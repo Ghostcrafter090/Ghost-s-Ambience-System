@@ -31,7 +31,8 @@ void Dialog::on_onButton_clicked() {
     } else {
         systemState = true;
         autoUpdate();
-        system("pushd %USERPROFILE%\\Desktop\\ambience_py && start /min "" ambience \"py main.py\"");
+        std::string runCommand = "pushd %USERPROFILE%\\Desktop\\ambience_py && start /min "" ambience \"py main.py " + apiKey + "\"";
+        system(runCommand.c_str());
         ui->onButton->setText("Switch Offline");
     }
 }

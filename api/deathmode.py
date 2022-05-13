@@ -36,8 +36,8 @@ class background:
             start = pytools.clock.dateArrayToUTC(pytools.clock.getMidnight(timef))
             midnight = pytools.clock.dateArrayToUTC(pytools.clock.getMidnight(dateArray))
             current = pytools.clock.dateArrayToUTC(dateArray)
-            x = current - start
-            g = midnight - pytools.clock.dateArrayToUTC(dayTimes[5])
+            x = 86400 + (current - start)
+            g = 86400 - (pytools.clock.dateArrayToUTC(dayTimes[5]) - midnight)
             e = 2.71828182846
             a = 10
             f = 0.000000004

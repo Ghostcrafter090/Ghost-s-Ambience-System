@@ -5,6 +5,12 @@ import pytools
 import threading
 import time
 
+class status:
+    apiKey = ""
+    vars = {
+        "lastLoop": []
+    }
+
 class globals:
     daytimes = 'set csth=6 \nset cstm=17 \nset ceth=20 \nset cetm=4 \nset cesth=19 \nset cestm=35 \nset nsth=5 \nset nstm=42 \nset neth=20 \nset netm=40 \nset asth=5 \nset astm=5 \nset aeth=21 \nset aetm=16 \n'
     minn = [-1, -1]
