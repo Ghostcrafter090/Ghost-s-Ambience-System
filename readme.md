@@ -1,4 +1,4 @@
-GHOSTS ADAPTIVE AMBIENCE SYSTEM (Python Version, because batch is old lmao)
+GHOSTS ADAPTIVE AMBIENCE SYSTEM (Python Version)
 ---------------------------------------------------------------------------
 
 To install, run setup.py, this will install the required python libraries if they don't exist already, and it will then pull the system assets from my website and unpack them.
