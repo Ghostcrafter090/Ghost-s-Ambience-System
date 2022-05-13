@@ -38,93 +38,116 @@ def main():
         dataList = utils.dataGrabber()
         dayTimes = utils.dayTimesGrabber()
 
-        num = dataList[0][7] - 15
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[0] = per / (((((300 - dayOfYear) ** 4) + 1) / 4100625) + 1)
-
-        num = dataList[0][7] - 16
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[1] = per / (((((235 - dayOfYear) ** 4) + 1) / 4100625) + 1) / (101 - dataList[0][8])
-
-        num = dataList[0][7] - 12
-        if dataList[0][7] >= 19:
-            num = num - ((dataList[0][7] - 18) * 2)
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[2] = per / (((((250 - dayOfYear) ** 4) + 1) / 4100625) + 1) / (101 - dataList[0][8])
-
-        num = dataList[0][7] - 3
-        if dataList[0][7] >= 20:
-            num = num - ((dataList[0][7] - 19) * 2)
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[3] = per / (((((320 - dayOfYear) ** 4) + 1) / 4100625) + 1)
-
-        num = dataList[0][7] - 15
-        if dataList[0][7] >= 21:
-            num = num - ((dataList[0][7] - 20) * 2)
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[4] = per / (((((240 - dayOfYear) ** 4) + 1) / 4100625) + 1)
-
-        num = dataList[0][7] - 16 - (16 - dateArray[3])
-        if dataList[0][7] >= 20:
-            num = num - (dateArray[3] * 2)
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[5] = per / (((((230 - dayOfYear) ** 4) + 1) / 4100625) + 1)
-
-        num = dataList[0][7] - 16 - (23 - dateArray[3])
-        if dataList[0][7] <= 20:
-            num = num - ((dataList[0][7] - 19) * 2)
-        if dateArray[3] >= 6:
-            num = num - (dateArray[3] * 2)
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[6] = per / (((((260 - dayOfYear) ** 4) + 1) / 4100625) + 1) / (101 - dataList[0][8])
-
-        num = dataList[0][7] - 16 - (23 - dateArray[3])
-        if dataList[0][7] <= 20:
-            num = num - ((dataList[0][7] - 19) * 2)
-        if dateArray[3] >= 18:
-            num = num - (dateArray[3] * 2)
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[7] = per / ((((((260 - dayOfYear) ** 2) * ((280 - dayOfYear) ** 2)) + 1) / 4100625) + 1) / (50 - dataList[0][8])
-
-        num = dataList[0][7] - 16 - (23 - dateArray[3])
-        if dataList[0][7] <= 20:
-            num = num - ((dataList[0][7] - 19) * 2)
-        if dateArray[3] >= 6:
-            num = num - (dateArray[3] * 2)
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[8] = per / (((((300 - dayOfYear) * ((260 - dayOfYear) ** 3)) + 1) / 4100625) + 1)
-
-        num = dataList[0][7] - 8
-        if dataList[0][7] <= 17:
-            num = num - ((dataList[0][7] - 16) * 2)
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[9] = per / (((((190 - dayOfYear) ** 4) + 1) / 4100625) + 1)
-
-        num = dataList[0][7] - 15
-        if num < 0:
-            num = 0
-        per = (2 ** num) * 5
-        chance[10] = per / (((((300 - dayOfYear) ** 4) + 1) / 4100625) + 1)
+        try:
+            num = dataList[0][7] - 15
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[0] = per / (((((300 - dayOfYear) ** 4) + 1) / 4100625) + 1)
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 16
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[1] = per / (((((235 - dayOfYear) ** 4) + 1) / 4100625) + 1) / (101 - dataList[0][8])
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 12
+            if dataList[0][7] >= 19:
+                num = num - ((dataList[0][7] - 18) * 2)
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[2] = per / (((((250 - dayOfYear) ** 4) + 1) / 4100625) + 1) / (101 - dataList[0][8])
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 3
+            if dataList[0][7] >= 20:
+                num = num - ((dataList[0][7] - 19) * 2)
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[3] = per / (((((320 - dayOfYear) ** 4) + 1) / 4100625) + 1)
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 15
+            if dataList[0][7] >= 21:
+                num = num - ((dataList[0][7] - 20) * 2)
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[4] = per / (((((240 - dayOfYear) ** 4) + 1) / 4100625) + 1)
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 16 - (16 - dateArray[3])
+            if dataList[0][7] >= 20:
+                num = num - (dateArray[3] * 2)
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[5] = per / (((((230 - dayOfYear) ** 4) + 1) / 4100625) + 1)
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 16 - (23 - dateArray[3])
+            if dataList[0][7] <= 20:
+                num = num - ((dataList[0][7] - 19) * 2)
+            if dateArray[3] >= 6:
+                num = num - (dateArray[3] * 2)
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[6] = per / (((((260 - dayOfYear) ** 4) + 1) / 4100625) + 1) / (101 - dataList[0][8])
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 16 - (23 - dateArray[3])
+            if dataList[0][7] <= 20:
+                num = num - ((dataList[0][7] - 19) * 2)
+            if dateArray[3] >= 18:
+                num = num - (dateArray[3] * 2)
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[7] = per / ((((((260 - dayOfYear) ** 2) * ((280 - dayOfYear) ** 2)) + 1) / 4100625) + 1) / (50 - dataList[0][8])
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 16 - (23 - dateArray[3])
+            if dataList[0][7] <= 20:
+                num = num - ((dataList[0][7] - 19) * 2)
+            if dateArray[3] >= 6:
+                num = num - (dateArray[3] * 2)
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[8] = per / (((((300 - dayOfYear) * ((260 - dayOfYear) ** 3)) + 1) / 4100625) + 1)
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 8
+            if dataList[0][7] <= 17:
+                num = num - ((dataList[0][7] - 16) * 2)
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[9] = per / (((((190 - dayOfYear) ** 4) + 1) / 4100625) + 1)
+        except:
+            pass
+        try:
+            num = dataList[0][7] - 15
+            if num < 0:
+                num = 0
+            per = (2 ** num) * 5
+            chance[10] = per / (((((300 - dayOfYear) ** 4) + 1) / 4100625) + 1)
+        except:
+            pass
 
         speed = dataList[0][7] / 20
 

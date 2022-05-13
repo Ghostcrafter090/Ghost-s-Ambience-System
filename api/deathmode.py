@@ -139,12 +139,21 @@ def main():
         wait = 600
         if dateArray[2] == 13:
             if dayOfWeek == 5:
-                background.whispers.run(dateArray, dayTimes)
-                wait = 1
-                background.death_wind(dateArray, dayTimes)
-                if 9 <= dateArray[1] <= 11:
-                    background.monsters(dateArray, dayTimes)
-        if dateArray[1] == 10:
+                if dateArray[3] > 11:
+                    background.whispers.run(dateArray, dayTimes)
+                    wait = 1
+                    background.death_wind(dateArray, dayTimes)
+                    if 9 <= dateArray[1] <= 11:
+                        background.monsters(dateArray, dayTimes)
+        elif dateArray[2] == 14:
+            if dayOfWeek == 6:
+                if dateArray[3] < 12:
+                    background.whispers.run(dateArray, dayTimes)
+                    wait = 1
+                    background.death_wind(dateArray, dayTimes)
+                    if 9 <= dateArray[1] <= 11:
+                        background.monsters(dateArray, dayTimes)
+        if ((dateArray[1] == 10) and (((dateArray[2] == 1) and (dateArray[3] > 12)) or (dateArray[2] > 1))) or ((dateArray[1] == 11) and (dateArray[2] == 1) and (dateArray[3] < 12)):
             background.whispers.run(dateArray, dayTimes)
             wait = 1
             if dateArray[2] >= 29:
