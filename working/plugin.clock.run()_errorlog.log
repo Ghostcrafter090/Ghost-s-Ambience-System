@@ -1,3 +1,0 @@
-
-[2022, 5, 10, 19, 50, 17] ::: plugin.clock.run(); [Errno 2] No such file or directory: '.\\hcs_config.txt'
-[2022, 5, 10, 19, 50, 18] ::: plugin.clock.run(); File Closed Unexpectedly!
