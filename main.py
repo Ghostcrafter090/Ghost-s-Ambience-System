@@ -2,6 +2,7 @@ import pytools
 import os
 import threading
 import time
+import sys
 
 class globals:
     class thread:
@@ -60,7 +61,7 @@ class handlers:
             global plugin
             script = ""
             while i < len(list):
-                script = script + "import api." + list[i] + "\nplugin." + list[i] + " = api." + list[i] + "\n"
+                script = script + "import api." + list[i] + "\nplugin." + list[i] + " = api." + list[i] + "\n" + "api." + list[i] + ".status.apiKey = " + sys.argv[1]
                 os.system("mkdir .\\vars\\plugins")
                 i = i + 1
             out = exec(script)

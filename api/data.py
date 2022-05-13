@@ -9,7 +9,7 @@ class status:
 
 class globals:
     urlBase = 'http://api.openweathermap.org/data/2.5/weather?lat=44.8367770&lon=-63.5951100&appid=' + status.apiKey
-    urlFast = 'http://gsweathermore.ddns.net:226/access.php?key=56c15c7d00df42d8815c7d00df42d8a' + status.apiKey
+    urlFast = 'http://gsweathermore.ddns.net:226/access.php?key=56c15c7d00df42d8815c7d00df42d8a'
 
 class grabber:
     def getBaseData(url):
