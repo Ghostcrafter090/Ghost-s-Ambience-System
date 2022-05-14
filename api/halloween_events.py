@@ -21,16 +21,16 @@ def main():
         dayTimes = utils.dayTimesGrabber()
         cestj = dayTimes[5][3] - 1
         halloweenMode = False
-        if dateArray[1] == 10:
+        if (dateArray[1] == 10) or ((dateArray[1] == 11) and (dateArray[2] == 1) and (dateArray[3] < 12)):
             halloweenMode = True
             if os.path.isfile("halloweenmode.derp") == False:
-                pytools.IO.saveFile('halloweenmode.derp')
+                pytools.IO.saveFile('halloweenmode.derp', "1")
         elif dateArray[1] == 11:
             if dateArray[2] == 1:
                 if dateArray[3] < 12:
                     halloweenMode = True
                     if os.path.isfile("halloweenmode.derp") == False:
-                        pytools.IO.saveFile('halloweenmode.derp')
+                        pytools.IO.saveFile('halloweenmode.derp', "1")
         if halloweenMode:
             if dateArray[3] == dayTimes[5][3]:
                 if dateArray[4] == dayTimes[5][4]:

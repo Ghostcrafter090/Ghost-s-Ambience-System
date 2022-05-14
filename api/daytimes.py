@@ -1,6 +1,9 @@
 import pytools
 import time
 
+class globals:
+    dateArray = [0, 0, 0, 0, 0, 0]
+
 class status:
     apiKey = ""
     vars = {
@@ -11,10 +14,15 @@ class tools:
     def returnDateArray(string):
         staArray = pytools.clock.utcFormatToArray(string)
         diaArray = pytools.clock.getTimeDialation()
-        return pytools.clock.solveForDialation(diaArray, staArray)
+        outArray = pytools.clock.solveForDialation(diaArray, staArray)
+        outArray[0] = globals.dateArray[0]
+        outArray[1] = globals.dateArray[1]
+        outArray[2] = globals.dateArray[2]
+        return outArray
 
 def main():
     while True:
+        globals.dateArray = pytools.clock.getDateTime()
         data = pytools.net.getJsonAPI('https://api.sunrise-sunset.org/json?lat=44.847075&lng=-63.604849&formatted=0')
         sunrise = tools.returnDateArray(data['results']['sunrise'])
         sunset = tools.returnDateArray(data['results']['sunset'])

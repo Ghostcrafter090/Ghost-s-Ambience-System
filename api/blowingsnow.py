@@ -37,7 +37,10 @@ def audio(dataList, depth):
 def main():
     while True:
         data = pytools.net.getTextAPI('https://www.snow-forecast.com/resorts/Ski-Martock/6day/bot')
-        depth = float(data.split("Fresh snowfall depth:")[1].split(" ")[1])
+        try:
+            depth = float(data.split("Fresh snowfall depth:")[1].split(" ")[1])
+        except:
+            depth = 0
         try:
             dataList = utils.dataGrabber()
         except:

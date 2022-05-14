@@ -1164,10 +1164,11 @@ class clock:
         staArray = clock.getDateTime()
         utcArray = clock.getDateTime(True)
         diaArray = [0, 0, 0, 0, 0, 0]
-        i = 0
-        while i < len(diaArray):
-            diaArray[i] = utcArray[i] - staArray[i]
-            i = i + 1
+        # i = 0
+        # while i < len(diaArray):
+        #     diaArray[i] = staArray[i] - utcArray[i]
+        #     i = i + 1
+        diaArray[3] = 24 - (staArray[3] - utcArray[3])
         return diaArray
 
     def fixDateArray(dateArray):
@@ -1190,7 +1191,7 @@ class clock:
         xArray = [1, 12, "me", 24, 60, 60]
         i = 0
         while i < len(diaArray):
-            outArray[i] = staArray[i] - diaArray[i]
+            outArray[i] = (staArray[i] - diaArray[i])
             i = i + 1
         i = len(outArray) - 1
         while i > 1:

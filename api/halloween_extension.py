@@ -3,6 +3,7 @@ import json
 import random
 import os
 import sys
+import pytools
 
 class status:
     apiKey = ""
@@ -144,11 +145,20 @@ def main():
     prevMin = 0
     ghostsChance = [0, 0, 0]
     while True:
-        dateArray = getDateTime()
+        dateArray = pytools.clock.getDateTime()
         error = 1
         while error == 1:
             try:
-                sunJson = json.loads(("{\"" + getFile('daytimes.cmd').replace("set ", "").replace("\n", "\", \"").replace("=", "\": \"") + "}").replace(", \"}", "}").replace(" \",", "\",").replace(" \"}", "\"}"))
+                dayTimes = pytools.IO.getList("daytimes.pyl")[1]
+                sunJson = {
+                    "ceth": dayTimes[6][3],
+                    "cetm": dayTimes[6][4],
+                    "csth": dayTimes[2][3],
+                    "cstm": dayTimes[2][4],
+                    "cesth": dayTimes[5][3],
+                    "cestm": dayTimes[5][4]
+                }
+                # sunJson = json.loads(("{\"" + getFile('daytimes.cmd').replace("set ", "").replace("\n", "\", \"").replace("=", "\": \"") + "}").replace(", \"}", "}").replace(" \",", "\",").replace(" \"}", "\"}"))
                 doNull(sunJson['ceth'])
                 doNull(sunJson['cetm'])
                 doNull(sunJson['csth'])
@@ -190,9 +200,40 @@ def main():
             moodChance = 0
             if os.path.isfile('halloweenmode.derp') == True:
                 if prevMin != dateArray[4]:
-                    playSound('h_general.mp3', 0, 25, 1, 0, 0)
-                    playSound('h_general.mp3', 1, 25, 1, 0, 0)
-                    playSound('h_general.mp3', 2, 25, 1, 0, 0)
+                    monthS = pytools.clock.dateArrayToUTC([dateArray[0], 10, 1, 0, 0, 0])
+                    monthE = pytools.clock.dateArrayToUTC([dateArray[0], 11, 1, 0, 0, 0])
+                    monthC = pytools.clock.dateArrayToUTC(dateArray) - monthS
+                    
+                    hGeneralVol = 35 * (monthC / (monthE - monthS))
+                    if hGeneralVol > 35:
+                        hGeneralVol = 35
+                    hGeneralSpeedModifier = 0.08
+                    midnight = pytools.clock.dateArrayToUTC(pytools.clock.getMidnight(dateArray))
+                    sunset = pytools.clock.dateArrayToUTC(dayTimes[5])
+                    civil = pytools.clock.dateArrayToUTC(dayTimes[2])
+                    sunrise = pytools.clock.dateArrayToUTC(dayTimes[3])
+                    current = pytools.clock.dateArrayToUTC(dateArray)
+                    try:
+                        if current > sunset:
+                            hGeneralSpeedModifier = 0.08 * (((midnight - sunset) - (midnight - current)) / (midnight - sunset))
+                        elif (midnight - current) > 82800:
+                            hGeneralSpeedModifier = 0.08 * (1 - ((midnight - current - 83160) / 3600))
+                        elif current < civil:
+                            hGeneralSpeedModifier = 0.1
+                        elif current < sunrise:
+                            hGeneralSpeedModifier =  0.1 * (((sunrise - civil) / ((sunrise - civil + 1) - (sunrise - current))) - 1)
+                        else:
+                            hGeneralSpeedModifier = 0
+                    except:
+                        pass
+                    if hGeneralSpeedModifier > 0.4:
+                        hGeneralSpeedModifier = 0.4
+                    elif hGeneralSpeedModifier < 0:
+                        hGeneralSpeedModifier = 0
+                    hGeneralSpeedModifier = hGeneralSpeedModifier * (monthC / (monthE - monthS))
+                    playSound('h_general.mp3', 0, hGeneralVol, 1 - hGeneralSpeedModifier, 0, 0)
+                    playSound('h_general.mp3', 1, hGeneralVol, 1 - hGeneralSpeedModifier, 0, 0)
+                    playSound('h_general.mp3', 2, hGeneralVol, 1 - hGeneralSpeedModifier, 0, 0)
                     prevMin = dateArray[4]
                 moodChance = 0
                 if dateArray[3] < 24:
@@ -215,9 +256,10 @@ def main():
                 if dateArray[4] == 35:
                     if noE != 1:
                         if random.randrange(dateArray[3], 24) == 23:
-                            playSound('h_rumble.mp3', 0, 40, 1, 0, 0)
-                            playSound('h_rumble.mp3', 1, 40, 1, 0, 0)
-                            playSound('h_rumble.mp3', 2, 40, 1, 0, 0)
+                            rumbleNum = random.randrange(0, 2)
+                            playSound('h_rumble_' + rumbleNum + '.mp3', 0, 40, 1, 0, 0)
+                            playSound('h_rumble_' + rumbleNum + '.mp3', 1, 40, 1, 0, 0)
+                            playSound('h_rumble_' + rumbleNum + '.mp3', 2, 40, 1, 0, 0)
                         noE = 1
                 else:
                     noE = 0
@@ -228,16 +270,18 @@ def main():
                 if dateArray[4] == 20:
                     if noF != 1:
                         if random.randrange(dateArray[3], 24) == 23:
-                            playSound('h_rumble.mp3', 0, 40, 1, 0, 0)
-                            playSound('h_rumble.mp3', 1, 40, 1, 0, 0)
-                            playSound('h_rumble.mp3', 2, 40, 1, 0, 0)
+                            rumbleNum = random.randrange(0, 2)
+                            playSound('h_rumble_' + rumbleNum + '.mp3', 0, 40, 1, 0, 0)
+                            playSound('h_rumble_' + rumbleNum + '.mp3', 1, 40, 1, 0, 0)
+                            playSound('h_rumble_' + rumbleNum + '.mp3', 2, 40, 1, 0, 0)
                         noF = 1
                 elif dateArray[4] == 40:
                     if noF != 1:
                         if random.randrange(dateArray[3], 24) == 23:
-                            playSound('h_rumble.mp3', 0, 40, 1, 0, 0)
-                            playSound('h_rumble.mp3', 1, 40, 1, 0, 0)
-                            playSound('h_rumble.mp3', 2, 40, 1, 0, 0)
+                            rumbleNum = random.randrange(0, 2)
+                            playSound('h_rumble_' + rumbleNum + '.mp3', 0, 40, 1, 0, 0)
+                            playSound('h_rumble_' + rumbleNum + '.mp3', 1, 40, 1, 0, 0)
+                            playSound('h_rumble_' + rumbleNum + '.mp3', 2, 40, 1, 0, 0)
                         noF = 1
                 else:
                     noF = 0
