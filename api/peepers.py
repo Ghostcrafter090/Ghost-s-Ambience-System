@@ -4,7 +4,12 @@ import time
 class status:
     apiKey = ""
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "peepersTempModifier": 0,
+        "peepersHumidModifier": 0,
+        "peepersRainModifier": 0,
+        "peepersWindModifier": 0,
+        "peepersIndex": 0
     }
 
 class utils:
@@ -85,6 +90,12 @@ def main():
         peepersMax = peepersMax - tempSub - windSub - humidSub + rainSub
 
         print("Peepers Index             = " + str(peepersMax))
+
+        status.vars['peepersTempModifier'] = tempSub
+        status.vars['peepersHumidModifier'] = humidSub
+        status.vars['peepersRainModifier'] = rainSub
+        status.vars['peepersWindModifier'] = windSub
+        status.vars['peepersIndex'] = peepersMax
     
         pep0 = pytools.clock.dateArrayToUTC(pytools.clock.fixDateArray([dateArray[0], dateArray[1], dateArray[2], dayTimes[5][3] - 2, dayTimes[5][4] + 30, 0]))
         pep1 = pytools.clock.dateArrayToUTC(pytools.clock.fixDateArray([dateArray[0], dateArray[1], dateArray[2], dayTimes[5][3], dayTimes[5][4], 0]))
@@ -171,6 +182,7 @@ def main():
                 pytools.sound.main.playSoundWindow("m_peepers_4_fo.mp3;peepers_4_fo.mp3", 25, 1.0, 0.0, 0)
 
         time.sleep(480)
-
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
+        
 def run():
     main()

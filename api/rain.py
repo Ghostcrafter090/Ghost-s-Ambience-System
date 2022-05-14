@@ -40,7 +40,8 @@ def main():
         if dataList[0][4] == "thunder":
             sounds.rain()
         time.sleep(194)
-
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
+        
 def run():
     main()
             

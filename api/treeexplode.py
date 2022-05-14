@@ -5,7 +5,8 @@ import time
 class status:
     apiKey = ""
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "explodingTreeIndex": 0
     }
 
 class utils:
@@ -30,6 +31,7 @@ def main():
                 if intf >= 68:
                     randa = randa * ((intf - 67) ** 2)
             print("Exploding Tree Wait Time: " + str(randa))
+            status.vars['explodingTreeIndex'] = randa
             time.sleep(randa)
             randb = -1
             while randb <= 0:
@@ -38,6 +40,7 @@ def main():
             pytools.sound.main.playSound("treeex" + str(randb) + ".wav", 6, 100, 1.0, 0.0, 1)
         else:
             time.sleep(60)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 def run():
     main()

@@ -6,7 +6,8 @@ import time
 class status:
     apiKey = ""
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "thunderIndex": 0
     }
 
 class utils:
@@ -18,7 +19,10 @@ class utils:
     
     def getHorrorIndex():
         if os.path.isfile("horrorindex.cx"):
-            out = float(pytools.IO.getFile("horrorindex.cx").replace(" ", ""))
+            try:
+                out = float(pytools.IO.getFile("horrorindex.cx").replace(" ", ""))
+            except:
+                out = 0
         else:
             out = 0
         return out
@@ -50,6 +54,7 @@ def main():
         if tempc < -7:
             tempc = 16 + ((tempc * (0 - 1)) - 7)
         chance = ((dateArray[3] ** 2) * (tempc - 15)) + horrorIndex
+        status.vars['thunderIndex'] = chance
         print("Thunder Chance: " + str((chance * 100) / 32768) + "%")
         if (random.random() * 32768) < chance:
             if dataList[0][4] == 'rain':
@@ -57,6 +62,7 @@ def main():
             else:
                 sounds.thunderHeat()
         time.sleep(194)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 def run():
     main()

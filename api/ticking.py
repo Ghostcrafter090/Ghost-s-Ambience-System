@@ -20,6 +20,7 @@ def main():
         if dateArray[4] == diab:
             pytools.sound.main.playSound("ticking.mp3", 0, 100, 1.0, 0.0, 0)
         time.sleep(60)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 def run():
     main()

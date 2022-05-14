@@ -8,7 +8,8 @@ import pytools
 class status:
     apiKey = ""
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "horrorIndex": 0
     }
 
 def getFile(path):
@@ -302,7 +303,10 @@ def main():
             if breathChance < 0:
                 breathChance = 0
             horrorIndex = ghostsChance[0] + ghostsChance[1] + ghostsChance[2] + draftChance + breathChance + moodChance + knockChance
+            print("Current Horror Index: " + str(horrorIndex))
+            status.vars['horrorIndex'] = horrorIndex
             saveFile('horrorindex.cx', str(horrorIndex))
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 def run():       
     main()

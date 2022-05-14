@@ -6,7 +6,8 @@ import time
 class status:
     apiKey = ""
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "blowingSnowChance": 0
     }
 
 class utils:
@@ -49,6 +50,7 @@ def main():
             chance = (5 - (dataList[0][7])) * (5 - (dataList[0][7])) * (5 - (dataList[0][7])) * (5 - (dataList[0][7])) * (float(depth) + 1)
         else:
             chance = 0
+        status.vars['blowingSnowChance'] = chance
         print("Blowing Snow Chance: " + str(chance))
         if dataList[0][4].find("snow") != -1:
             audio(dataList, depth)

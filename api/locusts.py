@@ -5,7 +5,8 @@ import time
 class status:
     apiKey = ""
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "locustChances": []
     }
 
 class utils:
@@ -184,8 +185,9 @@ def main():
             if dateArray[3] < dayTimes[6][3]:
                 if dateArray[3] >= dayTimes[2][3]:
                     pytools.sound.main.playSoundWindow("cicada_windowclosed.mp3;cicada_windowopen.mp3", 50, speed, 0, 0)
-
+        status.vars['locustChances'] = chance
         time.sleep(30)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 def run():
     main()

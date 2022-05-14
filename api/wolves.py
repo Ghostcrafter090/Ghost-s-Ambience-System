@@ -8,7 +8,8 @@ import time
 class status:
     apiKey = ""
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "wolvesChance": 0
     }
 
 class globals:
@@ -34,6 +35,7 @@ class main:
             if ((dateArray[4] % 5) != 0):
                 dataGrabbed = 0
             time.sleep(5)
+            status.vars['lastLoop'] = pytools.clock.getDateTime()
     
     def workHandler():
         dateArray = pytools.clock.getDateTime()
@@ -41,6 +43,7 @@ class main:
         minZ = [dateArray[4] - 1, int(dateArray[5] / 10), jsonData, -1, [0, {'x': 0, 'y': 0, 'z': 0}]]
         while True:
             minZ = main.worker(minZ[0], minZ[1], minZ[2], minZ[3], minZ[4])
+            status.vars['lastLoop'] = pytools.clock.getDateTime()
 
     def worker(minZ, minN, jsonData, ticb, currentColor):
         dateArray = pytools.clock.getDateTime()

@@ -6,7 +6,9 @@ import os
 class status:
     apiKey = ""
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "whisperIndex": 0,
+        "hallowedWolfIndex": 0
     }
 
 class globals:
@@ -69,7 +71,7 @@ class background:
             except:
                 out = 0
             print('Current whisper chance: ' + str(out))
-
+            status.vars['whisperIndex'] = out
             return out
 
         def run(dateArray, dayTimes):
@@ -78,7 +80,6 @@ class background:
 
     def death_wind(dateArray, dayTimes):
         dateArray[2] = dateArray[2] + 1
-        print(dateArray)
         start = pytools.clock.dateArrayToUTC(pytools.clock.solveForDialation([0, 0, 0, 0, -11, 0], dayTimes[5]))
         current = pytools.clock.dateArrayToUTC(dateArray)
         end = pytools.clock.dateArrayToUTC(pytools.clock.solveForDialation([0, 0, 0, 0, -11, 0], dayTimes[2]))
@@ -109,6 +110,7 @@ class background:
             else:
                 pytools.sound.main.playSound('wolf_howl_' + str(random.randrange(0, 3)) + "_m.mp3", 2, 40, 1, 0, 0)
                 pytools.sound.main.playSound('wolf_howl_' + str(random.randrange(0, 3)) + ".mp3", 3, 40, 1, 0, 0)
+        status.vars['hallowedWoldIndex'] = wolfChance
         if (start < current) or (current < end):
             globals.monsters.run = 1
             if globals.monsters.state == 0:
@@ -181,7 +183,6 @@ def main():
         if ((dateArray[1] == 10) and (((dateArray[2] == 1) and (dateArray[3] > 12)) or (dateArray[2] > 1))) or ((dateArray[1] == 11) and (dateArray[2] == 1) and (dateArray[3] < 12)):
             background.whispers.run(dateArray, dayTimes)
             wait = 1
-            print(dateArray)
             if (dateArray[2] >= 29) or ((dateArray[1] == 11) and (dateArray[2] <= 1)):
                 background.death_wind(dateArray, dayTimes)
             if (dateArray[2] >= 30) or ((dateArray[1] == 11) and (dateArray[2] <= 1)):

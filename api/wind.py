@@ -48,6 +48,7 @@ def main():
         if (dataList[0][1] > 30) or (dataList[0][0] > 30):
             sounds.hurricaneWind()
         time.sleep(194)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 def run():
     main()

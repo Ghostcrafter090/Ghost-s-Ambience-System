@@ -13,3 +13,4 @@ def hello():
 def run():
     while True:
         hello()
+        status.vars['lastLoop'] = pytools.clock.getDateTime()

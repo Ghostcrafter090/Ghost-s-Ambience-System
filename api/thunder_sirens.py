@@ -35,6 +35,7 @@ def main():
                     pytools.sound.main.playSoundAll("tornado_sirens_test.mp3", 100, 1.0, 0.0, 0)
                     time.sleep(55)
         time.sleep(10)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 def run():
     main()

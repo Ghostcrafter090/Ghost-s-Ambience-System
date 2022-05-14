@@ -216,6 +216,7 @@ def main():
                 pytools.sound.main.playSoundWindow("cold_wn_day_fo.mp3;cold_wn_day_fo_nm.mp3", 100, 1.0, 0.0, 0)
         
         time.sleep(194)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 
 def run():

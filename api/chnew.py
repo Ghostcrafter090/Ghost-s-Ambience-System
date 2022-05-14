@@ -10,7 +10,8 @@ import pytools
 class status:
     apiKey = ""
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "heavenIndex": 0
     }
 
 def getFile(path):
@@ -468,6 +469,8 @@ def main():
                 if tic != ticOld:
                     ticOld = tic
                     heavenIndex = bellsChance + outsideBandChance + outsideBellsChance + musicBoxChance + lateNightChoirChance + lateDayBellsChance + mmcidleChance + santaLandingChance + sleighPassingChance
+                    print("Heaven Index: " + str(heavenIndex) + "Hi")
+                    status.vars['heavenIndex'] = heavenIndex
                     saveFile('heavenindex.cx', str(heavenIndex))
 
 def run():           

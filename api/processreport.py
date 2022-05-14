@@ -140,6 +140,7 @@ def main():
         saveFile("..\\vars\\sounds\\window.cxl", windowsounds + windownsounds)
         saveFile("..\\vars\\sounds\\outside.cxl", outsidesounds + windownsounds)
         time.sleep(1)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 def run():
     main()

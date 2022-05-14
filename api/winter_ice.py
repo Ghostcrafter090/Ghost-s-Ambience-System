@@ -58,6 +58,7 @@ def main():
                 pytools.sound.main.playSound('ice_nm.mp3', 3, vol, speed, 0, 0)
             time.sleep(300 / speed)
         time.sleep(1)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
 
 def run():
     main()
