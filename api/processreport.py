@@ -5,6 +5,7 @@ import pytools
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": []
     }
@@ -45,103 +46,64 @@ def getProcesses():
     clockI = 0
     fireplaceI = 0
     for proc in psutil.process_iter():
-        try:
             # Get process name & pid from process object.
-            processName = proc.name()
-            processID = proc.cmdline()
-            if processName == "window.exe":
-                windowI = windowI + 1
-                window.append(processID)
-            if processName == "clock.exe":
-                clockI = clockI + 1
-                clock.append(processID)
-            if processName == "fireplace.exe":
-                fireplaceI = fireplaceI + 1
-                fireplace.append(processID)
-            if processName == "outside.exe":
-                outsideI = outsideI + 1
-                outside.append(processID)
-            if processName == "windown.exe":
-                windownI = windownI + 1
-                windown.append(processID)
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-    return [clock, fireplace, window, outside, windown]
+            try:
+                processName = proc.name()
+                processID = proc.cmdline()
+                if processName == "window.exe":
+                    windowI = windowI + 1
+                    window.append(processID)
+                if processName == "clock.exe":
+                    clockI = clockI + 1
+                    clock.append(processID)
+                if processName == "fireplace.exe":
+                    fireplaceI = fireplaceI + 1
+                    fireplace.append(processID)
+                if processName == "outside.exe":
+                    outsideI = outsideI + 1
+                    outside.append(processID)
+                if processName == "windown.exe":
+                    windownI = windownI + 1
+                    windown.append(processID)
+            except:
+                pass
+    return {"clock": clock, "fireplace": fireplace, "window": window, "outside": outside, "windown": windown}
+
+def makeString(listf):
+    string = "\n"
+    i = 0
+    while i < len(listf):
+        if listf[i][1] == "runaudio.vbs":
+            if string.find("\n" + listf[i][2].replace(".mp3", "").replace(".vbs", "").replace("_", " ") + "\n") == -1:
+                string = string + listf[i][2].replace(".mp3", "").replace(".vbs", "").replace("_", " ") + "\n"
+        else:
+            if string.find("\n" + listf[i][1].replace(".mp3", "").replace(".vbs", "").replace("_", " ") + "\n") == -1:
+                string = string + listf[i][1].replace(".mp3", "").replace(".vbs", "").replace("_", " ") + "\n"
+        i = i + 1
+    return string[1:]
 
 def main():
     while True:
         clocksounds = ""
         windowsounds = ""
-        firesounds = ""
+        fireplacesounds = ""
         outsidesounds = ""
         windownsounds = ""
         processes = getProcesses()
-        # print(processes)
-        i = 0
-        try:
-            while i < len(processes[0][0]):
-                # print(processes[0][0][i])
-                if processes[0][0][i] != "clock.exe":
-                    if processes[0][0][i] != "runaudio.vbs":
-                        if (processes[0][0][i].find(".vbs") != -1) or (processes[0][0][i].find(".mp3") != -1):
-                            clocksounds = clocksounds + "\n       = " + processes[0][0][i].replace(".vbs", "").replace(".mp3", "").replace("_", " ")
-                i = i + 1
-        except:
-            pass
-        i = 0
-        try:
-            while i < len(processes[1][0]):
-                print(processes[1][0][i])
-                # print(processes[1][0][i])
-                if processes[1][0][i] != "fireplace.exe":
-                    if processes[1][0][i] != "runaudio.vbs":
-                        if (processes[1][0][i].find(".vbs") != -1) or (processes[1][0][i].find(".mp3") != -1):
-                            firesounds = firesounds + "\n       = " + processes[1][0][i].replace(".vbs", "").replace(".mp3", "").replace("_", " ")
-                i = i + 1
-        except:
-            pass
-        i = 0
-        try:
-            while i < len(processes[2][0]):
-                # print(processes[2][0][i])
-                if processes[2][0][i] != "window.exe":
-                    if processes[2][0][i] != "runaudio.vbs":
-                        if (processes[2][0][i].find(".vbs") != -1) or (processes[2][0][i].find(".mp3") != -1):
-                            windowsounds = windowsounds + "\n       = " + processes[2][0][i].replace(".vbs", "").replace(".mp3", "").replace("_", " ")
-                i = i + 1
-        except:
-            pass
-            
-        i = 0
-        try:
-            while i < len(processes[3][0]):
-                # print(processes[2][0][i])
-                if processes[3][0][i] != "outside.exe":
-                    if processes[3][0][i] != "runaudio.vbs":
-                        if (processes[3][0][i].find(".vbs") != -1) or (processes[3][0][i].find(".mp3") != -1):
-                            outsidesounds = outsidesounds + "\n       = " + processes[3][0][i].replace(".vbs", "").replace(".mp3", "").replace("_", " ")
-                i = i + 1
-        except:
-            pass
-        
-        i = 0
-        try:
-            while i < len(processes[4][0]):
-                # print(processes[2][0][i])
-                if processes[4][0][i] != "windown.exe":
-                    if processes[4][0][i] != "runaudio.vbs":
-                        if (processes[4][0][i].find(".vbs") != -1) or (processes[4][0][i].find(".mp3") != -1):
-                            windownsounds = windownsounds + "\n       = " + processes[4][0][i].replace(".vbs", "").replace(".mp3", "").replace("_", " ")
-                i = i + 1
-        except:
-            pass
-
+        clocksounds = makeString(processes['clock'])
+        fireplacesounds = makeString(processes['fireplace'])
+        windowsounds = makeString(processes['window'])
+        outsidesounds = makeString(processes['outside'])
+        windownsounds = makeString(processes['windown'])
+        windowsounds = windowsounds + windownsounds
+        outsidesounds = outsidesounds + windownsounds
         saveFile("..\\vars\\sounds\\clock.cxl", clocksounds)
-        saveFile("..\\vars\\sounds\\fireplace.cxl", firesounds)
+        saveFile("..\\vars\\sounds\\fireplace.cxl", fireplacesounds)
         saveFile("..\\vars\\sounds\\window.cxl", windowsounds + windownsounds)
         saveFile("..\\vars\\sounds\\outside.cxl", outsidesounds + windownsounds)
         time.sleep(1)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

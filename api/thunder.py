@@ -5,6 +5,7 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "thunderIndex": 0
@@ -63,6 +64,7 @@ def main():
                 sounds.thunderHeat()
         time.sleep(194)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

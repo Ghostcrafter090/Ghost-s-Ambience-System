@@ -4,6 +4,7 @@ import random
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": []
     }
@@ -30,6 +31,7 @@ def main():
             music()
         time.sleep(194)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

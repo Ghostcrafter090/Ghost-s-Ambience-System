@@ -7,6 +7,7 @@ import pytools
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "horrorIndex": 0
@@ -307,6 +308,8 @@ def main():
             status.vars['horrorIndex'] = horrorIndex
             saveFile('horrorindex.cx', str(horrorIndex))
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
+
 
 def run():       
     main()

@@ -4,6 +4,7 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": []
     }
@@ -31,7 +32,7 @@ def main():
                 error = 0
             except:
                 error = 1
-        temp = data[1][3]
+        temp = data[0][7]
         no = 0
         if temp >= 2:
             no = 1
@@ -59,6 +60,7 @@ def main():
             time.sleep(300 / speed)
         time.sleep(1)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

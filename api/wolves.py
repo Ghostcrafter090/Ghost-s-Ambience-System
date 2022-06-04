@@ -7,6 +7,7 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "wolvesChance": 0
@@ -44,6 +45,8 @@ class main:
         while True:
             minZ = main.worker(minZ[0], minZ[1], minZ[2], minZ[3], minZ[4])
             status.vars['lastLoop'] = pytools.clock.getDateTime()
+            status.finishedLoop = True
+
 
     def worker(minZ, minN, jsonData, ticb, currentColor):
         dateArray = pytools.clock.getDateTime()

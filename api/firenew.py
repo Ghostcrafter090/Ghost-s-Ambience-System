@@ -5,33 +5,10 @@ import pytools
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": []
     }
-
-def getFile(path):
-    error = 0
-    try:
-        file = open(path, "r")
-        jsonData = file.read()
-        file.close()
-    except:
-        print("Unexpected error:", sys.exc_info())
-        error = 1
-    if error != 0:
-        jsonData = error
-    return jsonData
-
-def saveFile(path, jsonData):
-    error = 0
-    try:
-        file = open(path, "w")
-        file.write(jsonData)
-        file.close()
-    except:
-        print("Unexpected error:", sys.exc_info())
-        error = 1
-    return error
     
 def getTemp():
     temp = pytools.IO.getList("dataList.pyl")[1][0][7] + 273
@@ -39,31 +16,33 @@ def getTemp():
     
 def playMatch():
     print("Lighting fireplace...")
-    os.system('cmd.exe /c start /b /d ".\\lighting\\fire" "" ..\\..\\light.exe match_light.vbs & start /b /wait "" /d ".\\sound\\fire" ..\\..\\fireplace.exe match.vbs ')
+    pytools.sound.main.playSound('match_light.mp3', 5, 50, 1, 0, 0)
+    pytools.sound.main.playSound('match.wav', 1, 10, 1, 0, 1)
+    # os.system('cmd.exe /c start /b /d ".\\lighting\\fire" "" ..\\..\\light.exe match_light.vbs & start /b /wait "" /d ".\\sound\\fire" ..\\..\\fireplace.exe match.vbs ')
 
 def playFire():
     print("Playing standard fire effect...")
-    os.system('cmd.exe /c start /b  "" /d ".\\sound\\fire" ..\\..\\fireplace.exe fire.vbs & start /b /d ".\\lighting\\fire" "" ..\\..\\light.exe fire_light.vbs')
+    pytools.sound.main.playSound('fire.wav', 1, 10, 1, 0, 0)
+    pytools.sound.main.playSound('fire.wav', 5, 100, 1, -100, 0)   
+    # os.system('cmd.exe /c start /b  "" /d ".\\sound\\fire" ..\\..\\fireplace.exe fire.vbs & start /b /d ".\\lighting\\fire" "" ..\\..\\light.exe fire_light.vbs')
     
 def playFireStart():
     print("Playing standard fire_starting effect...")
-    os.system('cmd.exe /c start /b  "" /d ".\\sound\\fire" ..\\..\\fireplace.exe fire_start.vbs & start /b /d ".\\lighting\\fire" "" ..\\..\\light.exe fire_start_light.vbs')
+    pytools.sound.main.playSound('fire_start.wav', 1, 10, 1, 0, 0)
+    pytools.sound.main.playSound('fire_start.wav', 5, 100, 1, -100, 0)
+    # os.system('cmd.exe /c start /b  "" /d ".\\sound\\fire" ..\\..\\fireplace.exe fire_start.vbs & start /b /d ".\\lighting\\fire" "" ..\\..\\light.exe fire_start_light.vbs')
     
 def playFireEnd():
     print("Playing standard fire_ending effect...")
-    os.system('cmd.exe /c start /b  "" /d ".\\sound\\fire" ..\\..\\fireplace.exe fire_end.vbs & start /b /wait /d ".\\lighting\\fire" "" ..\\..\\light.exe fire_end_light.vbs')
+    pytools.sound.main.playSound('fire_end.wav', 1, 10, 1, 0, 0)
+    pytools.sound.main.playSound('fire_end.wav', 5, 100, 1, -100, 0)
+    # os.system('cmd.exe /c start /b  "" /d ".\\sound\\fire" ..\\..\\fireplace.exe fire_end.vbs & start /b /wait /d ".\\lighting\\fire" "" ..\\..\\light.exe fire_end_light.vbs')
     
 def playFireiLog():
     print("Playing standard fire_ilog effect...")
-    os.system('cmd.exe /c start /b  "" /d ".\\sound\\fire" ..\\..\\fireplace.exe fire_ilog.vbs & start /b /d ".\\lighting\\fire" "" ..\\..\\light.exe fire_ilog_light.vbs')
-
-def playFireStartNew():
-    pytools.sound.main.playSound('fire_start_new.mp3', 1, 60, 1, 0, 0)
-    pytools.sound.main.playSound('fire_start_new_light.mp3', 5, 100, 1, -100, 0)
-    
-def playFireCont():
-    pytools.sound.main.playSound('fire_cont.mp3', 1, 60, 1, 0, 0)
-    pytools.sound.main.playSound('fire_cont_light.mp3', 5, 100, 1, -100, 0)
+    pytools.sound.main.playSound('fire_ilog.mp3', 1, 10, 1, 0, 0)
+    pytools.sound.main.playSound('fire_ilog.mp3', 5, 100, 1, -100, 0)
+    # os.system('cmd.exe /c start /b  "" /d ".\\sound\\fire" ..\\..\\fireplace.exe fire_ilog.vbs & start /b /d ".\\lighting\\fire" "" ..\\..\\light.exe fire_ilog_light.vbs')
 
 def playGetLogs():
     if testWindow() == 1:
@@ -120,19 +99,6 @@ def main():
                     time.sleep(2100)
             playFireEnd()
             time.sleep()
-        time.sleep(10)
-        status.vars['lastLoop'] = pytools.clock.getDateTime()
-
-def mainNew():
-    while True:
-        fireCond = testforCond()
-        if fireCond == 1:
-            playFireStartNew()
-            time.sleep(2500)
-            while fireCond == 1:
-                playFireCont()
-                time.sleep(4720)
-                fireCond = testforCond()
         time.sleep(10)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
 

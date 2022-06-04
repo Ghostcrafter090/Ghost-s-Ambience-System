@@ -5,6 +5,7 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "blowingSnowChance": 0
@@ -58,6 +59,8 @@ def main():
             audio(dataList, depth)
         time.sleep(194)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
+        status.finishedLoop = True
 
 def run():
     main()

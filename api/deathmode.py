@@ -5,6 +5,7 @@ import os
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "whisperIndex": 0,
@@ -192,6 +193,7 @@ def main():
         background.end()
         time.sleep(wait)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

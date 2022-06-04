@@ -71,16 +71,21 @@ class handlers:
             imports = handlers.launcher.getImports()
             handlers.launcher.importPlugins(imports)
             i = 0
+            pluginList = ";"
             while i < len(imports):
+                pluginList = pluginList + 'plugin.' + str(imports[i]) + ";"
                 plugin.register('plugin.' + str(imports[i]))
                 i = i + 1
+            os.system("del .\\vars\\plugins\\*.cx /f /s /q")
+            os.system("del .\\working\\*_errorlog.log")
+            pytools.IO.saveFile(".\\vars\\pluginsList.pyn", pluginList)
             os.chdir('.\\working')
             plugin.activate()
             while True:
                 i = 0
                 while i < len(imports):
                     try:
-                        exec("for key in plugin." + imports[i] + ".status.vars:\n    pytools.IO.saveJson('..\\\\vars\\\\plugins\\\\' + imports[i] + '-' + key + '.cx', plugin." + str(imports[i]) + ".status.vars[key])")
+                        exec("for key in plugin." + imports[i] + ".status.vars:\n    if str(plugin." + str(imports[i]) + ".status.vars['lastLoop']).find('Time: ') == -1:\n        plugin." + str(imports[i]) + ".status.vars['lastLoop'] = 'Time: ' + str(plugin." + str(imports[i]) + ".status.vars['lastLoop'])\n    pytools.IO.saveJson('..\\\\vars\\\\pluginVars\\\\' + imports[i] + '-' + key + '.cx', plugin." + str(imports[i]) + ".status.vars[key])")
                     except:
                         pass
                     i = i + 1
@@ -88,11 +93,19 @@ class handlers:
             return 0
 
     class error:
-        def log(error, plugin):
-            if os.path.isfile(plugin + '_errorlog.log') == False:
-                pytools.IO.saveFile(plugin + '_errorlog.log', '')
+
+        errorStatus = {}
+
+        def log(error, pluginf):
+            if os.path.isfile(pluginf + '_errorlog.log') == False:
+                pytools.IO.saveFile(pluginf + '_errorlog.log', '')
             # errorlog = pytools.IO.getFile(plugin + '_errorlog.log')
-            errorlog = "\n" + str(pytools.clock.getDateTime()) + ' ::: ' + plugin + "; " + error
-            pytools.IO.appendFile(plugin + '_errorlog.log', errorlog)
+            pytools.IO.saveFile("..\\vars\\plugins\\" + pluginf + "-error.cx", error)
+            errorlog = "\n" + str(pytools.clock.getDateTime()) + ' ::: ' + pluginf + "; " + error
+            pytools.IO.appendFile(pluginf + '_errorlog.log', errorlog)
+            print("handlers.error.errorStatus['" + pluginf.split(".")[1] + "'] = " + pluginf.replace(".run()", "") + ".status.finishedLoop")
+            exec("handlers.error.errorStatus['" + pluginf.split(".")[1] + "'] = " + pluginf.replace(".run()", "") + ".status.finishedLoop")
+            pytools.IO.saveFile("..\\vars\\plugins\\" + pluginf + "-loopStatus.cx", str(handlers.error.errorStatus[pluginf.split(".")[1]]))
+            time.sleep(3)
 
 handlers.launcher.launch()

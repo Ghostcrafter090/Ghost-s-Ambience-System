@@ -1,15 +1,15 @@
 
-set csth=5
-set cstm=12
+set csth=4
+set cstm=55
 set ceth=21
-set cetm=8
+set cetm=29
 set cesth=20
-set cestm=36
+set cestm=55
 set nsth=4
-set nstm=29
-set neth=21
-set netm=52
+set nstm=7
+set neth=22
+set netm=16
 set asth=3
-set astm=39
-set aeth=22
-set aetm=42
+set astm=8
+set aeth=23
+set aetm=16

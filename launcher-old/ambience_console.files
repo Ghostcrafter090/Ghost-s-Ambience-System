@@ -1,0 +1,7 @@
+dialog.cpp
+dialog.h
+dialog.ui
+json.hpp
+logdisplay.cpp
+logdisplay.h
+main.cpp

@@ -4,6 +4,7 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "locustChances": []
@@ -188,6 +189,7 @@ def main():
         status.vars['locustChances'] = chance
         time.sleep(30)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

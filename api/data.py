@@ -3,14 +3,15 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": []
     }
 
 class globals:
     urlBase = 'http://api.openweathermap.org/data/2.5/weather?lat=44.8367770&lon=-63.5951100&appid=' + status.apiKey
-    urlFast = 'http://gsweathermore.ddns.net:226/access.php?key=56c15c7d00df42d8815c7d00df42d8a'
-
+    urlFast = 'http://gsweathermore.ddns.net:226/access.php?key=56c15c7d00df42d8815c7d00df42d8ab'
+    urlSuperFast = 'http://gsweathermore.ddns.net:226/currentdata.json'
 class grabber:
     def getBaseData(url):
         try:
@@ -98,52 +99,94 @@ class grabber:
         except:
             return False
 
+    def getSuperFastData(url):
+        data = pytools.net.getJsonAPI(url)
+        try:
+            rainRate = float(data['rainHour'])
+        except:
+            rainRate = 0.0
+        try:
+            windGusts = float(data['windPeak'])
+        except:
+            rainGusts = 0.0
+        try:
+            windSpeeds = float(data['windAvg'])
+        except:
+            windSpeeds = 0.0
+        try:
+            temp = float(data['temp'])
+        except:
+            temp = 0.0
+        try:
+            humidity = float(data['humidity'])
+        except:
+            humidity = 0.0
+        try:
+            pressure = float(data['rainHour'])
+        except:
+            pressure = 0.0
+        return [temp, humidity, pressure, rainRate, windSpeeds, windGusts]
+        
+
 class bulk:
     def getData(oldBool: bool, oldData, bypass):
         dateArray = pytools.clock.getDateTime()
         if bypass:
             baseData = grabber.getBaseData(globals.urlBase)
+            baseDataf = [baseData[0], baseData[1]]
             fastData = grabber.getFastData(globals.urlFast)
-            time.sleep(3)
+            superData = grabber.getSuperFastData(globals.urlSuperFast)
             dateNewBase = dateArray[4]
             dateNewFast = dateArray[4]
+            dateNewSuper = dateArray[5]
         else:
             baseData = oldData[0]
+            baseDataf = oldData[7]
             fastData = oldData[1]
-            dateNewBase = oldData[3]
-            dateNewFast = oldData[4]
+            superData = oldData[2]
+            dateNewBase = oldData[4]
+            dateNewFast = oldData[5]
+            dateNewSuper = oldData[6]
             if (dateArray[4] % 15) == 0:
-                if oldData[3] != dateArray[4]:
+                if oldData[4] != dateArray[4]:
                     dateNewBase = dateArray[4]
                     baseData = grabber.getBaseData(globals.urlBase)
+                    baseDataf[0] = baseData[0]
+                    baseDataf[1] = baseData[1]
             if (dateArray[4] % 1) == 0:
-                if oldData[4] != dateArray[4]:
+                if oldData[5] != dateArray[4]:
                     dateNewFast = dateArray[4]
                     fastData = grabber.getFastData(globals.urlFast)
-            time.sleep(3)
+            if (dateArray[5] % 20) == 0:
+                if oldData[6] != dateArray[5]:
+                    dateNewSuper = dateArray[5]
+                    superData = grabber.getSuperFastData(globals.urlSuperFast)
         try:
+            baseData[6] = superData[2]
+            baseData[7] = superData[0]
+            baseData[8] = superData[1]
+            if baseDataf[0] < superData[4]:
+                baseData[0] = superData[4]
+            if baseDataf[1] < superData[5]:
+                baseData[1] = superData[5]
             if fastData == False:
-                fastData = [0, 0, baseData[6], baseData[7], baseData[8], 0]
-            else:
-                baseData[6] = fastData[2]
-                baseData[7] = fastData[3]
-                baseData[8] = fastData[4]
+                fastData = [0, 0, baseData[6], baseData[7], baseData[8], 0]      
         except:
             pass
 
-        outString = """set temp=""" + str(fastData[3] + 273).split('.')[0] + """
-    set tempc=""" + str(fastData[3]).split('.')[0] + """
+        outString = """set temp=""" + str(superData[0] + 273).split('.')[0] + """
+    set tempc=""" + str(superData[0]).split('.')[0] + """
     set windspeed=""" + str(baseData[0]).split('.')[0] + """
     set windgust=""" + str(baseData[1]).split('.')[0] + """
-    set pressure=""" + str(fastData[2]).split('.')[0] + """
-    set humidity=""" + str(fastData[4]).split('.')[0] + """
+    set pressure=""" + str(superData[2]).split('.')[0] + """
+    set humidity=""" + str(superData[1]).split('.')[0] + """
     set weather=""" + str(baseData[4]).split('.')[0] + """
     set modifier=""" + str(baseData[5]).split('.')[0]
-        dispString = """Temperature (C)      : """ + str(fastData[3]) + """C
+        dispString = """Temperature (C)      : """ + str(superData[0]) + """C
 Wind Speeds (m/s)    : """ + str(baseData[0]) + """m/s
 Wind Gusts  (m/s)    : """ + str(baseData[1]) + """m/s
-Pressure    (hPa)    : """ + str(fastData[2]) + """hPa
-Humidity    (%)      : """ + str(fastData[4]) + """%
+Pressure    (hPa)    : """ + str(superData[2]) + """hPa
+Humidity    (%)      : """ + str(superData[1]) + """%
 Condition   (type)   : """ + str(baseData[4]) + """
 Date        (YY-M-D) : """ + str(dateArray[0]) + "-" + str(dateArray[1]) + "-" + str(dateArray[2]) + """
 Time        (hh:mm)  : """ + str(dateArray[3]) + ":" + str(dateArray[4])
@@ -154,16 +197,19 @@ Time        (hh:mm)  : """ + str(dateArray[3]) + ":" + str(dateArray[4])
         })
         if oldBool == 1:
             pytools.IO.saveFile('cond.cmd', outString)
-        return [baseData, fastData, outString, dateNewBase, dateNewFast]
+        return [baseData, fastData, superData, outString, dateNewBase, dateNewFast, dateNewSuper, baseDataf]
 
 def main():
     data = bulk.getData(1, [], True)
     while True:
         data = bulk.getData(1, data, False)
         print(str(pytools.clock.getDateTime()) + ' ::: ' + str(data))
-        pytools.IO.saveList("dataList.pyl", data)
-        time.sleep(60)
+        time.sleep(0.5)
+        if (pytools.clock.getDateTime()[5] % 20) == 0:
+            pytools.IO.saveList("dataList.pyl", data)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
+
 
 def run():
     main()

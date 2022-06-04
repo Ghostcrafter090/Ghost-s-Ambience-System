@@ -4,6 +4,7 @@ import os
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": []
     }
@@ -39,6 +40,7 @@ def main():
                     playDeath()
         time.sleep(60)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

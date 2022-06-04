@@ -6,6 +6,7 @@ class globals:
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": []
     }
@@ -52,6 +53,7 @@ set aetm=""" + str(ate[4])
         pytools.IO.saveFile("daytimes.cmd", string)
         time.sleep(600)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

@@ -9,6 +9,7 @@ import pytools
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "heavenIndex": 0
@@ -472,6 +473,7 @@ def main():
                     print("Heaven Index: " + str(heavenIndex) + "Hi")
                     status.vars['heavenIndex'] = heavenIndex
                     saveFile('heavenindex.cx', str(heavenIndex))
+        status.finishedLoop = True
 
 def run():           
     main()

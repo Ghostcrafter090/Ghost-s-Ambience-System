@@ -4,6 +4,7 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "trickOrTreatIndex": 0
@@ -26,6 +27,7 @@ def main():
                     pytools.sound.main.playSound('distanttrt' + str(random.randint(0, 6)) + ".mp3", 0, 100, 1.0, 0.0, 0)
         time.sleep(300)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

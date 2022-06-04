@@ -3,6 +3,7 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "peepersTempModifier": 0,
@@ -183,6 +184,7 @@ def main():
 
         time.sleep(480)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
         
 def run():
     main()

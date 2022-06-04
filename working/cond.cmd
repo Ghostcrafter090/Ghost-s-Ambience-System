@@ -1,8 +1,8 @@
-set temp=298
-    set tempc=25
-    set windspeed=0
-    set windgust=0
-    set pressure=1006
-    set humidity=61
+set temp=285
+    set tempc=12
+    set windspeed=5
+    set windgust=10
+    set pressure=0
+    set humidity=62
     set weather=clear
     set modifier=0

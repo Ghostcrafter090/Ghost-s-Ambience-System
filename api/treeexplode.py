@@ -4,6 +4,7 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": [],
         "explodingTreeIndex": 0
@@ -41,6 +42,7 @@ def main():
         else:
             time.sleep(60)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()

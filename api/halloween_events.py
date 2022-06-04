@@ -4,6 +4,7 @@ import time
 
 class status:
     apiKey = ""
+    finishedLoop = False
     vars = {
         "lastLoop": []
     }
@@ -72,6 +73,8 @@ def main():
             os.system('del .\\halloweenmode.derp /f /s /q')
             time.sleep(55)
         time.sleep(5)
+        status.vars['lastLoop'] = pytools.clock.getDateTime()
+        status.finishedLoop = True
 
 def run():
     main()
