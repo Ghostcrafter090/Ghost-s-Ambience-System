@@ -9,7 +9,7 @@ class status:
     }
 
 class globals:
-    urlBase = 'http://api.openweathermap.org/data/2.5/weather?lat=44.8367770&lon=-63.5951100&appid=' + status.apiKey
+    urlBase = 'http://api.openweathermap.org/data/2.5/weather?lat=44.905463&lon=-63.483926&appid='
     urlFast = 'http://gsweathermore.ddns.net:226/access.php?key=56c15c7d00df42d8815c7d00df42d8ab'
     urlSuperFast = 'http://gsweathermore.ddns.net:226/currentdata.json'
 class grabber:
@@ -17,27 +17,39 @@ class grabber:
         try:
             print(str(pytools.clock.getDateTime()) + ' ::: Getting Base Data...')
             # url: http://api.openweathermap.org/data/2.5/weather?lat=44.7659964&lon=-63.6850686&appid=<apiKey>
+            url = url + status.apiKey
             data = pytools.net.getJsonAPI(url)
             # [windspeeds, windgusts, visibility, snow, weather, modifier]
-            try:
-                if data['weather'][0]['main'] == "Thunderstorm":
-                    weather = 'thunder'
-                elif data['weather'][0]['main'] == "Rain":
-                    weather = 'rain'
-                elif data['weather'][0]['main'] == "Drizzle":
-                    weather = 'lightrain'
-                elif data['weather'][0]['main'] == "Snow":
-                    weather = 'snow'
-                elif data['weather'][0]['main'] == "Mist":
-                    weather = 'mist'
-                elif data['weather'][0]['main'] == "Clouds":
-                    weather = 'clouds'
-                elif float(data['weather'][0]['id']) == 500.0:
-                    weather = 'lightrain'
-                else:
-                    weather = 'clear'
-            except:
-                weather = 'clear'
+            r = 0
+            condf = 0
+            weather = 'clear'
+            while r < len(data['weather']):
+                try:
+                    print(data['weather'][r])
+                    if data['weather'][r]['main'] == "Thunderstorm":
+                        weather = 'thunder'
+                        condf = 6
+                    elif (data['weather'][r]['main'] == "Snow") and (condf < 5):
+                        weather = 'snow'
+                        condf = 5
+                    elif (data['weather'][r]['main'] == "Rain") and (condf < 4):
+                        weather = 'rain'
+                        condf = 4
+                    elif (data['weather'][r]['main'] == "Drizzle") and (condf < 3):
+                        weather = 'lightrain'
+                        condf = 3
+                    elif (data['weather'][r]['main'] == "Mist") and (condf < 2):
+                        weather = 'mist'
+                        condf = 2
+                    elif (data['weather'][r]['main'] == "Clouds") and (condf < 1):
+                        weather = 'clouds'
+                        condf = 1
+                    elif (float(data['weather'][r]['id']) == 500.0) and (condf < 3):
+                        weather = 'lightrain'
+                        condf = 3
+                except:
+                    print("fuck")
+                r = r + 1
 
             try:
                 i = 0
@@ -200,6 +212,7 @@ Time        (hh:mm)  : """ + str(dateArray[3]) + ":" + str(dateArray[4])
         return [baseData, fastData, superData, outString, dateNewBase, dateNewFast, dateNewSuper, baseDataf]
 
 def main():
+    status.apiKey = pytools.IO.getFile("access.key")
     data = bulk.getData(1, [], True)
     while True:
         data = bulk.getData(1, data, False)
