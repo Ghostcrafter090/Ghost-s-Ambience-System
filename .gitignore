@@ -17,6 +17,10 @@
 *.derp
 *.orig
 *.rej
+vars/*
+working/*.pyl
+working/cond.cmd
+working/daytimes.cmd
 *.old
 *.so
 *.mp3

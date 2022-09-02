@@ -1242,6 +1242,11 @@ class clock:
         out = out + (dateArray[2] * 24 * 60 * 60) + (dateArray[3] * 60 * 60) + (dateArray[4] * 60) + dateArray[5]
         return out
     
+    def getYearUTC():
+        utc = clock.dateArrayToUTC(clock.getDateTime())
+        start = clock.dateArrayToUTC([clock.getDateTime()[0], 1, 1, 0, 0, 0])
+        return utc - start
+    
 def dummy(*args):
     if args[0] == args[0]:
         pass
