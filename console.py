@@ -4,39 +4,177 @@ import os
 import termcolor
 import sys
 import threading
+import ctypes
+import msvcrt
+import subprocess
+
+from ctypes import wintypes
+
+kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
+user32 = ctypes.WinDLL('user32', use_last_error=True)
+
+SW_MAXIMIZE = 3
+
+kernel32.GetConsoleWindow.restype = wintypes.HWND
+kernel32.GetLargestConsoleWindowSize.restype = wintypes._COORD
+kernel32.GetLargestConsoleWindowSize.argtypes = (wintypes.HANDLE,)
+user32.ShowWindow.argtypes = (wintypes.HWND, ctypes.c_int)
+
+os.system("color")
 
 class flags:
     display = True
     exitf = False
     apiKey = ""
     pythonf = False
+    remote = False
+    defaultSystemState = False
+    server = False
+    timeout = 1000
+    
+class tools:
+    def max_window(lines=None):
+        fd = os.open('CONOUT$', os.O_RDWR)
+        try:
+            hCon = msvcrt.get_osfhandle(fd)
+            max_size = kernel32.GetLargestConsoleWindowSize(hCon)
+            if max_size.X == 0 and max_size.Y == 0:
+                raise ctypes.WinError(ctypes.get_last_error())
+        finally:
+            os.close(fd)
+        cols = 200
+        hWnd = kernel32.GetConsoleWindow()
+        if cols and hWnd:
+            if lines is None:
+                lines = 63
+            else:
+                lines = 63
+            subprocess.check_call('mode.com con cols={} lines={}'.format(cols, lines))
+            user32.ShowWindow(hWnd, SW_MAXIMIZE)
+            
+    def getRemote():
+        if flags.remote == False:
+            return "localhost"
+        else:
+            return flags.remote
+
+class comm:
+    def wait(timeout):
+        n = 0
+        while (pytools.IO.getJson("serverCommands.json")["execute"] != 0) or (timeout < n):
+            n = n + 1
+            time.sleep(0.001)
+        if timeout < n:
+            return False
+        else:
+            return True
+    
+    def sendStart():
+        pytools.IO.saveJson("serverCommands.json", {
+            "commands": [
+                "--run --start --apiKey=" + flags.apiKey
+            ],
+            "execute": 1
+        })
+        return comm.wait(flags.timeout)
+        
+    def sendStop():
+        pytools.IO.saveJson("serverCommands.json", {
+            "commands": [
+                "--run --stop"
+            ],
+            "execute": 1
+        })
+        return comm.wait(flags.timeout)
+    
+    def ping():
+        pytools.IO.saveJson("serverCommands.json", {
+            "commands": [
+                "--run --ping"
+            ],
+            "execute": 1
+        })
+        return comm.wait(flags.timeout)
+    
+    def connect(enf=True):
+        en = True
+        errord = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "ping " + flags.remote + " -w 1 -n 1")[0]
+        if errord != 0:
+            print("Could not connect to remote system. IP address " + flags.remote + "is not available.")
+            en = False
+        else:
+            errord = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "dir \\\\" + flags.remote + "\\ambience")[0]
+            if errord != 0:
+                print("Could not connect to remote system. Filesystem on IP address " + flags.remote + "doesn't exist or is not configured.")
+                en = False
+            else:
+                os.chdir("\\\\" + flags.remote + "\\ambience")
+                errord = comm.ping()
+                if errord:
+                    print("connected.")
+                else:
+                    print("Server not responding. Please check network connection, and check to make sure the remote ambience server is online.")
+                    en = False
+        return en and enf
     
 class system:
     def start():
-        if flags.pythonf == False:
-            for n in os.environ["path"].split(";"): 
-                if n.find("\\Python\\") != -1:
-                    flags.pythonf = n
-        if flags.pythonf == False:
-            flags.pythonf = input("Please specify the folder containing the python executable: ")
-        if flags.apiKey == "":
-            flags.apiKey = input("Please specify apiKey: ")
-        if flags.apiKey != "":
-            os.system("copy \"" + flags.pythonf + "python.exe\" \".\\ambience.exe\" /y")
-            os.system("start /min "" ambience.exe main.py \"" + flags.apiKey + "\"")
-            system.status.active = True
+        if flags.remote == False:
+            if flags.pythonf == False:
+                for n in os.environ["path"].split(";"): 
+                    if n.find("\\Python\\") != -1:
+                        flags.pythonf = n
+            if flags.pythonf == False:
+                if os.path.exists("C:\\windows\\py.exe"):
+                    flags.pythonf = "C:\\windows\\py.exe"
+            if flags.pythonf == False:
+                flags.pythonf = input("Please specify the folder containing the python executable: ")
+            if flags.apiKey == "":
+                flags.apiKey = input("Please specify apiKey: ")
+            if flags.apiKey != "":
+                if flags.pythonf[-4:] != ".exe":
+                    subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "copy \"" + flags.pythonf + "python.exe\" \".\\ambience.exe\" /y")[0]
+                else:
+                    subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "copy \"" + flags.pythonf + "\" \".\\ambience.exe\" /y")[0]
+                subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "start /min "" ambience.exe main.py \"" + flags.apiKey + "\"")[0]
+                system.status.active = True
+        else:
+            while comm.connect() == False:
+                pass
+            if comm.sendStart() == False:
+                while comm.connect() == False:
+                    pass
+                if comm.sendStart == False:
+                    raise Exception("Connect error. Unable to communicate with remote ambience server")
+                else:
+                    system.status.active = True
+            else:
+                system.status.active = True
     
     def stop():
-        os.system("taskkill /f /im ambience.exe")
-        os.system("taskkill /f /im clock.exe")
-        os.system("taskkill /f /im fireplace.exe")
-        os.system("taskkill /f /im window.exe")
-        os.system("taskkill /f /im outside.exe")
-        os.system("taskkill /f /im windown.exe")
-        os.system("taskkill /f /im light.exe")
-        pytools.IO.saveFile(".\\working\\clocks\\running\\gwcont.derp", "derp")
-        pytools.IO.saveFile(".\\working\\clocks\\running\\wcont.derp", "derp")
-        system.status.active = False
+        if flags.remote == False:
+            subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im ambience.exe")[0]
+            subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im clock.exe")[0]
+            subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im fireplace.exe")[0]
+            subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im window.exe")[0]
+            subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im outside.exe")[0]
+            subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im windown.exe")[0]
+            subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im light.exe")[0]
+            pytools.IO.saveFile(".\\working\\clocks\\running\\gwcont.derp", "derp")
+            pytools.IO.saveFile(".\\working\\clocks\\running\\wcont.derp", "derp")
+            system.status.active = False
+        else:
+            while comm.connect() == False:
+                pass
+            if comm.sendStop() == False:
+                while comm.connect() == False:
+                    pass
+                if comm.sendStop == False:
+                    raise Exception("Connect error. Unable to communicate with remote ambience server")
+                else:
+                    system.status.active = False
+            else:
+                system.status.active = False
     
     class status:
         active = False
@@ -50,16 +188,16 @@ class menu:
         except:
             flags.exitf = True
             system.stop()
-            crash["null"]
+            raise Exception("Exiting...")
     
     def main():
         f = True
         j = False
         while True:
             if f:
-                error = os.system("choice /c m /n")
+                error = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "choice /c m /n")[0]
             f = True
-            os.system("mode con cols=200 lines=63")
+            # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
             flags.display = False
             time.sleep(0.5)
             i = 0
@@ -79,7 +217,7 @@ class menu:
             if j:
                 printColor(0, 8, "---Error: Please start system before opening plugin menu.", "red")
                 j = False
-            error = os.system("choice /c rpshe /n")
+            error = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "choice /c rpshe /n")[0]
             if error == 1:
                 i = 0
                 while i < 63:
@@ -133,7 +271,7 @@ class menu:
                 choices[i + 2] = plugin
                 letters = letters + keys[i]
                 i = i + 1
-            choice = os.system("choice /c " + letters + " /n /cs")
+            choice = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "choice /c " + letters + " /n /cs")[0]
             if choice != 1:
                 plugin = choices[choice]
                 menu.plugN = 2
@@ -147,7 +285,7 @@ class menu:
                         menu.plugN = 0
                         menu.plugI = menu.plugI + 40
                 printColor(40 + menu.plugI, menu.plugN + 1, "(r) - Return to plugin menu.", "green")
-                error = os.system("choice /c r /n")
+                error = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "choice /c r /n")[0]
             else:
                 f = False
         
@@ -193,7 +331,7 @@ class menu:
             
         
 def printColor(x, y, text, color):
-    os.system("color")
+    subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "color")[0]
     pytools.IO.console.printAt(x, y, termcolor.colored(text, color))
 
 spaces = "                                                                    "
@@ -237,7 +375,7 @@ def getSection():
 
 def main():
     i = 0
-    os.system("mode con cols=200 lines=63")
+    # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
     flash = 0
     while i < 63:
         n = 0
@@ -250,7 +388,7 @@ def main():
             exit()
         if flags.display == True:
             if (pytools.clock.getDateTime()[5] % 30) == 0:
-                os.system("mode con cols=200 lines=63")
+                # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
                 i = 0
                 while i < 63:
                     n = 0
@@ -264,7 +402,9 @@ def main():
                 pytools.IO.console.printAt(0, 1, "-----------------------")
                 pytools.IO.console.printAt(0, 3, weather)
                 i = 4 + len(weather.split("\n"))
-                for plugin in os.listdir(".\\vars\\pluginVarsjson"):
+                if os.path.exists("\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson") == False:
+                    subprocess.getstatusoutput("pushd \"\\" + tools.getRemote() + "\\ambience\" & " + "mkdir \"" + "\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson" + "\"")[0]
+                for plugin in os.listdir("\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson"):
                     pytools.IO.console.printAt(2, i, plugin.split("_keys")[0][0:19])
                     pInfo = pytools.IO.getJson(".\\vars\\pluginVarsJson\\" + plugin)
                     if system.status.active == True:
@@ -384,37 +524,65 @@ def main():
 
 startf = False
 runf = False
+stopf = False
 en = True
 try:
     for n in sys.argv:
+        print(n)
         if runf:
             if n == "--start":
                 startf = True
+            elif n == "--stop":
+                stopf = True
             elif n.split("=")[0] == "--apiKey":
                 flags.apiKey = n.split("=")[1]
+            elif n.split("=")[0] == "--remote":
+                flags.remote = n.split("=")[1]
+            elif n == "--startDefault":
+                flags.defaultSystemState = True
+            elif n == "--server":
+                flags.server = True
+            elif n == "--ping":
+                print("ping")
             elif n == "--help":
-                print("Ghosts Ambience System Console Usage")
-                print("------------------------------------")
-                print("--run: Start the console")
-                print("--start: Start the system automatically upon console load.")
-                print("   ^ --apiKey=<apiKey>: must be specified api key on launch.")
-                print("                        This will be your Open Weather Map API Key.")
-                print("--help: Print this help text.")
+                pass
             else:
                 print("Invalid Syntax. Type --help for more options.")
                 en = False
         if n == "--run":
             runf = True
+        if n == "--help":
+            print("Ghosts Ambience System Console Usage")
+            print("------------------------------------")
+            print("--run: Start the console")
+            print("--start: Start the system automatically upon console load.")
+            print("   ^ --apiKey=<apiKey>: must be specified api key on launch.")
+            print("                        This will be your Open Weather Map API Key.")
+            print("--remote=<remoteIp>: Connects in with a remote ambience server (file sharing must be enabled.)")
+            print("   ^ --startDefault: If connection is lost, automatically restart system if it is offline.")
+            print("--help: Print this help text.")
 except:
-    pass
+    print("Unexpected error:", sys.exc_info())
+
+if flags.remote != False:
+    en = comm.connect(en)
+    if en:
+        os.chdir("\\\\" + flags.remote + "\\ambience")
+
+if stopf:
+    if en:
+        system.stop()
 
 if startf:
     if en:
         system.start()
-
+                            
 if runf:
     if en:
-        thread0 = threading.Thread(target=main)
-        thread1 = threading.Thread(target=menu.handler)
-        thread0.start()
-        thread1.start()
+        if flags.server == False:
+            tools.max_window()
+            time.sleep(1)
+            thread0 = threading.Thread(target=main)
+            thread1 = threading.Thread(target=menu.handler)
+            thread0.start()
+            thread1.start()
