@@ -123,33 +123,34 @@ def main():
     chime.chimeHN()
     time.sleep(60)
     while 1 == 1:
-        if int(getDate()[3]) == 19:
-            if int(getDate()[4]) == 8:
-                mech.windCL()
-        if int((getDate()[4])) == 58:
-            mech.chimePR()
-        if int((getDate()[4])) == 13:
-            mech.chimePR()
-        if int((getDate()[4])) == 28:
-            mech.chimePR()
-        if int((getDate()[4])) == 43:
-            mech.chimePR()
-        if int((getDate()[4])) == 0:
-            chime.chimeFH()
-            if int(getDate()[2]) == 12:
-                if int(getDate()[3]) == 12:
-                    chime.chimeCH()
-            chime.chimeHN()
-            time.sleep(60)
-        if int((getDate()[4])) == 15:
-            chime.chimeQH()
-            time.sleep(60)
-        if int((getDate()[4])) == 30:
-            chime.chimeHH()
-            time.sleep(60)
-        if int((getDate()[4])) == 45:
-            chime.chimeTH()
-            time.sleep(60)
+        if os.path.exists(".\\remember.derp") == False:
+            if int(getDate()[3]) == 19:
+                if int(getDate()[4]) == 8:
+                    mech.windCL()
+            if int((getDate()[4])) == 58:
+                mech.chimePR()
+            if int((getDate()[4])) == 13:
+                mech.chimePR()
+            if int((getDate()[4])) == 28:
+                mech.chimePR()
+            if int((getDate()[4])) == 43:
+                mech.chimePR()
+            if int((getDate()[4])) == 0:
+                chime.chimeFH()
+                if int(getDate()[2]) == 12:
+                    if int(getDate()[3]) == 12:
+                        chime.chimeCH()
+                chime.chimeHN()
+                time.sleep(60)
+            if int((getDate()[4])) == 15:
+                chime.chimeQH()
+                time.sleep(60)
+            if int((getDate()[4])) == 30:
+                chime.chimeHH()
+                time.sleep(60)
+            if int((getDate()[4])) == 45:
+                chime.chimeTH()
+                time.sleep(60)
         time.sleep(10)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True

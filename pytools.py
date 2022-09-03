@@ -98,7 +98,7 @@ class IO:
  
         COORD._fields_ = [("X", c_short), ("Y", c_short)]
 
-        def printAt(r, c, s):
+        def printAt(c, r, s):
             h = windll.kernel32.GetStdHandle(IO.console.STD_OUTPUT_HANDLE)
             windll.kernel32.SetConsoleCursorPosition(h, IO.console.COORD(c, r))
         
@@ -201,8 +201,9 @@ class sound:
             exit()
 
     class main:
-        def playSound(path, speaker, volume, speed, balence, waitBool):
-            sound.handler.handle([path, speaker, volume, speed, balence, waitBool])
+        def playSound(path, speaker, volume, speed, balence, waitBool, remember=False):
+            if (os.path.exists(".\\remember.derp") == False) or remember:
+                sound.handler.handle([path, speaker, volume, speed, balence, waitBool])
 
         def playSoundWindow(path, volume, speed, balence, waitBool):
             if str(volume)[0] == "[":
@@ -217,10 +218,10 @@ class sound:
                 sound.main.playSound(path.split(";")[0], 2,  volumeI, speed, balence, 0)
                 sound.main.playSound(path.split(";")[1], 3,  volumeO, speed, balence, waitBool)
 
-        def playSoundAll(path, volume, speed, balence, waitBool):
+        def playSoundAll(path, volume, speed, balence, waitBool, remember=False):
             sound.main.playSound(path, 0, volume, speed, balence, 0)
             sound.main.playSound(path, 1, volume, speed, balence, 0)
-            sound.main.playSound(path, 4, volume, speed, balence, waitBool)
+            sound.main.playSound(path, 4, volume, speed, balence, waitBool, remember)
 
     class player:
         def playSound(path, speaker, volume, speed, balence, waitBool):
@@ -1231,6 +1232,9 @@ class clock:
             if midnight[1] > 12:
                 midnight[1] = 1
                 midnight[0] = midnight[0] + 1
+        if midnight[2] > clock.getMonthEnd(dateArray[1]):
+            midnight[2] = midnight[2] - clock.getMonthEnd(dateArray[1])
+            
         return midnight
         
     def dateArrayToUTC(dateArray):

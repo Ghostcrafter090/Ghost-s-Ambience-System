@@ -2,6 +2,7 @@ import pytools
 import random
 import time
 import os
+import math
 
 class status:
     apiKey = ""
@@ -9,7 +10,10 @@ class status:
     vars = {
         "lastLoop": [],
         "whisperIndex": 0,
-        "hallowedWolfIndex": 0
+        "hallowedWolfIndex": 0,
+        "ghosts": {},
+        "monsters": {},
+        "death_wind": {}
     }
 
 class globals:
@@ -44,7 +48,12 @@ class background:
                 midnight = pytools.clock.dateArrayToUTC(pytools.clock.getMidnight(dateArray))
                 current = pytools.clock.dateArrayToUTC(dateArray)
                 x = 86400 + (current - start)
-                g = 86400 - (pytools.clock.dateArrayToUTC(dayTimes[5]) - midnight)
+                g = 86400 - (86400 - (pytools.clock.dateArrayToUTC(dayTimes[5]) - midnight))
+                while g > 86400:
+                    g = g - 86400
+                while x > 86400:
+                    x = x - 86400
+                
                 e = 2.71828182846
                 a = 10
                 f = 0.000000004
@@ -52,7 +61,15 @@ class background:
                 r = 0.0008
                 j = 0.000000002
                 n = a * (e ** (-f * ((x - 86000) ** 2)))
-                l = k * (e ** (-3 * r * ((x - g - 100) ** 1.12)))
+                print(x > g)
+                l = k * (e ** ((-3) * r * ((x - g - 100) ** 1.12)))
+                try:
+                    pass
+                    #l = math.fabs(float(l))
+                except:
+                    pass
+                    #l = math.fabs(float(l.real))
+                l = (2.5 * k) * (1 / ((2 * 3.14) ** 0.5) * (e ** (-1 * (((x - g - 100) ** 2) / (20 * k)))))
                 s = 5 * (e ** (-j * ((x - g - 5400) ** 2)))
                 m = 0.5 * a * (e ** (-2 * f * ((x - 86000 - 3600) ** 2)))
                 d = 6 * a * (e ** (-150 * f * ((x - 86400) ** 2)))
@@ -71,6 +88,7 @@ class background:
                     out = 0
             except:
                 out = 0
+                
             print('Current whisper chance: ' + str(out))
             status.vars['whisperIndex'] = out
             return out
@@ -94,6 +112,8 @@ class background:
                 if globals.deathWind.nextPlay < pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()):
                     globals.deathWind.nextPlay = pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) + 194
                     pytools.sound.main.playSoundWindow("death_wind.mp3;death_wind.mp3", [10, 50], 1.0, 0.0, 0)
+        status.vars["death_wind"]["nextPlay"] = globals.deathWind.nextPlay
+        status.vars["death_wind"]["state"] = globals.deathWind.state
 
     def monsters(dateArray, dayTimes):
         start = pytools.clock.dateArrayToUTC(pytools.clock.solveForDialation([0, 0, 0, 0, -26, 0], dayTimes[5]))
@@ -111,7 +131,7 @@ class background:
             else:
                 pytools.sound.main.playSound('wolf_howl_' + str(random.randrange(0, 3)) + "_m.mp3", 2, 40, 1, 0, 0)
                 pytools.sound.main.playSound('wolf_howl_' + str(random.randrange(0, 3)) + ".mp3", 3, 40, 1, 0, 0)
-        status.vars['hallowedWoldIndex'] = wolfChance
+        status.vars['hallowedWolfIndex'] = wolfChance
         if (start < current) or (current < end):
             globals.monsters.run = 1
             if globals.monsters.state == 0:
@@ -122,7 +142,9 @@ class background:
                 if globals.monsters.nextPlay < pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()):
                     globals.monsters.nextPlay = pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) + 194
                     pytools.sound.main.playSoundWindow("monsters.mp3;monsters.mp3", [10, 50], 1.0, 0.0, 0)
-
+        status.vars["monsters"]["nextPlay"] = globals.monsters.nextPlay
+        status.vars["monsters"]["state"] = globals.monsters.state
+    
     def ghosts(dateArray, dayTimes):
         start = pytools.clock.dateArrayToUTC(dayTimes[6])
         current = pytools.clock.dateArrayToUTC(dateArray)
@@ -137,7 +159,9 @@ class background:
                 if globals.ghosts.nextPlay < pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()):
                     globals.ghosts.nextPlay = pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) + 194
                     pytools.sound.main.playSoundWindow("ghosts.mp3;ghosts.mp3", [10, 50], 1.0, 0.0, 0)
-
+        status.vars["ghosts"]["nextPlay"] = globals.ghosts.nextPlay
+        status.vars["ghosts"]["state"] = globals.ghosts.state
+    
     def end():
         if globals.ghosts.run == 0:
             if globals.ghosts.nextPlay < pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()):

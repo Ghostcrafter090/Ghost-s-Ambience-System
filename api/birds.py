@@ -8,7 +8,9 @@ class status:
     apiKey = ""
     finishedLoop = False
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "notHunterCoeff": 0,
+        "birds": {}
     }
     
 birds = pytools.IO.getJson("birds.json")
@@ -56,6 +58,27 @@ class tools:
             if bird.find(f) != -1:
                 return (random.random() * random.random())
         return 1
+    
+    notHunterCoeff = 0
+    
+    def isNotHunter(bird, dayTimes):
+        n = ["hawk", "eagle", "owl", "osprey", "heron", "woodpecker", "grouse"]
+        out = 1
+        p = True
+        for f in n:
+            if bird.find(f) != -1:
+                p = False
+        if p:
+            if pytools.clock.getDateTime()[3] > 12:
+                tools.notHunterCoeff = ((1000000 * tools.notHunterCoeff) + (3 * (5 - math.fabs(5 - math.fabs(((pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) - (pytools.clock.dateArrayToUTC(dayTimes[0]) + 86400)) / 3600)))) + 1)) / 1000001
+                if tools.notHunterCoeff > 0.1:
+                    out = (random.random() * random.random()) / (tools.notHunterCoeff * 10)
+            else:
+                tools.notHunterCoeff = ((1000000 * tools.notHunterCoeff) + (3 * (5 - math.fabs(5 - math.fabs(((pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) - (pytools.clock.dateArrayToUTC(dayTimes[0]))) / 3600)))) + 1)) / 1000001
+                if tools.notHunterCoeff > 0.1:
+                    out = (random.random() * random.random()) / (tools.notHunterCoeff * 10)
+            status.vars["notHunterCoeff"] = tools.notHunterCoeff
+        return out
             
     def gullInc(bird, dataArray):
         if bird.find("gull") != -1:
@@ -104,6 +127,12 @@ class utils:
     
 def main():
     birds = pytools.IO.getJson("birds.json")
+    for bird in birds.keys():
+        status.vars["birds"][bird] = {
+            "monthActivity": 0,
+            "dayActivity": 0,
+            "activity": 0
+        }
     birdTimes = pytools.IO.getJson("birdDays.json")
     dayTimes = pytools.IO.getList("daytimes.pyl")[1]
     dayTimesUTC = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -124,9 +153,40 @@ def main():
         dayTimesUTC[0] = pytools.clock.dateArrayToUTC(dayTimes[4]) - (86400 / 2)
         for bird in birds:
             ytc = (12 * pytools.clock.getYearUTC()) / 31536000
-            monthActivity = ((1 - (ytc - math.floor(ytc))) * birds[bird]["activity"][int(math.floor(ytc))] + (((ytc - math.floor(ytc))) * birds[bird]["activity"][int(math.floor(ytc + 1))]))
+            try:
+                monthActivity = ((1 - (ytc - math.floor(ytc))) * birds[bird]["activity"][int(math.floor(ytc))] + (((ytc - math.floor(ytc))) * birds[bird]["activity"][int(math.floor(ytc + 1))]))
+            except:
+                monthActivity = ((1 - (ytc - math.floor(ytc))) * birds[bird]["activity"][int(math.floor(ytc))] + (((ytc - math.floor(ytc))) * birds[bird]["activity"][int(math.floor(0))]))
             dayActivity = tools.getActivity(birdTimes[bird], dayTimesUTC)
             activity = (((monthActivity * dayActivity) / 100) ** (2 - (1 - tools.isHunter(bird)))) * tools.isWater(bird) * tools.isRaven(bird) * tools.isHunter(bird) * random.random() * tools.gullInc(bird, dataArray) * tools.tempDiff(birds[bird], dataArray)
+            try:
+                if os.path.exists("halloweenmode.derp"):
+                    horrorIndex = float(pytools.IO.getFile("horrorindex.cx"))
+                    if horrorIndex > 0:
+                        if bird.find("owl") != -1:
+                            horrf = (horrorIndex / 100)
+                            if horrf > 1:
+                                activity = activity * (horrf + 1)
+                        else:
+                                activity = activity / ((horrorIndex / 10) + 1)
+                    elif horrorIndex < 0:
+                        if bird.find("crow") == -1:
+                            horrf = ((-1 * horrorIndex) / 100)
+                            if horrf > 1:
+                                activity = activity * horrf
+                        if bird.find("raven") == -1:
+                            horrf = ((-1 * horrorIndex) / 100)
+                            if horrf > 1:
+                                activity = activity * horrf
+            except:
+                pass
+            if dayTimesUTC[6] < pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()):
+                activity = activity * tools.isNotHunter(bird, dayTimes)
+            if dayTimesUTC[0] < pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) < dayTimesUTC[1]:
+                activity = activity * tools.isNotHunter(bird, dayTimes)
+            status.vars["birds"][bird]["monthActivity"] = monthActivity
+            status.vars["birds"][bird]["dayActivity"] = dayActivity
+            status.vars["birds"][bird]["activity"] = ((status.vars["birds"][bird]["activity"] * 100) + activity) / 101
             # print("Bird " + bird + " activity is registering at " + str(int(math.floor(activity * 100))) + "%" + " " + str(monthActivity) + " " + str(dayActivity))
             if random.random() < activity:
                 if utils.testWindow():
@@ -135,5 +195,6 @@ def main():
                     pytools.sound.main.playSound(birds[bird]["sounds"][int(math.floor(random.random() * len(birds[bird]["sounds"])))], 2, (((activity * 2) * 10)) * random.random() * tools.isWater(bird) * tools.isRaven(bird) * tools.tempDiff(birds[bird], dataArray) * tools.isCrow(bird), 1, 0, 0)
                     pytools.sound.main.playSound(birds[bird]["sounds"][int(math.floor(random.random() * len(birds[bird]["sounds"])))], 3, (((activity * 2) / 8) * 10) * random.random() * tools.isWater(bird) * tools.isRaven(bird) * tools.tempDiff(birds[bird], dataArray) * tools.isCrow(bird), 1, 0, 0)
             time.sleep(0.1)
+            status.vars["lastLoop"] = pytools.clock.getDateTime()
 def run():
     main()

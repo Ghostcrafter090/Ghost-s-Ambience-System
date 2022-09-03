@@ -22,7 +22,7 @@ class RDC:
     def run():
         handlers.stopSound(1)
         pytools.sound.globals.bypass = 1
-        pytools.sound.main.playSoundAll('remember.mp3', 100, 1, 0, 1)
+        pytools.sound.main.playSoundAll('remember.mp3', 100, 1, 0, 1, True)
         pytools.sound.globals.bypass = 0
         handlers.startSound()
 

@@ -29,7 +29,7 @@ def main():
         if dateArray[1] == 12:
             if getTestStatus() == 1:
                 startBool = 0
-            if 23 < dateArray[2] < 27:
+            if ((dateArray[2] == 24) and (dateArray[3] > 8)) or ((dateArray[2] == 25) and (dateArray[3] < 10)):
                 if startBool != 1:
                     try:
                         os.system('del testemccs.derp /f /q')

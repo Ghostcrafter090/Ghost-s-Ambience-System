@@ -4,6 +4,9 @@ import threading
 import time
 import sys
 
+os.system("mkdir vars\\pluginVars")
+os.system("mkdir vars\\pluginVarsJson")
+
 class globals:
     class thread:
         list = [[], 0]
@@ -85,9 +88,16 @@ class handlers:
                 i = 0
                 while i < len(imports):
                     try:
-                        exec("for key in plugin." + imports[i] + ".status.vars:\n    if str(plugin." + str(imports[i]) + ".status.vars['lastLoop']).find('Time: ') == -1:\n        plugin." + str(imports[i]) + ".status.vars['lastLoop'] = 'Time: ' + str(plugin." + str(imports[i]) + ".status.vars['lastLoop'])\n    pytools.IO.saveJson('..\\\\vars\\\\pluginVars\\\\' + imports[i] + '-' + key + '.cx', plugin." + str(imports[i]) + ".status.vars[key])")
+                        compat = False
+                        for n in sys.argv:
+                            if n == "--compatMode":
+                                compat = True
+                        if compat:
+                            exec("for key in plugin." + imports[i] + ".status.vars:\n    if str(plugin." + str(imports[i]) + ".status.vars['lastLoop']).find('Time: ') == -1:\n        plugin." + str(imports[i]) + ".status.vars['lastLoop'] = 'Time: ' + str(plugin." + str(imports[i]) + ".status.vars['lastLoop'])\n    pytools.IO.saveJson('..\\\\vars\\\\pluginVars\\\\' + imports[i] + '-' + key + '.cx', plugin." + str(imports[i]) + ".status.vars[key])")
+                        # exec("for key in plugin." + imports[i] + ".status.vars:\n    if str(plugin." + str(imports[i]) + ".status.vars['lastLoop']).find('Time: ') == -1:\n        plugin." + str(imports[i]) + ".status.vars['lastLoop'] = 'Time: ' + str(plugin." + str(imports[i]) + ".status.vars['lastLoop'])\n    pytools.IO.saveJson('..\\\\vars\\\\pluginVars\\\\' + imports[i] + '-' + key + '.cx', plugin." + str(imports[i]) + ".status.vars[key])")
+                        exec("pytools.IO.saveJson('..\\\\vars\\\\pluginVarsJson\\\\' + imports[i] + '_keys.json', plugin." + imports[i] + ".status.vars)")
                     except:
-                        pass
+                        print("plugin_mon_error;")
                     i = i + 1
                 time.sleep(3)
             return 0

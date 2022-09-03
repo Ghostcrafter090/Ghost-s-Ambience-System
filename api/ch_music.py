@@ -10,8 +10,8 @@ class status:
     }
 
 def playMusic():
-    mp3 = 'ch_music_' + str(random.randint(0, 2)) + ".mp3"
-    pytools.sound.main.playSoundWindow(mp3, 50, 1.0, 0, 1)
+    mp3 = 'ch_music_' + str(random.randint(0, 1)) + ".mp3"
+    pytools.sound.main.playSoundWindow(mp3 + ";" + mp3, 50, 1.0, 0, 1)
 
 def music(dateArray):
     if dateArray[3] > 9:
@@ -26,9 +26,9 @@ def main():
         dateArray = pytools.clock.getDateTime()
         if dateArray[1] == 11:
             if dateArray[2] > 11:
-                music()
+                music(dateArray)
         if dateArray[1] == 12:
-            music()
+            music(dateArray)
         time.sleep(194)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True

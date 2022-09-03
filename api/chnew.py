@@ -125,6 +125,7 @@ def main():
     ticOld = 0
     santaLandingDate = -1
     mmcbellsn = -1
+    pmch = -1
     while True:
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         dateArray = getDateTime()
@@ -132,17 +133,25 @@ def main():
         tic = dayTic(dateArray)
         while error == 1:
             try:
-                sunJson = json.loads(("{\"" + getFile('daytimes.cmd').replace("set ", "").replace("\n", "\", \"").replace("=", "\": \"") + "}").replace(", \"}", "}").replace(" \",", "\",").replace(" \"}", "\"}"))
-                doNull(sunJson['ceth'])
-                doNull(sunJson['cetm'])
-                doNull(sunJson['csth'])
-                doNull(sunJson['cstm'])
-                doNull(sunJson['cesth'])
-                doNull(sunJson['cestm'])
+                dayTimes = pytools.IO.getList("daytimes.pyl")[1]
+                sunJson = {
+                    "ceth": dayTimes[6][3],
+                    "cetm": dayTimes[6][4],
+                    "csth": dayTimes[3][3],
+                    "cstm": dayTimes[3][4],
+                    "cesth": dayTimes[5][3],
+                    "cestm": dayTimes[5][4]
+                }
+                # sunJson = json.loads(("{\"" + getFile('daytimes.cmd').replace("set ", "").replace("\n", "\", \"").replace("=", "\": \"") + "}").replace(", \"}", "}").replace(" \",", "\",").replace(" \"}", "\"}"))
+                # doNull(sunJson['ceth'])
+                # doNull(sunJson['cetm'])
+                # doNull(sunJson['csth'])
+                # doNull(sunJson['cstm'])
+                # doNull(sunJson['cesth'])
+                # doNull(sunJson['cestm'])
                 error = 0
             except:
                 error = 1
-            
         if dateArray[1] > 10:
             if ((dateArray[1] == 11) and (dateArray[2] > 11)) or (dateArray[1] == 12):
                 # noA = closetosixTest(dateArray, 6, 9, 10, noA)
@@ -272,20 +281,20 @@ def main():
                     if dateArray[4] == 10:
                         if dateArray[2] != pmch:
                             pmch = dateArray[2]
-                        n = 'playSound("6pm_ch.mp3", 0, 15, 1, 0, 0)'
-                        th1 = threading.Thread(target=sn, args=n)
-                        n = 'playSound("6pm_ch.mp3", 1, 15, 1, 0, 0)'
-                        th2 = threading.Thread(target=sn, args=n)
-                        n = 'playSound("6pm_ch.mp3", 4, 15, 1, 0, 0)'
-                        th3 = threading.Thread(target=sn, args=n)
+                            n = 'playSound("6pm_ch.mp3", 0, 15, 1, 0, 0)'
+                            th1 = threading.Thread(target=sn, args=n)
+                            n = 'playSound("6pm_ch.mp3", 1, 15, 1, 0, 0)'
+                            th2 = threading.Thread(target=sn, args=n)
+                            n = 'playSound("6pm_ch.mp3", 4, 15, 1, 0, 0)'
+                            th3 = threading.Thread(target=sn, args=n)
 
-                        th1.start()
-                        th2.start()
-                        th3.start()
+                            th1.start()
+                            th2.start()
+                            th3.start()
 
-                        th1.join()
-                        th2.join()
-                        th3.join()
+                            th1.join()
+                            th2.join()
+                            th3.join()
                 
                 lateNightChoirChance = 0
                 lateNightChoirChance = detBellCurve(2, 1900, 7200, 10800, tic) / (getDayTic(dateArray) * 1.5)

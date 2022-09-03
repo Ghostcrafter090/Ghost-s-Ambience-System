@@ -99,8 +99,8 @@ def main():
         outsidesounds = outsidesounds + windownsounds
         saveFile("..\\vars\\sounds\\clock.cxl", clocksounds)
         saveFile("..\\vars\\sounds\\fireplace.cxl", fireplacesounds)
-        saveFile("..\\vars\\sounds\\window.cxl", windowsounds + windownsounds)
-        saveFile("..\\vars\\sounds\\outside.cxl", outsidesounds + windownsounds)
+        saveFile("..\\vars\\sounds\\window.cxl", windowsounds)
+        saveFile("..\\vars\\sounds\\outside.cxl", outsidesounds)
         time.sleep(1)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True

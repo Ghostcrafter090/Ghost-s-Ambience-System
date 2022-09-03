@@ -24,7 +24,7 @@ class tools:
 def main():
     while True:
         globals.dateArray = pytools.clock.getDateTime()
-        data = pytools.net.getJsonAPI('https://api.sunrise-sunset.org/json?lat=44.847075&lng=-63.604849&formatted=0')
+        data = pytools.net.getJsonAPI('https://api.sunrise-sunset.org/json?lat=44.847075&lng=-63.604849&date=' + str(globals.dateArray[0]) + "-" + str(globals.dateArray[1]) + "-" + str(globals.dateArray[2]) + '&formatted=0')
         sunrise = tools.returnDateArray(data['results']['sunrise'])
         sunset = tools.returnDateArray(data['results']['sunset'])
         cts = tools.returnDateArray(data['results']['civil_twilight_begin'])

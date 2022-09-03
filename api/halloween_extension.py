@@ -141,6 +141,7 @@ def main():
     noB = 0
     noC = 0
     noD = 0
+    pHorr = False
     noE = 0
     noF = 0
     noG = 0
@@ -206,7 +207,7 @@ def main():
                     monthE = pytools.clock.dateArrayToUTC([dateArray[0], 11, 1, 0, 0, 0])
                     monthC = pytools.clock.dateArrayToUTC(dateArray) - monthS
                     
-                    hGeneralVol = 35 * (monthC / (monthE - monthS))
+                    hGeneralVol = 42 * (monthC / (monthE - monthS))
                     if hGeneralVol > 35:
                         hGeneralVol = 35
                     hGeneralSpeedModifier = 0.08
@@ -259,9 +260,9 @@ def main():
                     if noE != 1:
                         if random.randrange(dateArray[3], 24) == 23:
                             rumbleNum = random.randrange(0, 2)
-                            playSound('h_rumble_' + rumbleNum + '.mp3', 0, 40, 1, 0, 0)
-                            playSound('h_rumble_' + rumbleNum + '.mp3', 1, 40, 1, 0, 0)
-                            playSound('h_rumble_' + rumbleNum + '.mp3', 2, 40, 1, 0, 0)
+                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 0, 40, 1, 0, 0)
+                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 1, 40, 1, 0, 0)
+                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 2, 40, 1, 0, 0)
                         noE = 1
                 else:
                     noE = 0
@@ -273,17 +274,17 @@ def main():
                     if noF != 1:
                         if random.randrange(dateArray[3], 24) == 23:
                             rumbleNum = random.randrange(0, 2)
-                            playSound('h_rumble_' + rumbleNum + '.mp3', 0, 40, 1, 0, 0)
-                            playSound('h_rumble_' + rumbleNum + '.mp3', 1, 40, 1, 0, 0)
-                            playSound('h_rumble_' + rumbleNum + '.mp3', 2, 40, 1, 0, 0)
+                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 0, 40, 1, 0, 0)
+                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 1, 40, 1, 0, 0)
+                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 2, 40, 1, 0, 0)
                         noF = 1
                 elif dateArray[4] == 40:
                     if noF != 1:
                         if random.randrange(dateArray[3], 24) == 23:
                             rumbleNum = random.randrange(0, 2)
-                            playSound('h_rumble_' + rumbleNum + '.mp3', 0, 40, 1, 0, 0)
-                            playSound('h_rumble_' + rumbleNum + '.mp3', 1, 40, 1, 0, 0)
-                            playSound('h_rumble_' + rumbleNum + '.mp3', 2, 40, 1, 0, 0)
+                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 0, 40, 1, 0, 0)
+                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 1, 40, 1, 0, 0)
+                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 2, 40, 1, 0, 0)
                         noF = 1
                 else:
                     noF = 0
@@ -304,9 +305,14 @@ def main():
             if breathChance < 0:
                 breathChance = 0
             horrorIndex = ghostsChance[0] + ghostsChance[1] + ghostsChance[2] + draftChance + breathChance + moodChance + knockChance
-            print("Current Horror Index: " + str(horrorIndex))
-            status.vars['horrorIndex'] = horrorIndex
-            saveFile('horrorindex.cx', str(horrorIndex))
+            if (dateArray[5] % 2) == 0:
+                if pHorr == False:
+                    print("Current Horror Index: " + str(horrorIndex))
+                    status.vars['horrorIndex'] = horrorIndex
+                    saveFile('horrorindex.cx', str(horrorIndex))
+                    pHorr = True
+            else:
+                pHorr = False
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True
 
