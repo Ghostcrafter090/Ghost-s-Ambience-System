@@ -31,6 +31,17 @@ class flags:
     defaultSystemState = False
     server = False
     timeout = 1000
+    bypass = False
+    enigma = False
+    enigmaSettings = {
+        "salt": 0,
+        "rotors": 0,
+        "plugboard": ""
+    }
+    monitor = False
+    
+class globals:
+    maxY = 0
     
 class tools:
     def max_window(lines=None):
@@ -46,10 +57,10 @@ class tools:
         hWnd = kernel32.GetConsoleWindow()
         if cols and hWnd:
             if lines is None:
-                lines = 63
+                globals.maxY = max_size.Y
             else:
-                lines = 63
-            subprocess.check_call('mode.com con cols={} lines={}'.format(cols, lines))
+                globals.maxY = max_size.Y
+            subprocess.check_call('mode.com con cols={} lines={}'.format(cols, globals.maxY))
             user32.ShowWindow(hWnd, SW_MAXIMIZE)
             
     def getRemote():
@@ -57,6 +68,16 @@ class tools:
             return "localhost"
         else:
             return flags.remote
+        
+    def inputOption(text: str, type):
+        errork = True
+        while errork:
+            try:
+                salt = type(input(text))
+                errork = False
+            except:
+                print("Value incorrect. Please enter a value of type " + type.__name__ + ".")
+        return salt
 
 class comm:
     def wait(timeout):
@@ -136,7 +157,7 @@ class system:
                     subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "copy \"" + flags.pythonf + "python.exe\" \".\\ambience.exe\" /y")[0]
                 else:
                     subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "copy \"" + flags.pythonf + "\" \".\\ambience.exe\" /y")[0]
-                subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "start /min "" ambience.exe main.py \"" + flags.apiKey + "\"")[0]
+                os.system("start /min \"\" ambience.exe main.py \"" + flags.apiKey + "\"")
                 system.status.active = True
         else:
             while comm.connect() == False:
@@ -150,6 +171,97 @@ class system:
                     system.status.active = True
             else:
                 system.status.active = True
+                
+    def getEnigma():
+        i = 0
+        while i < globals.maxY:
+            n = 0
+            while n < 200:
+                pytools.IO.console.printAt(n, i, "          ")
+                n = n + 10
+            i = i + 1
+        print("Enigma Encoder")
+        print("--------------")
+        salt = tools.inputOption("Please enter the salt (integer): ", int)
+        rotors = tools.inputOption("Please enter the number of rotors (integer): ", int)
+        plugboard = tools.inputOption("Please enter the plugboard key (string): ", str)
+        flags.enigmaSettings = {
+            "salt": salt,
+            "rotors": rotors,
+            "plugboard": plugboard
+        }
+        pytools.cipher.enigma.enigma.init(salt, rotors, plugboard)
+        
+    def changeCred():
+        if os.path.exists("server.json"):
+            cred = pytools.IO.getJson("server.json")
+        else:
+            cred = {
+                "username": "",
+                "password": ""
+            }
+        system.getEnigma()
+        exitn = True
+        while exitn:
+            username = tools.inputOption("Please enter your username: ", str)
+            usernameConf = tools.inputOption("Please enter your username: ", str)
+            if username == usernameConf:
+                cred["username"] = pytools.cipher.enigma.work.encode(username)
+                exitn = False
+            else:
+                print("Please correct username issues.")
+        
+        exitn = True
+        while exitn:
+            username = tools.inputOption("Please enter your password: ", str)
+            usernameConf = tools.inputOption("Please enter your password: ", str)
+            if username == usernameConf:
+                cred["password"] = pytools.cipher.enigma.work.encode(username)
+                exitn = False
+            else:
+                print("Please password username issues.")
+        pytools.IO.saveJson("server.json", cred)
+        print("changed.")
+        
+    def checkCred(bypass=False):
+        i = 0
+        while i < globals.maxY:
+            n = 0
+            while n < 200:
+                pytools.IO.console.printAt(n, i, "          ")
+                n = n + 10
+            i = i + 1
+        if bypass == False:
+            if os.path.exists("server.json"):
+                cred = pytools.IO.getJson("server.json")
+            else:
+                system.changeCred()
+                cred = pytools.IO.getJson("server.json")
+            if cred["username"] == "":
+                if cred["password"] == "":
+                    system.changeCred()
+        if bypass == False:
+            if flags.enigma == False:
+                system.getEnigma()
+            else:
+                pytools.cipher.enigma.enigma.init(flags.enigmaSettings["salt"], flags.enigmaSettings["rotors"], flags.enigmaSettings["plugboard"])
+        else:
+            pytools.cipher.enigma.enigma.init(flags.enigmaSettings["salt"], flags.enigmaSettings["rotors"], flags.enigmaSettings["plugboard"])
+        check = True
+        if bypass:
+            if cred["username"] == "":
+                if cred["password"] == "":
+                    check = False
+        if check:
+            username = tools.inputOption("Please enter your username: ", str)
+            password = tools.inputOption("Please enter your password: ", str)
+            if cred["username"] == pytools.cipher.enigma.work.encode(username):
+                if cred["password"] == pytools.cipher.enigma.work.encode(password):
+                    flags.enigma = True
+                    return True
+        else:
+            return True
+        return False
     
     def stop():
         if flags.remote == False:
@@ -183,16 +295,19 @@ class menu:
     def handler():
         try:
             menu.main()
-            system.stop()
+            if (flags.monitor == False) or flags.bypass:
+                system.stop()
             exit(0)
         except:
             flags.exitf = True
-            system.stop()
+            if (flags.monitor == False) or flags.bypass:
+                system.stop()
             raise Exception("Exiting...")
     
     def main():
         f = True
         j = False
+        h = False
         while True:
             if f:
                 error = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "choice /c m /n")[0]
@@ -201,7 +316,7 @@ class menu:
             flags.display = False
             time.sleep(0.5)
             i = 0
-            while i < 63:
+            while i < globals.maxY:
                 n = 0
                 while n < 200:
                     pytools.IO.console.printAt(n, i, "          ")
@@ -211,16 +326,28 @@ class menu:
             printColor(0, 1, "---------", "green")
             printColor(0, 3, "(r) - Return", "green")
             printColor(0, 4, "(p) - Open Plugin Inspector", "green")
-            printColor(0, 5, "(s) - Start System", "green")
-            printColor(0, 6, "(h) - Stop System", "green")
-            printColor(0, 7, "(e) - Exit", "green")
+            upn = 0
+            if flags.monitor == False:
+                upn = 3
+                printColor(0, 5, "(s) - Start System", "green")
+                printColor(0, 6, "(h) - Stop System", "green")
+                printColor(0, 7, "(c) - Change Login Credentials", "green")
+            elif flags.bypass:
+                upn = 3
+                printColor(0, 5, "(s) - Start System", "green")
+                printColor(0, 6, "(h) - Stop System", "green")
+                printColor(0, 7, "(c) - Change Login Credentials", "green")
+            printColor(0, 5 + upn, "(e) - Exit", "green")
             if j:
-                printColor(0, 8, "---Error: Please start system before opening plugin menu.", "red")
+                printColor(0, 9, "---Error: Please start system before opening plugin menu.", "red")
                 j = False
-            error = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "choice /c rpshe /n")[0]
+            if h:
+                printColor(0, 9, "---Error: Username and/or password incorrect.", "red")
+                h = False
+            error = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "choice /c rpshce /n")[0]
             if error == 1:
                 i = 0
-                while i < 63:
+                while i < globals.maxY:
                     n = 0
                     while n < 200:
                         pytools.IO.console.printAt(n, i, "          ")
@@ -233,13 +360,29 @@ class menu:
                 else:
                     j = True
                 f = False
-            if error == 3:
-                system.start()
-                f = False
-            if error == 4:
-                system.stop()
-                f = False
-            if error == 5:
+            if (flags.monitor == False) or flags.bypass:
+                if error == 3:
+                    if system.checkCred():
+                        system.start()
+                    else:
+                        h = True
+                    f = False
+                if error == 4:
+                    if system.checkCred():
+                        system.stop()
+                    else:
+                        h = True
+                    f = False
+                if error == 5:
+                    if system.checkCred(True):
+                        system.changeCred()
+                    else:
+                        h = True
+                    f = False
+            else:
+                if 3 <= error <= 5:
+                    f = False
+            if error == 6:
                 flags.exitf = True
                 return 0
                 
@@ -253,7 +396,7 @@ class menu:
         f = True
         while f:
             i = 0
-            while i < 63:
+            while i < globals.maxY:
                 n = 0
                 while n < 200:
                     pytools.IO.console.printAt(n, i, "          ")
@@ -281,7 +424,7 @@ class menu:
                 for key in json:
                     menu.readInfo(json[key], key)
                     menu.plugN = menu.plugN + 1
-                    if menu.plugN > 62:
+                    if menu.plugN > (globals.maxY - 1):
                         menu.plugN = 0
                         menu.plugI = menu.plugI + 40
                 printColor(40 + menu.plugI, menu.plugN + 1, "(r) - Return to plugin menu.", "green")
@@ -295,25 +438,25 @@ class menu:
         if str(json)[0] == "{":
             if menu.plugR:
                 menu.plugN = menu.plugN + 1
-                if menu.plugN > 62:
+                if menu.plugN > (globals.maxY - 1):
                     menu.plugN = 0
                     menu.plugI = menu.plugI + 40
                 menu.plugR = False
             printColor(40 + menu.plugI, menu.plugN, menu.strF[0:menu.plugF] + str(key) + ":", "green")
             menu.plugN = menu.plugN + 1
-            if menu.plugN > 62:
+            if menu.plugN > (globals.maxY - 1):
                 menu.plugN = 0
                 menu.plugI = menu.plugI + 40
             for keyf in json:
                 menu.readInfo(json[keyf], keyf)
                 menu.plugN = menu.plugN + 1
-                if menu.plugN > 62:
+                if menu.plugN > (globals.maxY - 1):
                     menu.plugN = 0
                     menu.plugI = menu.plugI + 40
         elif str(json)[0] == "[":
             printColor(40 + menu.plugI, menu.plugN, menu.strF[0:menu.plugF] + str(key) + ":", "green")
             menu.plugN = menu.plugN + 1
-            if menu.plugN > 62:
+            if menu.plugN > (globals.maxY - 1):
                 menu.plugN = 0
                 menu.plugI = menu.plugI + 40
             i = 0
@@ -321,7 +464,7 @@ class menu:
                 menu.readInfo(keyf, "-" + str(i))
                 i = i + 1
                 menu.plugN = menu.plugN + 1
-                if menu.plugN > 62:
+                if menu.plugN > (globals.maxY - 1):
                     menu.plugN = 0
                     menu.plugI = menu.plugI + 40
         else:
@@ -377,20 +520,28 @@ def main():
     i = 0
     # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
     flash = 0
-    while i < 63:
+    while i < globals.maxY:
         n = 0
         while n < 200:
             pytools.IO.console.printAt(n, i, "          ")
             n = n + 10
         i = i + 1
     while True:
+        try:
+            if os.path.exists(".\\systemLoop.json"):
+                if (pytools.clock.dateArrayToUTC(pytools.IO.getJson(".\\systemLoop.json")["lastLoop"]) + 5) < (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime())):
+                    system.status.active = False
+                else:
+                    system.status.active = True
+        except:
+            pass
         if flags.exitf == True:
             exit()
         if flags.display == True:
             if (pytools.clock.getDateTime()[5] % 30) == 0:
                 # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
                 i = 0
-                while i < 63:
+                while i < globals.maxY:
                     n = 0
                     while n < 200:
                         pytools.IO.console.printAt(n, i, "          ")
@@ -519,7 +670,7 @@ def main():
                 flash = 1
             else:
                 flash = 0
-            printColor(0, 62, "(m &+ enter) - Goto Menu", "green")
+            printColor(0, globals.maxY - 1, "(m &+ enter) - Goto Menu", "green")
         time.sleep(0.3)
 
 startf = False
@@ -542,6 +693,10 @@ try:
                 flags.defaultSystemState = True
             elif n == "--server":
                 flags.server = True
+            elif n == "--monitor":
+                flags.monitor = True
+            elif n == "--takeOver":
+                flags.bypass = True
             elif n == "--ping":
                 print("ping")
             elif n == "--help":
@@ -554,12 +709,17 @@ try:
         if n == "--help":
             print("Ghosts Ambience System Console Usage")
             print("------------------------------------")
-            print("--run: Start the console")
+            print("--run: Start the console (must be first always to run command line)")
             print("--start: Start the system automatically upon console load.")
             print("   ^ --apiKey=<apiKey>: must be specified api key on launch.")
             print("                        This will be your Open Weather Map API Key.")
             print("--remote=<remoteIp>: Connects in with a remote ambience server (file sharing must be enabled.)")
             print("   ^ --startDefault: If connection is lost, automatically restart system if it is offline.")
+            print("--server: no gui (does not load console window/menu, simply runs the command.")
+            print("--monitor: Put's Console into monitor mode.")
+            print("   ^ --takeOver: Tells the console to take control,")
+            print("                 overriding all other consoles (used for remoting in to manage).")
+            print("                 (Requires login credentials of the windows os user.)")
             print("--help: Print this help text.")
 except:
     print("Unexpected error:", sys.exc_info())
