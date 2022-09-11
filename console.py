@@ -295,12 +295,12 @@ class menu:
     def handler():
         try:
             menu.main()
-            if (flags.monitor == False) or flags.bypass:
+            if (flags.monitor == False):
                 system.stop()
             exit(0)
         except:
             flags.exitf = True
-            if (flags.monitor == False) or flags.bypass:
+            if (flags.monitor == False):
                 system.stop()
             raise Exception("Exiting...")
     
@@ -488,16 +488,25 @@ def getSection():
     else:
         if dateArray[3] > 12:
             if dateArray[3] < 22:
-                if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["death_wind"]["state"] == 0:
-                    return phases[1]
-                else:
-                    if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["monsters"]["state"] == 0:
-                        return phases[2]
+                try:
+                    if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["death_wind"]["state"] == 0:
+                        return phases[1]
                     else:
-                        if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["ghosts"]["state"] == 0:
-                            return phases[3]
-                        else:
-                            return phases[4]
+                        try:
+                            if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["monsters"]["state"] == 0:
+                                return phases[2]
+                            else:
+                                try:
+                                    if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["ghosts"]["state"] == 0:
+                                        return phases[3]
+                                    else:
+                                        return phases[4]
+                                except:
+                                    return phases[3]
+                        except:
+                            return phases[2]
+                except:
+                    return phases[1]
             elif dateArray[3] == 22:
                 if dateArray[4] < 15:
                     return phases[5]
@@ -531,6 +540,7 @@ def main():
             if os.path.exists(".\\systemLoop.json"):
                 if (pytools.clock.dateArrayToUTC(pytools.IO.getJson(".\\systemLoop.json")["lastLoop"]) + 5) < (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime())):
                     system.status.active = False
+                    subprocess.getstatusoutput("echo {\"loopTime\":[9999, 0, 0, 0, 0, 0]} > \\\\" + tools.getRemote() + "\\ambience\\systemLoop.json")[0]
                 else:
                     system.status.active = True
         except:
