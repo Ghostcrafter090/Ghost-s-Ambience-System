@@ -1,4 +1,5 @@
 import os
+import sys
 
 importArray = [
     ['win32api', "py -m pip install pywin32"],
@@ -25,7 +26,9 @@ importArray = [
     ['sentencepiece', 'py -m pip install sentencepiece'],
     ['protobuf', 'py -m pip install protobuf==3.20.2'],
     ['sounddevice', 'py -m pip install sounddevice'],
-    ['speechrecognition', 'py -m pip install speechrecognition']
+    ['speechrecognition', 'py -m pip install speechrecognition'],
+    ['pyttsx3', 'py -m pip install pyttsx3'],
+    ['pyAudio', 'py -m pip install pyAudio']
 ]
 
 class check:
@@ -36,7 +39,10 @@ install = True
 while (i < len(importArray)) and (install):
     # exec("try:\n    import " + importArray[i] + "\n    check.cond = True\nexcept:\n    check.cond = False")
     if check.cond == False:
-        out = input("Permission to install " + str(importArray[i]) + " (Y/n)? ")
+        if sys.argv[1] != "--confirmInstall":
+            out = input("Permission to install " + str(importArray[i]) + " (Y/n)? ")
+        else:
+            out = "Y"
         if out == "Y":
             if str(importArray[i])[0] == "[":
                 os.system(importArray[i][1])
