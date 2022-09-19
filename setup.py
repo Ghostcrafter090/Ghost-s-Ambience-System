@@ -15,6 +15,17 @@ importArray = [
     ['zipfile', 'py -m pip install zipfile36 & py -m pip install zipfile38'],
     ['shutil', 'py -m pip install pytest-shutil'],
     ['pickle', 'py -m pip install pickle-mixin'],
+    ["torch", 'py -m pip install torch'],
+    ['transformers', 'py -m pip install transformers'],
+    ['numpy', 'py -m pip install numpy'],
+    ['scipy', 'py -m pip install scipy'],
+    ['wave', 'py -m pip install wave'],
+    ['gtts', 'py -m pip install gtts'],
+    ['pydub', 'py -m pip install pydub'],
+    ['sentencepiece', 'py -m pip install sentencepiece'],
+    ['protobuf', 'py -m pip install protobuf==3.20.2'],
+    ['sounddevice', 'py -m pip install sounddevice'],
+    ['speechrecognition', 'py -m pip install speechrecognition']
 ]
 
 class check:

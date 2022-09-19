@@ -21,6 +21,17 @@ vars/*
 working/*.pyl
 working/cond.cmd
 working/daytimes.cmd
+working/sound/assets/assets.zip
+working/sound/fire/fire.zip
+serverCommands.json
+systemLoop.json
+vars/sounds/window.cxl
+vars/sounds/outside.cxl
+vars/sounds/clock.cxl
+vars/pluginsList.pyn
+vars/dispstring.cx
+vars/data.json
+
 *.old
 *.so
 *.mp3

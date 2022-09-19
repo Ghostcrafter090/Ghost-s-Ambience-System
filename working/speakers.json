@@ -1,0 +1,36 @@
+{
+    "bedroom-jj": {
+        "window": [[400, 375]],
+        "fireplace": [[325, 270]],
+        "clock": [[450, 230]]
+    },
+    "bathroom-jj": {
+        "clock": [[455, 115]]
+    },
+    "hallway": {
+        "generic": [[365, 175]],
+        "clock": [[280, 195]]
+    },
+    "foyer": {
+        "generic": [[310, 40]]
+    },
+    "kitchen": {
+        "clock": [[180, 10]]
+    },
+    "pantry": {
+        "generic": [[10, 40]]
+    },
+    "living-room": {
+        "window": [
+            [465, 385],
+            [110, 375]
+        ],
+        "fireplace": [[180, 280]],
+        "clock": [[465, 385]]
+    },
+    "bedroom-ac": {
+        "fireplace": [[190, 330]],
+        "window": [[270, 375]],
+        "clock": [[310, 240]]
+    }
+}

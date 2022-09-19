@@ -673,9 +673,16 @@ def main():
                         printColor(23, y + 6, "DEATH NIGHT ACTIVITY", "red")
                         printColor(23, y + 7, "--------------------", "red")
                         printColor(23, y + 9, "Horror Index        : " + pytools.IO.getFile(".\\working\\horrorIndex.cx") + "Hi" + spaces[0:10], "red")
-                        printColor(23, y + 10, "Whispering Index    : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["whisperIndex"]) + "Hi" + spaces[0:10], "red")
-                        printColor(23, y + 11, "Hallowed Wolf Index : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["hallowedWolfIndex"]) + "Hi" + spaces[0:10], "red")
+                        try:
+                            printColor(23, y + 10, "Whispering Index    : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["whisperIndex"]) + "Hi" + spaces[0:10], "red")
+                        except:
+                            printColor(23, y + 10, "Whispering Index    : " + "0" + "Hi" + spaces[0:10], "red")
+                        try:
+                            printColor(23, y + 11, "Hallowed Wolf Index : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["hallowedWolfIndex"]) + "Hi" + spaces[0:10], "red")
+                        except:
+                            printColor(23, y + 11, "Hallowed Wolf Index : " + "0" + "Hi" + spaces[0:10], "red")
                         printColor(23, y + 12, "Current Section     : " + section + spaces[0:10], "red")
+                            
             if flash == 0:
                 flash = 1
             else:
