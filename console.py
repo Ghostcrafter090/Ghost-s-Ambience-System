@@ -108,7 +108,16 @@ class comm:
             "execute": 1
         })
         return comm.wait(flags.timeout)
-        
+    
+    def sendUpdateRestart()
+        pytools.IO.saveJson("serverCommands.json", {
+            "commands": [
+                "--run --stop --start --update"
+            ],
+            "execute": 1
+        })
+        return comm.wait(flags.timeout)
+    
     def sendStop():
         pytools.IO.saveJson("serverCommands.json", {
             "commands": [
@@ -830,7 +839,6 @@ if stopf:
 if flags.update == True:
     if en:
         system.update()
-        
 
 if startf:
     if en:
