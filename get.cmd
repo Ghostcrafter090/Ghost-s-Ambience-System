@@ -1,1 +1,0 @@
-xcopy "C:\Users\joshp\Documents\build-ambience_console-Desktop_Qt_6_2_4_MinGW_64_bit-Debug\ambience_console.exe" . /e /c /y
