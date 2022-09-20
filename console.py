@@ -32,6 +32,7 @@ class flags:
     server = False
     timeout = 1000
     bypass = False
+    update = False
     enigma = False
     enigmaSettings = {
         "salt": 0,
@@ -759,6 +760,8 @@ try:
                 flags.server = True
             elif n == "--monitor":
                 flags.monitor = True
+            elif n == "--update":
+                flags.update = True
             elif n == "--takeOver":
                 flags.bypass = True
             elif n == "--ping":
@@ -796,6 +799,10 @@ if flags.remote != False:
 if stopf:
     if en:
         system.stop()
+        
+if flags.update == True:
+    if en:
+        system.update()
 
 if startf:
     if en:
