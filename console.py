@@ -109,7 +109,7 @@ class comm:
         })
         return comm.wait(flags.timeout)
     
-    def sendUpdateRestart()
+    def sendUpdateRestart():
         pytools.IO.saveJson("serverCommands.json", {
             "commands": [
                 "--run --stop --start --update"
@@ -117,7 +117,7 @@ class comm:
             "execute": 1
         })
         return comm.wait(flags.timeout)
-    
+
     def sendStop():
         pytools.IO.saveJson("serverCommands.json", {
             "commands": [
@@ -184,15 +184,17 @@ class system:
             if comm.sendStart() == False:
                 while comm.connect() == False:
                     pass
-                if comm.sendStart == False:
+                if comm.sendStart() == False:
                     raise Exception("Connect error. Unable to communicate with remote ambience server")
                 else:
                     system.status.active = True
             else:
                 system.status.active = True
     
-    def update():
+    def update(restart=False):
         if flags.remote == False:
+            if restart:
+                system.stop()
             noUpdate = pytools.IO.getJson("noUpdate.json")
             print("reading noUpdate...")
             for n in noUpdate["list"]:
@@ -206,18 +208,31 @@ class system:
             subprocess.getstatusoutput("py setup.py --confirmInstall")
             print("Copying noUpdate files back to main repo.")
             subprocess.getstatusoutput("xcopy \"..\\ambience_py_updates\\*\" \".\" /e /c /y")
+            if restart:
+                system.start()
         else:
             while comm.connect() == False:
                 pass
-            if comm.sendUpdate() == False:
-                while comm.connect() == False:
-                    pass
-                if comm.sendUpdate == False:
-                    raise Exception("Connect error. Unable to communicate with remote ambience server")
+            if restart:
+                if comm.sendUpdateRestart() == False:
+                    while comm.connect() == False:
+                        pass
+                    if comm.sendUpdateRestart() == False:
+                        raise Exception("Connect error. Unable to communicate with remote ambience server")
+                    else:
+                        system.status.active = True
                 else:
-                    system.status.active = True
+                    pass
             else:
-                pass
+                if comm.sendUpdate() == False:
+                    while comm.connect() == False:
+                        pass
+                    if comm.sendUpdate() == False:
+                        raise Exception("Connect error. Unable to communicate with remote ambience server")
+                    else:
+                        system.status.active = True
+                else:
+                    pass
             
     def getEnigma():
         i = 0
@@ -328,7 +343,7 @@ class system:
             if comm.sendStop() == False:
                 while comm.connect() == False:
                     pass
-                if comm.sendStop == False:
+                if comm.sendStop() == False:
                     raise Exception("Connect error. Unable to communicate with remote ambience server")
                 else:
                     system.status.active = False
@@ -798,6 +813,8 @@ try:
                 flags.monitor = True
             elif n == "--update":
                 flags.update = True
+            elif n == "--restart":
+                flags.restart = True
             elif n == "--takeOver":
                 flags.bypass = True
             elif n == "--ping":
@@ -823,6 +840,8 @@ try:
             print("   ^ --takeOver: Tells the console to take control,")
             print("                 overriding all other consoles (used for remoting in to manage).")
             print("                 (Requires login credentials of the windows os user.)")
+            print("--update: Updates the system.")
+            print("   ^ --restart: Performs restart cycle after update. Use if the server in already online.")
             print("--help: Print this help text.")
 except:
     print("Unexpected error:", sys.exc_info())
@@ -838,7 +857,10 @@ if stopf:
         
 if flags.update == True:
     if en:
-        system.update()
+        if flags.restart == True:
+            system.update(True)
+        else:
+            system.update()
 
 if startf:
     if en:
