@@ -701,10 +701,13 @@ def main():
                 
                 y = i
                 
-                soundsClock = pytools.IO.getFile(".\\vars\\sounds\\clock.cxl").split("\n")
-                soundsFireplace = pytools.IO.getFile(".\\vars\\sounds\\fireplace.cxl").split("\n")
-                soundsOutside = pytools.IO.getFile(".\\vars\\sounds\\outside.cxl").split("\n")
-                soundsWindow = pytools.IO.getFile(".\\vars\\sounds\\window.cxl").split("\n")
+                try:
+                    soundsClock = pytools.IO.getFile(".\\vars\\sounds\\clock.cxl").split("\n")
+                    soundsFireplace = pytools.IO.getFile(".\\vars\\sounds\\fireplace.cxl").split("\n")
+                    soundsOutside = pytools.IO.getFile(".\\vars\\sounds\\outside.cxl").split("\n")
+                    soundsWindow = pytools.IO.getFile(".\\vars\\sounds\\window.cxl").split("\n")
+                except:
+                    pass
                 
                 try:
                     pytools.IO.console.printAt(50, 0, "Clock Speaker Sounds")
