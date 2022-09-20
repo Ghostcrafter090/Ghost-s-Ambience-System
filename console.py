@@ -175,11 +175,16 @@ class system:
     
     def update():
         noUpdate = pytools.IO.getJson("noUpdate.json")
+        print("reading noUpdate...")
         for n in noUpdate["list"]:
             fileName = n.split("\\")[-1]
+            print(n)
             subprocess.getstatusoutput("xcopy \"" + n + "\" \"..\\ambience_py_updates\\" + n.split(fileName)[0] + "\" /i /e /c /y")[0]
-        subprocess.getstatusoutput("git pull -f")[0]
+        print("Pulling from repository...")
+        print(subprocess.getoutput("git pull -f"))
+        print("(This may take a while) Rerunning repo install...")
         subprocess.getstatusoutput("py setup.py --confirmInstall")
+        print("Copying noUpdate files back to main repo.")
         subprocess.getstatusoutput("xcopy \"..\\ambience_py_updates\\*\" \".\" /e /c /y")
             
     def getEnigma():
