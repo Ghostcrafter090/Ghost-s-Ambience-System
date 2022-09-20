@@ -32,6 +32,7 @@ class flags:
     server = False
     timeout = 1000
     bypass = False
+    restart = False
     update = False
     enigma = False
     enigmaSettings = {
