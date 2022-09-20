@@ -123,14 +123,14 @@ class comm:
         if flags.unpack:
             pytools.IO.saveJson("serverCommands.json", {
                 "commands": [
-                    "--run --stop --start --update"
+                    "--run --stop --start --update --apiKey=" + flags.apiKey
                 ],
                 "execute": 1
             })
         else:
             pytools.IO.saveJson("serverCommands.json", {
                 "commands": [
-                    "--run --stop --start --update --noUnpack"
+                    "--run --stop --start --update --noUnpack --apiKey=" + flags.apiKey
                 ],
                 "execute": 1
             })
