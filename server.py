@@ -17,7 +17,7 @@ def main():
             if commands["execute"] == 1:
                 for command in commands["commands"]:
                     print("running command: " + command)
-                    os.system("start /min "" py console.py " + command + " --server")
+                    os.system("start /min "" py console.py " + command + " --server > server_output.cxl")
                 commands["execute"] = 0
                 pytools.IO.saveJson(".\\serverCommands.json", commands)
         except:
