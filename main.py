@@ -3,6 +3,7 @@ import os
 import threading
 import time
 import sys
+import traceback
 
 os.system("mkdir vars\\pluginVars")
 os.system("mkdir vars\\pluginVarsJson")
@@ -43,7 +44,7 @@ class plugin:
         while True:
             error = 'File Closed Unexpectedly!'
             # print('try:\n    ' + string + '\nexcept Exception as e:\n    error = e')
-            execString = 'try:\n    ' + string.replace('main.plugin.', 'plugin.') + '\nexcept Exception as e:\n    error = e\n    print(error)\n    handlers.error.log(str(error), \'' + string + '\')'
+            execString = 'try:\n    ' + string.replace('main.plugin.', 'plugin.') + '\nexcept Exception as e:\n    error = e\n    print(error)\n    handlers.error.log(str(error), \'' + string + '\', traceback.format_exc())'
             exec(execString)
             handlers.error.log(error, string)
 
@@ -106,12 +107,12 @@ class handlers:
 
         errorStatus = {}
 
-        def log(error, pluginf):
+        def log(error, pluginf, tracebackf):
             if os.path.isfile(pluginf + '_errorlog.log') == False:
                 pytools.IO.saveFile(pluginf + '_errorlog.log', '')
             # errorlog = pytools.IO.getFile(plugin + '_errorlog.log')
             pytools.IO.saveFile("..\\vars\\plugins\\" + pluginf + "-error.cx", error)
-            errorlog = "\n" + str(pytools.clock.getDateTime()) + ' ::: ' + pluginf + "; " + error
+            errorlog = "\n" + str(pytools.clock.getDateTime()) + ' ::: ' + pluginf + "; " + tracebackf
             pytools.IO.appendFile(pluginf + '_errorlog.log', errorlog)
             print("handlers.error.errorStatus['" + pluginf.split(".")[1] + "'] = " + pluginf.replace(".run()", "") + ".status.finishedLoop")
             exec("handlers.error.errorStatus['" + pluginf.split(".")[1] + "'] = " + pluginf.replace(".run()", "") + ".status.finishedLoop")

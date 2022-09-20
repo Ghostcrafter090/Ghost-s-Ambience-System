@@ -118,16 +118,15 @@ def run():
     f = 0
     while n < sr.Microphone.get_pyaudio().PyAudio().get_device_count():
         for key in mics:
-            if key == sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["name"]:
-                if sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["hostApi"] == 2:
-                    micHandlers.append(["", ""])
-                    micHandlers[f][0] = [n, sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["name"]]
-                    micHandlers[f][1] = threading.Thread(target=runMic, args=str(f))
-                    f = f + 1
+            # if key == sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["name"]:
+            if sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["hostApi"] == 2:
+                micHandlers.append(["", ""])
+                micHandlers[f][0] = [n, sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["name"]]
+                micHandlers[f][1] = threading.Thread(target=runMic, args=str(f))
+                f = f + 1
         n = n + 1
     for n in micHandlers:
         n[1].start()
-        print("penis")
     while True:
         pytools.IO.saveFile("speechPerMinute.cx", "0")
         dateArray = pytools.clock.getDateTime()

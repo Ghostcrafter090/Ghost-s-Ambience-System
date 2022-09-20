@@ -37,6 +37,13 @@ class speech:
 class tools:
     def getDayTimesUTC():
         dayTimes = pytools.IO.getList("daytimes.pyl")[1]
+        try:
+            while int(dayTimes) == dayTimes:
+                dayTimes = pytools.IO.getList("daytimes.pyl")[1]
+                time.sleep(1)
+        except:
+            pass
+                
         dayTimesUTC = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         i = 0
         while i < len(dayTimes):
