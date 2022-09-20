@@ -191,6 +191,7 @@ class system:
                 print(n)
                 subprocess.getstatusoutput("xcopy \"" + n + "\" \"..\\ambience_py_updates\\" + n.split(fileName)[0] + "\" /i /e /c /y")[0]
             print("Pulling from repository...")
+            print(subprocess.getoutput("git restore *"))
             print(subprocess.getoutput("git pull -f"))
             print("(This may take a while) Rerunning repo install...")
             subprocess.getstatusoutput("py setup.py --confirmInstall")
