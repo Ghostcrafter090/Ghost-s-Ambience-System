@@ -197,7 +197,6 @@ class system:
             subprocess.getstatusoutput("py setup.py --confirmInstall")
             print("Copying noUpdate files back to main repo.")
             subprocess.getstatusoutput("xcopy \"..\\ambience_py_updates\\*\" \".\" /e /c /y")
-            pytools.IO.saveFile(".\\finishedUpdate.cx", "done.")
         else:
             while comm.connect() == False:
                 pass
@@ -209,22 +208,7 @@ class system:
                 else:
                     system.status.active = True
             else:
-                fnl = True
-                while fnl:
-                    if os.path.exists(".\\finishedUpdate.cx"):
-                        if pytools.IO.getFile(".\\finishedUpdate.cx") == "done.":
-                            fnl = False
-                            pytools.IO.saveFile(".\\finishedUpdate.cx", "Waiting...")
-                    time.sleep(5)
-                    i = 0
-                    while i < globals.maxY:
-                        n = 0
-                        while n < 200:
-                            pytools.IO.console.printAt(n, i, "          ")
-                            n = n + 10
-                        i = i + 1
-                    pytools.IO.console.printAt(0, 0, pytools.IO.getFile("server_output.cxl"))
-                    
+                pass
             
     def getEnigma():
         i = 0
