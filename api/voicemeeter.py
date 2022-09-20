@@ -1,6 +1,7 @@
 import pytools
 import os
 import time
+import psutil
 
 class status:
     apiKey = ""
@@ -11,9 +12,10 @@ class status:
 
 def main():
     while True:
-        os.system('start /b /wait "" ..\..\Voicemeeter.lnk')
-        time.sleep(86400)
-        os.system("taskkill /f /im voicemeeter8.exe")
+        if ("voicemeeter8.exe" in (p.name() for p in psutil.process_iter())) == False:
+            os.system("taskkill /f /im voicemeeter8.exe")
+            os.system('start /b "" ..\..\Voicemeeter.lnk')
+        time.sleep(60)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True
 
