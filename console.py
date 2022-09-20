@@ -174,7 +174,6 @@ class system:
                 system.status.active = True
     
     def update():
-        system.stop()
         noUpdate = pytools.IO.getJson("noUpdate.json")
         for n in noUpdate["list"]:
             fileName = n.split("\\")[-1]
