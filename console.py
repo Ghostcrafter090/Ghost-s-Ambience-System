@@ -32,6 +32,7 @@ class flags:
     server = False
     timeout = 1000
     bypass = False
+    unpack = True
     restart = False
     update = False
     enigma = False
@@ -102,12 +103,20 @@ class comm:
         return comm.wait(flags.timeout)
     
     def sendUpdate():
-        pytools.IO.saveJson("serverCommands.json", {
-            "commands": [
-                "--run --update"
-            ],
-            "execute": 1
-        })
+        if flags.unpack:
+            pytools.IO.saveJson("serverCommands.json", {
+                "commands": [
+                    "--run --update"
+                ],
+                "execute": 1
+            })
+        else:
+            pytools.IO.saveJson("serverCommands.json", {
+                "commands": [
+                    "--run --update --noUnpack"
+                ],
+                "execute": 1
+            })
         return comm.wait(flags.timeout)
     
     def sendUpdateRestart():
@@ -206,7 +215,8 @@ class system:
             print(subprocess.getoutput("git restore *"))
             print(subprocess.getoutput("git pull -f"))
             print("(This may take a while) Rerunning repo install...")
-            subprocess.getstatusoutput("py setup.py --confirmInstall")
+            if flags.unpack:
+                subprocess.getstatusoutput("py setup.py --confirmInstall")
             print("Copying noUpdate files back to main repo.")
             subprocess.getstatusoutput("xcopy \"..\\ambience_py_updates\\*\" \".\" /e /c /y")
             if restart:
@@ -816,6 +826,8 @@ try:
                 flags.update = True
             elif n == "--restart":
                 flags.restart = True
+            elif n == "--noUnpack":
+                flags.unpack = False
             elif n == "--takeOver":
                 flags.bypass = True
             elif n == "--ping":
@@ -843,6 +855,7 @@ try:
             print("                 (Requires login credentials of the windows os user.)")
             print("--update: Updates the system.")
             print("   ^ --restart: Performs restart cycle after update. Use if the server in already online.")
+            print("   ^ --noUnpack: disables the rerun of setup.py.")
             print("--help: Print this help text.")
 except:
     print("Unexpected error:", sys.exc_info())
