@@ -46,7 +46,7 @@ class plugin:
             # print('try:\n    ' + string + '\nexcept Exception as e:\n    error = e')
             execString = 'try:\n    ' + string.replace('main.plugin.', 'plugin.') + '\nexcept Exception as e:\n    error = e\n    print(error)\n    handlers.error.log(str(error), \'' + string + '\', traceback.format_exc())'
             exec(execString)
-            handlers.error.log(error, string)
+            handlers.error.log(error, string, traceback.format_exc())
 
 class handlers:
     class launcher:
