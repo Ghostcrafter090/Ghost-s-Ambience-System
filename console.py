@@ -120,12 +120,20 @@ class comm:
         return comm.wait(flags.timeout)
     
     def sendUpdateRestart():
-        pytools.IO.saveJson("serverCommands.json", {
-            "commands": [
-                "--run --stop --start --update"
-            ],
-            "execute": 1
-        })
+        if flags.unpack:
+            pytools.IO.saveJson("serverCommands.json", {
+                "commands": [
+                    "--run --stop --start --update"
+                ],
+                "execute": 1
+            })
+        else:
+            pytools.IO.saveJson("serverCommands.json", {
+                "commands": [
+                    "--run --stop --start --update --noUnpack"
+                ],
+                "execute": 1
+            })
         return comm.wait(flags.timeout)
 
     def sendStop():
