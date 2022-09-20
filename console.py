@@ -99,6 +99,15 @@ class comm:
             "execute": 1
         })
         return comm.wait(flags.timeout)
+    
+    def sendUpdate():
+        pytools.IO.saveJson("serverCommands.json", {
+            "commands": [
+                "--run --update"
+            ],
+            "execute": 1
+        })
+        return comm.wait(flags.timeout)
         
     def sendStop():
         pytools.IO.saveJson("serverCommands.json", {
@@ -174,18 +183,31 @@ class system:
                 system.status.active = True
     
     def update():
-        noUpdate = pytools.IO.getJson("noUpdate.json")
-        print("reading noUpdate...")
-        for n in noUpdate["list"]:
-            fileName = n.split("\\")[-1]
-            print(n)
-            subprocess.getstatusoutput("xcopy \"" + n + "\" \"..\\ambience_py_updates\\" + n.split(fileName)[0] + "\" /i /e /c /y")[0]
-        print("Pulling from repository...")
-        print(subprocess.getoutput("git pull -f"))
-        print("(This may take a while) Rerunning repo install...")
-        subprocess.getstatusoutput("py setup.py --confirmInstall")
-        print("Copying noUpdate files back to main repo.")
-        subprocess.getstatusoutput("xcopy \"..\\ambience_py_updates\\*\" \".\" /e /c /y")
+        if flags.remote == False:
+            noUpdate = pytools.IO.getJson("noUpdate.json")
+            print("reading noUpdate...")
+            for n in noUpdate["list"]:
+                fileName = n.split("\\")[-1]
+                print(n)
+                subprocess.getstatusoutput("xcopy \"" + n + "\" \"..\\ambience_py_updates\\" + n.split(fileName)[0] + "\" /i /e /c /y")[0]
+            print("Pulling from repository...")
+            print(subprocess.getoutput("git pull -f"))
+            print("(This may take a while) Rerunning repo install...")
+            subprocess.getstatusoutput("py setup.py --confirmInstall")
+            print("Copying noUpdate files back to main repo.")
+            subprocess.getstatusoutput("xcopy \"..\\ambience_py_updates\\*\" \".\" /e /c /y")
+        else:
+            while comm.connect() == False:
+                pass
+            if comm.sendUpdate() == False:
+                while comm.connect() == False:
+                    pass
+                if comm.sendUpdate == False:
+                    raise Exception("Connect error. Unable to communicate with remote ambience server")
+                else:
+                    system.status.active = True
+            else:
+                system.status.active = True
             
     def getEnigma():
         i = 0
