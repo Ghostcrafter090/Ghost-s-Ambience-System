@@ -628,188 +628,193 @@ def getSection():
             return phases[12]
 
 def main():
-    i = 0
-    # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
-    flash = 0
-    while i < globals.maxY:
-        n = 0
-        while n < 200:
-            pytools.IO.console.printAt(n, i, "          ")
-            n = n + 10
-        i = i + 1
-    while True:
-        try:
-            if os.path.exists(".\\systemLoop.json"):
-                if (pytools.clock.dateArrayToUTC(pytools.IO.getJson(".\\systemLoop.json")["lastLoop"]) + 5) < (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime())):
-                    system.status.active = False
-                    subprocess.getstatusoutput("echo {\"loopTime\":[9999, 0, 0, 0, 0, 0]} > \\\\" + tools.getRemote() + "\\ambience\\systemLoop.json")[0]
-                else:
-                    system.status.active = True
-        except:
-            pass
-        if flags.exitf == True:
-            exit()
-        if flags.display == True:
-            if (pytools.clock.getDateTime()[5] % 30) == 0:
-                # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
-                i = 0
-                while i < globals.maxY:
-                    n = 0
-                    while n < 200:
-                        pytools.IO.console.printAt(n, i, "          ")
-                        n = n + 10
-                    i = i + 1
-            weather = pytools.IO.getFile(".\\vars\\dispstring.cx")
-            if weather[0:23] == 'Temperature (C)      : ':
-                pytools.IO.console.printAt(0, 0, "Ambience System Console")
-                pytools.IO.console.printAt(0, 1, "-----------------------")
-                pytools.IO.console.printAt(0, 3, weather)
-                i = 4 + len(weather.split("\n"))
-                if os.path.exists("\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson") == False:
-                    subprocess.getstatusoutput("pushd \"\\" + tools.getRemote() + "\\ambience\" & " + "mkdir \"" + "\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson" + "\"")[0]
-                for plugin in os.listdir("\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson"):
-                    pytools.IO.console.printAt(2, i, plugin.split("_keys")[0][0:19])
-                    pInfo = pytools.IO.getJson(".\\vars\\pluginVarsJson\\" + plugin)
-                    if system.status.active == True:
-                        if os.path.exists(".\\vars\\plugins\\plugin." + plugin.split("_keys")[0] + ".run()-error.cx"):
-                            pError = pytools.IO.getFile(".\\vars\\plugins\\plugin." + plugin.split("_keys")[0] + ".run()-error.cx")
-                            if flash == 0:
-                                try:
-                                    if (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) - pytools.clock.dateArrayToUTC(pInfo["lastLoop"])) > 600:
-                                        printColor(0, i, "!", "red")
-                                    else:
-                                        printColor(0, i, "!", "yellow")
-                                except:
-                                    printColor(0, i, "!", "red")
-                            else:
-                                pytools.IO.console.printAt(0, i, " ")
-                            printColor(37, i, " ;;; " + pError, "yellow")
+        i = 0
+        # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
+        flash = 0
+        while i < globals.maxY:
+            n = 0
+            while n < 200:
+                pytools.IO.console.printAt(n, i, "          ")
+                n = n + 10
+            i = i + 1
+        while True:
+            try:
+                try:
+                    if os.path.exists(".\\systemLoop.json"):
+                        if (pytools.clock.dateArrayToUTC(pytools.IO.getJson(".\\systemLoop.json")["lastLoop"]) + 5) < (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime())):
+                            system.status.active = False
+                            subprocess.getstatusoutput("echo {\"loopTime\":[9999, 0, 0, 0, 0, 0]} > \\\\" + tools.getRemote() + "\\ambience\\systemLoop.json")[0]
                         else:
-                            pytools.IO.console.printAt(0, i, " ")
-                    if system.status.active == True:
+                            system.status.active = True
+                except:
+                    pass
+                if flags.exitf == True:
+                    exit()
+                if flags.display == True:
+                    if (pytools.clock.getDateTime()[5] % 30) == 0:
+                        # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
+                        i = 0
+                        while i < globals.maxY:
+                            n = 0
+                            while n < 200:
+                                pytools.IO.console.printAt(n, i, "          ")
+                                n = n + 10
+                            i = i + 1
+                    weather = pytools.IO.getFile(".\\vars\\dispstring.cx")
+                    if weather[0:23] == 'Temperature (C)      : ':
+                        pytools.IO.console.printAt(0, 0, "Ambience System Console")
+                        pytools.IO.console.printAt(0, 1, "-----------------------")
+                        pytools.IO.console.printAt(0, 3, weather)
+                        i = 4 + len(weather.split("\n"))
+                        if os.path.exists("\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson") == False:
+                            subprocess.getstatusoutput("pushd \"\\" + tools.getRemote() + "\\ambience\" & " + "mkdir \"" + "\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson" + "\"")[0]
+                        for plugin in os.listdir("\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson"):
+                            pytools.IO.console.printAt(2, i, plugin.split("_keys")[0][0:19])
+                            pInfo = pytools.IO.getJson(".\\vars\\pluginVarsJson\\" + plugin)
+                            if system.status.active == True:
+                                if os.path.exists(".\\vars\\plugins\\plugin." + plugin.split("_keys")[0] + ".run()-error.cx"):
+                                    pError = pytools.IO.getFile(".\\vars\\plugins\\plugin." + plugin.split("_keys")[0] + ".run()-error.cx")
+                                    if flash == 0:
+                                        try:
+                                            if (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) - pytools.clock.dateArrayToUTC(pInfo["lastLoop"])) > 600:
+                                                printColor(0, i, "!", "red")
+                                            else:
+                                                printColor(0, i, "!", "yellow")
+                                        except:
+                                            printColor(0, i, "!", "red")
+                                    else:
+                                        pytools.IO.console.printAt(0, i, " ")
+                                    printColor(37, i, " ;;; " + pError, "yellow")
+                                else:
+                                    pytools.IO.console.printAt(0, i, " ")
+                            if system.status.active == True:
+                                try:
+                                    pytools.IO.console.printAt(20, i, " : ")
+                                    if (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) - pytools.clock.dateArrayToUTC(pInfo["lastLoop"])) > 600:
+                                        printColor(23, i, "Inactive." + spaces[len("Inactive."):14], "yellow")
+                                    else:
+                                        printColor(23, i, "Active." + spaces[len("Active."):14], "green")
+                                except:
+                                    printColor(23, i, "Nonresponsive.", "red")
+                            else:
+                                printColor(23, i, "Offline." + spaces[len("Offline."):14], "magenta")
+                            i = i + 1
+                        
+                        y = i
+                        
                         try:
-                            pytools.IO.console.printAt(20, i, " : ")
-                            if (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) - pytools.clock.dateArrayToUTC(pInfo["lastLoop"])) > 600:
-                                printColor(23, i, "Inactive." + spaces[len("Inactive."):14], "yellow")
-                            else:
-                                printColor(23, i, "Active." + spaces[len("Active."):14], "green")
+                            soundsClock = pytools.IO.getFile(".\\vars\\sounds\\clock.cxl").split("\n")
+                            soundsFireplace = pytools.IO.getFile(".\\vars\\sounds\\fireplace.cxl").split("\n")
+                            soundsOutside = pytools.IO.getFile(".\\vars\\sounds\\outside.cxl").split("\n")
+                            soundsWindow = pytools.IO.getFile(".\\vars\\sounds\\window.cxl").split("\n")
                         except:
-                            printColor(23, i, "Nonresponsive.", "red")
+                            pass
+                        
+                        try:
+                            pytools.IO.console.printAt(50, 0, "Clock Speaker Sounds")
+                            pytools.IO.console.printAt(50, 1, "--------------------")
+                            i = 3
+                            for f in soundsClock:
+                                if system.status.active == True:
+                                    pytools.IO.console.printAt(50, i, f + spaces[len(f):30])
+                                    i = i + 1
+                            f = i
+                            while i < (f + 10):
+                                pytools.IO.console.printAt(50, i, spaces[0:30])
+                                i = i + 1
+                        except:
+                            pass
+                        
+                        try:
+                            pytools.IO.console.printAt(80, 0, "Fireplace Speaker Sounds")
+                            pytools.IO.console.printAt(80, 1, "------------------------")
+                            i = 3
+                            for f in soundsFireplace:
+                                if system.status.active == True:
+                                    pytools.IO.console.printAt(80, i, f + spaces[len(f):30])
+                                    i = i + 1
+                            f = i
+                            while i < (f + 10):
+                                pytools.IO.console.printAt(80, i, spaces[0:30])
+                                i = i + 1
+                        except:
+                            pass
+                        
+                        try:
+                            pytools.IO.console.printAt(110, 0, "Window Speaker Sounds")
+                            pytools.IO.console.printAt(110, 1, "--------------------")
+                            i = 3
+                            for f in soundsWindow:
+                                if system.status.active == True:
+                                    pytools.IO.console.printAt(110, i, f + spaces[len(f):30])
+                                    i = i + 1
+                            f = i
+                            while i < (f + 10):
+                                pytools.IO.console.printAt(110, i, spaces[0:30])
+                                i = i + 1
+                        except:
+                            pass
+                        
+                        try:
+                            pytools.IO.console.printAt(140, 0, "Outside Speaker Sounds")
+                            pytools.IO.console.printAt(140, 1, "--------------------")
+                            i = 3
+                            for f in soundsOutside:
+                                if system.status.active == True:
+                                    pytools.IO.console.printAt(140, i, f + spaces[len(f):30])
+                                    i = i + 1
+                            f = i
+                            while i < (f + 10):
+                                pytools.IO.console.printAt(140, i, spaces[0:30])
+                                i = i + 1
+                        except:
+                            pass
+                        
+                        try:
+                            if system.status.active == True:
+                                if os.path.exists(".\\working\\halloweenmode.derp"):
+                                    if flash == 0:
+                                        printColor(3, y + 4, "        X", "red")
+                                        printColor(3, y + 5, "       X X", "red")
+                                        printColor(3, y + 6, "      X   X", "red")
+                                        printColor(3, y + 7, "     X  X  X", "red")
+                                        printColor(3, y + 8, "    X   X   X", "red")
+                                        printColor(3, y + 9, "   X    X    X", "red")
+                                        printColor(3, y + 10, "  X           X", "red")
+                                        printColor(3, y + 11, " X      X      X", "red")
+                                        printColor(3, y + 12, "X               X", "red")
+                                        printColor(3, y + 13, "XXXXXXXXXXXXXXXXX", "red")
+                                    else:
+                                        r = 0
+                                        while r < 14:
+                                            pytools.IO.console.printAt(3, y + r, "                  ")
+                                            r = r + 1
+                                    section = getSection()
+                                    printColor(23, y + 6, "DEATH NIGHT ACTIVITY", "red")
+                                    printColor(23, y + 7, "--------------------", "red")
+                                    printColor(23, y + 9, "Horror Index        : " + pytools.IO.getFile(".\\working\\horrorIndex.cx") + "Hi" + spaces[0:10], "red")
+                                    try:
+                                        printColor(23, y + 10, "Whispering Index    : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["whisperIndex"]) + "Hi" + spaces[0:10], "red")
+                                    except:
+                                        printColor(23, y + 10, "Whispering Index    : " + "0" + "Hi" + spaces[0:10], "red")
+                                    try:
+                                        printColor(23, y + 11, "Hallowed Wolf Index : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["hallowedWolfIndex"]) + "Hi" + spaces[0:10], "red")
+                                    except:
+                                        printColor(23, y + 11, "Hallowed Wolf Index : " + "0" + "Hi" + spaces[0:10], "red")
+                                    printColor(23, y + 12, "Current Section     : " + section + spaces[0:10], "red")
+                        except:
+                            pass
+                                    
+                    if flash == 0:
+                        flash = 1
                     else:
-                        printColor(23, i, "Offline." + spaces[len("Offline."):14], "magenta")
-                    i = i + 1
-                
-                y = i
-                
-                try:
-                    soundsClock = pytools.IO.getFile(".\\vars\\sounds\\clock.cxl").split("\n")
-                    soundsFireplace = pytools.IO.getFile(".\\vars\\sounds\\fireplace.cxl").split("\n")
-                    soundsOutside = pytools.IO.getFile(".\\vars\\sounds\\outside.cxl").split("\n")
-                    soundsWindow = pytools.IO.getFile(".\\vars\\sounds\\window.cxl").split("\n")
-                except:
-                    pass
-                
-                try:
-                    pytools.IO.console.printAt(50, 0, "Clock Speaker Sounds")
-                    pytools.IO.console.printAt(50, 1, "--------------------")
-                    i = 3
-                    for f in soundsClock:
-                        if system.status.active == True:
-                            pytools.IO.console.printAt(50, i, f + spaces[len(f):30])
-                            i = i + 1
-                    f = i
-                    while i < (f + 10):
-                        pytools.IO.console.printAt(50, i, spaces[0:30])
-                        i = i + 1
-                except:
-                    pass
-                
-                try:
-                    pytools.IO.console.printAt(80, 0, "Fireplace Speaker Sounds")
-                    pytools.IO.console.printAt(80, 1, "------------------------")
-                    i = 3
-                    for f in soundsFireplace:
-                        if system.status.active == True:
-                            pytools.IO.console.printAt(80, i, f + spaces[len(f):30])
-                            i = i + 1
-                    f = i
-                    while i < (f + 10):
-                        pytools.IO.console.printAt(80, i, spaces[0:30])
-                        i = i + 1
-                except:
-                    pass
-                
-                try:
-                    pytools.IO.console.printAt(110, 0, "Window Speaker Sounds")
-                    pytools.IO.console.printAt(110, 1, "--------------------")
-                    i = 3
-                    for f in soundsWindow:
-                        if system.status.active == True:
-                            pytools.IO.console.printAt(110, i, f + spaces[len(f):30])
-                            i = i + 1
-                    f = i
-                    while i < (f + 10):
-                        pytools.IO.console.printAt(110, i, spaces[0:30])
-                        i = i + 1
-                except:
-                    pass
-                
-                try:
-                    pytools.IO.console.printAt(140, 0, "Outside Speaker Sounds")
-                    pytools.IO.console.printAt(140, 1, "--------------------")
-                    i = 3
-                    for f in soundsOutside:
-                        if system.status.active == True:
-                            pytools.IO.console.printAt(140, i, f + spaces[len(f):30])
-                            i = i + 1
-                    f = i
-                    while i < (f + 10):
-                        pytools.IO.console.printAt(140, i, spaces[0:30])
-                        i = i + 1
-                except:
-                    pass
-                
-                try:
-                    if system.status.active == True:
-                        if os.path.exists(".\\working\\halloweenmode.derp"):
-                            if flash == 0:
-                                printColor(3, y + 4, "        X", "red")
-                                printColor(3, y + 5, "       X X", "red")
-                                printColor(3, y + 6, "      X   X", "red")
-                                printColor(3, y + 7, "     X  X  X", "red")
-                                printColor(3, y + 8, "    X   X   X", "red")
-                                printColor(3, y + 9, "   X    X    X", "red")
-                                printColor(3, y + 10, "  X           X", "red")
-                                printColor(3, y + 11, " X      X      X", "red")
-                                printColor(3, y + 12, "X               X", "red")
-                                printColor(3, y + 13, "XXXXXXXXXXXXXXXXX", "red")
-                            else:
-                                r = 0
-                                while r < 14:
-                                    pytools.IO.console.printAt(3, y + r, "                  ")
-                                    r = r + 1
-                            section = getSection()
-                            printColor(23, y + 6, "DEATH NIGHT ACTIVITY", "red")
-                            printColor(23, y + 7, "--------------------", "red")
-                            printColor(23, y + 9, "Horror Index        : " + pytools.IO.getFile(".\\working\\horrorIndex.cx") + "Hi" + spaces[0:10], "red")
-                            try:
-                                printColor(23, y + 10, "Whispering Index    : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["whisperIndex"]) + "Hi" + spaces[0:10], "red")
-                            except:
-                                printColor(23, y + 10, "Whispering Index    : " + "0" + "Hi" + spaces[0:10], "red")
-                            try:
-                                printColor(23, y + 11, "Hallowed Wolf Index : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["hallowedWolfIndex"]) + "Hi" + spaces[0:10], "red")
-                            except:
-                                printColor(23, y + 11, "Hallowed Wolf Index : " + "0" + "Hi" + spaces[0:10], "red")
-                            printColor(23, y + 12, "Current Section     : " + section + spaces[0:10], "red")
-                except:
-                    pass
-                            
-            if flash == 0:
-                flash = 1
-            else:
-                flash = 0
-            printColor(0, globals.maxY - 1, "(m &+ enter) - Goto Menu", "green")
-        time.sleep(0.3)
+                        flash = 0
+                    printColor(0, globals.maxY - 1, "(m &+ enter) - Goto Menu", "green")
+            
+            except:
+                pass
+                    
+            time.sleep(0.3)
 
 startf = False
 runf = False
