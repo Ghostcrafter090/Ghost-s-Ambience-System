@@ -4,6 +4,9 @@ import os
 
 class plugin:
     test = False
+    
+class globals:
+    apiKey = ""
 
 def run():
     exec("""
@@ -12,8 +15,14 @@ plugin.test = api.""" + sys.argv[2] + """
 """)
     
     os.chdir(".\\working")
+    
+    plugin.test.status.apiKey = globals.apiKey
 
     plugin.test.run()
+    
+for n in sys.argv:
+    if n.split("=") == "--apiKey":
+        globals.apiKey = n.split("=")[1]
 
 runf = False
 try:

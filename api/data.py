@@ -1,5 +1,6 @@
 import pytools
 import time
+import traceback
 
 class status:
     apiKey = ""
@@ -12,86 +13,88 @@ class globals:
     urlBase = 'http://api.openweathermap.org/data/2.5/weather?lat=44.905463&lon=-63.483926&appid='
     urlFast = 'http://gsweathermore.ddns.net:226/access.php?key=56c15c7d00df42d8815c7d00df42d8ab'
     urlSuperFast = 'http://gsweathermore.ddns.net:226/currentdata.json'
+
 class grabber:
     def getBaseData(url):
-        try:
-            print(str(pytools.clock.getDateTime()) + ' ::: Getting Base Data...')
-            # url: http://api.openweathermap.org/data/2.5/weather?lat=44.7659964&lon=-63.6850686&appid=<apiKey>
-            url = url + status.apiKey
-            data = pytools.net.getJsonAPI(url)
-            # [windspeeds, windgusts, visibility, snow, weather, modifier]
-            r = 0
-            condf = 0
-            weather = 'clear'
-            while r < len(data['weather']):
-                try:
-                    print(data['weather'][r])
-                    if data['weather'][r]['main'] == "Thunderstorm":
-                        weather = 'thunder'
-                        condf = 6
-                    elif (data['weather'][r]['main'] == "Snow") and (condf < 5):
-                        weather = 'snow'
-                        condf = 5
-                    elif (data['weather'][r]['main'] == "Rain") and (condf < 4):
-                        weather = 'rain'
-                        condf = 4
-                    elif (data['weather'][r]['main'] == "Drizzle") and (condf < 3):
-                        weather = 'lightrain'
-                        condf = 3
-                    elif (data['weather'][r]['main'] == "Mist") and (condf < 2):
-                        weather = 'mist'
-                        condf = 2
-                    elif (data['weather'][r]['main'] == "Clouds") and (condf < 1):
-                        weather = 'clouds'
-                        condf = 1
-                    elif (float(data['weather'][r]['id']) == 500.0) and (condf < 3):
-                        weather = 'lightrain'
-                        condf = 3
-                except:
-                    print("fuck")
-                r = r + 1
+        print(str(pytools.clock.getDateTime()) + ' ::: Getting Base Data...')
+        # url: http://api.openweathermap.org/data/2.5/weather?lat=44.7659964&lon=-63.6850686&appid=<apiKey>
+        url = url + status.apiKey
+        data = pytools.net.getJsonAPI(url)
+        # [windspeeds, windgusts, visibility, snow, weather, modifier]
+        r = 0
+        condf = 0
+        weather = 'clear'
+        while r < len(data['weather']):
+            print(data['weather'][r]['main'] )
+            try:
+                print(data['weather'][r])
+                if data['weather'][r]['main'] == "Thunderstorm":
+                    weather = 'thunder'
+                    condf = 6
+                elif (data['weather'][r]['main'] == "Snow") and (condf < 5):
+                    weather = 'snow'
+                    condf = 5
+                elif (data['weather'][r]['main'] == "Rain") and (condf < 4):
+                    weather = 'rain'
+                    condf = 4
+                elif (data['weather'][r]['main'] == "Drizzle") and (condf < 3):
+                    weather = 'lightrain'
+                    condf = 3
+                elif (data['weather'][r]['main'] == "Mist") and (condf < 2):
+                    weather = 'mist'
+                    condf = 2
+                elif (data['weather'][r]['main'] == "Clouds") and (condf < 1):
+                    weather = 'clouds'
+                    condf = 1
+                elif (float(data['weather'][r]['id']) == 500.0) and (condf < 3):
+                    weather = 'lightrain'
+                    condf = 3
+            except:
+                print("fuck")
+            r = r + 1
 
-            try:
-                i = 0
-                modifier = 0
-                while i < len(data['weather']):
-                    modifier = modifier + (float(data['weather'][i]['id']) % 100)
-                    i = i + 1
-            except:
-                modifier = 0
-            
-            try:
-                speed = float(data['wind']['speed'])
-            except:
-                speed = 0
-            try:
-                temp = float(data['main']['temp']) - 273
-            except:
-                temp = 0
-            try:
-                pressure = float(data['main']['pressure'])
-            except:
-                pressure = 0
-            try:
-                humidity = float(data['main']['humidity'])
-            except:
-                humidity = 0
-            try:
-                gusts = float(data['wind']['gust'])
-            except:
-                gusts = 0
-            try:
-                snow = float(data['snow']['1h'])
-            except:
-                try:
-                    snow = float(data['snow']['3h'])
-                except:
-                    snow = 0
-            array = [speed, gusts, float(data['visibility']), snow, weather, modifier, pressure, temp, humidity]
-            print(array)
-            return array
+        try:
+            i = 0
+            modifier = 0
+            while i < len(data['weather']):
+                modifier = modifier + (float(data['weather'][i]['id']) % 100)
+                i = i + 1
         except:
-            return [0.0, 0.0, 15000, 0.0, 'clear', 0, 1000.0, 15.0, 50.0]
+            modifier = 0
+        
+        try:
+            speed = float(data['wind']['speed'])
+        except:
+            speed = 0
+        try:
+            temp = float(data['main']['temp']) - 273
+        except:
+            temp = 0
+        try:
+            pressure = float(data['main']['pressure'])
+        except:
+            pressure = 0
+        try:
+            humidity = float(data['main']['humidity'])
+        except:
+            humidity = 0
+        try:
+            gusts = float(data['wind']['gust'])
+        except:
+            gusts = 0
+        try:
+            snow = float(data['snow']['1h'])
+        except:
+            try:
+                snow = float(data['snow']['3h'])
+            except:
+                snow = 0
+        array = [speed, gusts, float(data['visibility']), snow, weather, modifier, pressure, temp, humidity]
+        print(array)
+        return array
+        # except:
+        #     print(traceback.format_exc())
+        #     return [0.0, 0.0, 15000, 0.0, 'clear', 0, 1000.0, 15.0, 50.0]
 
     def getFastData(url):
         try:
@@ -212,7 +215,8 @@ Time        (hh:mm)  : """ + str(dateArray[3]) + ":" + str(dateArray[4])
         return [baseData, fastData, superData, outString, dateNewBase, dateNewFast, dateNewSuper, baseDataf]
 
 def main():
-    status.apiKey = pytools.IO.getFile("access.key")
+    if status.apiKey == "":
+        status.apiKey = pytools.IO.getFile("access.key")
     data = bulk.getData(1, [], True)
     while True:
         data = bulk.getData(1, data, False)
