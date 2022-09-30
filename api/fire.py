@@ -11,7 +11,10 @@ class status:
     }
     
 def getTemp():
-    temp = pytools.IO.getList("dataList.pyl")[1][0][7] + 273
+    try:
+        temp = pytools.IO.getList("dataList.pyl")[1][0][7] + 273
+    except:
+        temp = 283
     return temp
     
 def playMatch():
