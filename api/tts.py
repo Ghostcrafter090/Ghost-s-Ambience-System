@@ -25,8 +25,6 @@ def SpeakText(command):
     engine.runAndWait()
 
 mics = {}
-
-pytools.IO.saveFile("transcript.cxl", "")
      
 # Loop infinitely for user to
 # speak
@@ -112,6 +110,7 @@ def runMic(*args):
     n.micRun()
         
 def run():
+    pytools.IO.saveFile("transcript.cxl", "")
     mics = pytools.IO.getJson("mics.json")
     i = 0
     n = 0
