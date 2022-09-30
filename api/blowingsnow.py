@@ -10,6 +10,9 @@ class status:
         "lastLoop": [],
         "blowingSnowChance": 0
     }
+    
+class globals:
+    dataOld = ""
 
 class utils:
     def dataGrabber():
@@ -38,25 +41,32 @@ def audio(dataList, depth):
 
 def main():
     while True:
-        data = pytools.net.getTextAPI('https://www.snow-forecast.com/resorts/Ski-Martock/6day/bot')
+        n = True
         try:
-            depth = float(data.split("Fresh snowfall depth:")[1].split(" ")[1])
+            data = pytools.net.getTextAPI('https://www.snow-forecast.com/resorts/Ski-Martock/6day/bot')
         except:
-            depth = 0
-        try:
-            dataList = utils.dataGrabber()
-        except:
-            dataList = [[3.49, 7.79, 10000.0, 0, 'clouds', 4.0, 1027.0, 7.360000000000014, 99.0], [0, 0, 1027.0, 7.360000000000014, 99.0], 'set temp=280\n    set tempc=7\n    set windspeed=3\n    set windgust=7\n    set pressure=1027\n    set humidity=99\n    set weather=clouds\n    set modifier=4', 7]
-        if dataList[0][7] < 5:
-            chance = (5 - (dataList[0][7])) * (5 - (dataList[0][7])) * (5 - (dataList[0][7])) * (5 - (dataList[0][7])) * (float(depth) + 1)
-        else:
-            chance = 0
-        status.vars['blowingSnowChance'] = chance
-        print("Blowing Snow Chance: " + str(chance))
-        if dataList[0][4].find("snow") != -1:
-            audio(dataList, depth)
-        if (random.random() * 32768) <= chance:
-            audio(dataList, depth)
+            data = globals.dataOld
+            n = False
+        globals.dataOld = data
+        if n:
+            try:
+                depth = float(data.split("Fresh snowfall depth:")[1].split(" ")[1])
+            except:
+                depth = 0
+            try:
+                dataList = utils.dataGrabber()
+            except:
+                dataList = [[3.49, 7.79, 10000.0, 0, 'clouds', 4.0, 1027.0, 7.360000000000014, 99.0], [0, 0, 1027.0, 7.360000000000014, 99.0], 'set temp=280\n    set tempc=7\n    set windspeed=3\n    set windgust=7\n    set pressure=1027\n    set humidity=99\n    set weather=clouds\n    set modifier=4', 7]
+            if dataList[0][7] < 5:
+                chance = (5 - (dataList[0][7])) * (5 - (dataList[0][7])) * (5 - (dataList[0][7])) * (5 - (dataList[0][7])) * (float(depth) + 1)
+            else:
+                chance = 0
+            status.vars['blowingSnowChance'] = chance
+            print("Blowing Snow Chance: " + str(chance))
+            if dataList[0][4].find("snow") != -1:
+                audio(dataList, depth)
+            if (random.random() * 32768) <= chance:
+                audio(dataList, depth)
         time.sleep(194)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True

@@ -13,6 +13,9 @@ class globals:
     urlBase = 'http://api.openweathermap.org/data/2.5/weather?lat=44.905463&lon=-63.483926&appid='
     urlFast = 'http://gsweathermore.ddns.net:226/access.php?key=56c15c7d00df42d8815c7d00df42d8ab'
     urlSuperFast = 'http://gsweathermore.ddns.net:226/currentdata.json'
+    dataBaseOld = [0.0, 0.0, 15000, 0.0, 'clear', 0, 1000.0, 15.0, 50.0]
+    dataFastOld = [0, 0, 1000.0, 15, 50, 0]
+    dataSuperOld = [15, 50, 1000.0, 0, 0, 0]
 
 class grabber:
     def getBaseData(url):
@@ -20,7 +23,11 @@ class grabber:
             print(str(pytools.clock.getDateTime()) + ' ::: Getting Base Data...')
             # url: http://api.openweathermap.org/data/2.5/weather?lat=44.7659964&lon=-63.6850686&appid=<apiKey>
             url = url + status.apiKey
-            data = pytools.net.getJsonAPI(url)
+            try:
+                data = pytools.net.getJsonAPI(url)
+            except:
+                data = globals.dataBaseOld
+            globals.dataBaseOld = data
             # [windspeeds, windgusts, visibility, snow, weather, modifier]
             r = 0
             condf = 0
@@ -101,7 +108,11 @@ class grabber:
         try:
             print(str(pytools.clock.getDateTime()) + ' ::: Getting Fast Data...')
             # url: https://api.weather.com/v2/pws/observations/current?stationId=INOVASCO146&format=json&units=s&apiKey=<apiKey>
-            data = pytools.net.getJsonAPI(url)['data']
+            try:
+                data = pytools.net.getJsonAPI(url)['data']
+            except:
+                data = globals.dataFastOld
+            globals.dataFastOld = data
             # [rainRate, rainTotal, pressure, temp, humidity, lightningDanger]
             rainRate = data['main']['observations'][0]['metric_si']['precipRate']
             rainTotal = data['main']['observations'][0]['metric_si']['precipTotal']
@@ -116,7 +127,11 @@ class grabber:
             return False
 
     def getSuperFastData(url):
-        data = pytools.net.getJsonAPI(url)
+        try:
+            data = pytools.net.getJsonAPI(url)
+        except:
+            data = globals.dataSuperOld
+        globals.dataSuperOld = data
         try:
             rainRate = float(data['rainHour'])
         except:

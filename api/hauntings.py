@@ -731,10 +731,18 @@ class ghost:
         if self.prop["type"] == type.demon:
             self.ai.demon(self, dateArray)
             
+def dummy(var):
+    pass
+            
             
 def main():
     floorplan.loadLevel(0)
-    ghostsf = pytools.IO.getJson("ghosts.json")
+    try:
+        ghostsf = pytools.IO.getJson("ghosts.json")
+        dummy(ghostsf["list"])
+    except:
+        ghostsf = {{"list": [{"name": "Mr. Penis", "type": 4, "details": {"activity": [10, 10, 9, 4, 1, 0, 10, 10, 2, 8, 10, 10], "hatrid": 0, "love": 10, "voice": [1.4441737328663464, 8.776564559683385, 0.07029592593583422], "memmories": [[[0, 0, 0, 0, 0, 0], [120, 140]]], "completedMemmories": {}}}]}}
+        pytools.IO.saveJson(".\\ghosts.json", ghostsf)
     for n in ghostsf["list"]:
         if n["type"] != 4:
             haunts.register(n)

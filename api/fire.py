@@ -9,30 +9,6 @@ class status:
     vars = {
         "lastLoop": []
     }
-
-def getFile(path):
-    error = 0
-    try:
-        file = open(path, "r")
-        jsonData = file.read()
-        file.close()
-    except:
-        print("Unexpected error:", sys.exc_info())
-        error = 1
-    if error != 0:
-        jsonData = error
-    return jsonData
-
-def saveFile(path, jsonData):
-    error = 0
-    try:
-        file = open(path, "w")
-        file.write(jsonData)
-        file.close()
-    except:
-        print("Unexpected error:", sys.exc_info())
-        error = 1
-    return error
     
 def getTemp():
     temp = pytools.IO.getList("dataList.pyl")[1][0][7] + 273
@@ -67,14 +43,6 @@ def playFireiLog():
     pytools.sound.main.playSound('fire_ilog.mp3', 1, 10, 1, 0, 0)
     pytools.sound.main.playSound('fire_ilog.mp3', 5, 100, 1, -100, 0)
     # os.system('cmd.exe /c start /b  "" /d ".\\sound\\fire" ..\\..\\fireplace.exe fire_ilog.vbs & start /b /d ".\\lighting\\fire" "" ..\\..\\light.exe fire_ilog_light.vbs')
-
-def playFireStartNew():
-    pytools.sound.main.playSound('fire_start_new.mp3', 1, 60, 1, 0, 0)
-    pytools.sound.main.playSound('fire_start_new_light.mp3', 5, 100, 1, -100, 0)
-    
-def playFireCont():
-    pytools.sound.main.playSound('fire_cont.mp3', 1, 60, 1, 0, 0)
-    pytools.sound.main.playSound('fire_cont_light.mp3', 5, 100, 1, -100, 0)
 
 def playGetLogs():
     if testWindow() == 1:
@@ -133,20 +101,6 @@ def main():
             time.sleep()
         time.sleep(10)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
-
-def mainNew():
-    while True:
-        fireCond = testforCond()
-        if fireCond == 1:
-            playFireStartNew()
-            time.sleep(2500)
-            while fireCond == 1:
-                playFireCont()
-                time.sleep(4720)
-                fireCond = testforCond()
-        time.sleep(10)
-        status.vars['lastLoop'] = pytools.clock.getDateTime()
-        status.finishedLoop = True
 
 def run():
     main()

@@ -32,6 +32,7 @@ def main():
                 error = 0
             except:
                 error = 1
+                no = 1
         temp = data[0][7]
         no = 0
         if temp >= 2:

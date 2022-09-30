@@ -19,7 +19,10 @@ def main():
             dayTimes = pytools.IO.getList("dayTimes.pyl")[1]
         except:
             dayTimes = [[2022, 10, 21, 6, 0, 22], [2022, 10, 21, 6, 34, 14], [2022, 10, 21, 7, 8, 19], [2022, 10, 21, 7, 36, 33], [2022, 10, 21, 12, 59, 1], [2022, 10, 21, 18, 21, 28], [2022, 10, 21, 18, 49, 43], [2022, 10, 21, 19, 23, 47], [2022, 10, 21, 19, 57, 39]]
-        texts = pytools.net.getTextAPI("https://www.weather.gc.ca/warnings/report_e.html?ns1").split(" Access city")[1].split("Weather shortcuts")[0].split("\n")
+        try:
+            texts = pytools.net.getTextAPI("https://www.weather.gc.ca/warnings/report_e.html?ns1").split(" Access city")[1].split("Weather shortcuts")[0].split("\n")
+        except:
+            texts = globals.textsf
         out = True
         for n in texts:
             if n.find("No Alerts in effect") != -1:
