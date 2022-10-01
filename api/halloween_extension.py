@@ -10,7 +10,16 @@ class status:
     finishedLoop = False
     vars = {
         "lastLoop": [],
-        "horrorIndex": 0
+        "horrorIndex": 0,
+        "horrorStats": {
+            "ghostsChance-0": 0,
+            "ghostsChance-1": 0,
+            "ghostsChance-2": 0,
+            "draftChance": 0,
+            "breathChance": 0,
+            "moodChance": 0,
+            "knockChance": 0
+        }
     }
 
 def getFile(path):
@@ -305,6 +314,14 @@ def main():
             if breathChance < 0:
                 breathChance = 0
             horrorIndex = ghostsChance[0] + ghostsChance[1] + ghostsChance[2] + draftChance + breathChance + moodChance + knockChance
+            status.vars["horrorStats"]["ghostsChance-0"] = ghostsChance[0]
+            status.vars["horrorStats"]["ghostsChance-1"] = ghostsChance[1]
+            status.vars["horrorStats"]["ghostsChance-2"] = ghostsChance[2]
+            status.vars["horrorStats"]["draftChance"] = draftChance
+            status.vars["horrorStats"]["breathChance"] = breathChance
+            status.vars["horrorStats"]["moodChance"] = moodChance
+            status.vars["horrorStats"]["knockChance"] = knockChance
+            
             if (dateArray[5] % 2) == 0:
                 if pHorr == False:
                     print("Current Horror Index: " + str(horrorIndex))
