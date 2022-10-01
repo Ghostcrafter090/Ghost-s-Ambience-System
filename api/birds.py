@@ -171,13 +171,13 @@ def main():
                                 activity = activity / ((horrorIndex / 10) + 1)
                     elif horrorIndex < 0:
                         if bird.find("crow") == -1:
-                            horrf = ((-1 * horrorIndex) / 100)
+                            horrf = activity / ((math.fabs(horrorIndex) / 20) + 1)
                             if horrf > 1:
-                                activity = activity * horrf
+                                activity = activity / ((math.fabs(horrorIndex) / 100) + 1)
                         if bird.find("raven") == -1:
-                            horrf = ((-1 * horrorIndex) / 100)
+                            horrf = activity / ((math.fabs(horrorIndex) / 100) + 1)
                             if horrf > 1:
-                                activity = activity * horrf
+                                activity = activity / ((math.fabs(horrorIndex) / 100) + 1)
             except:
                 pass
             if dayTimesUTC[6] < pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()):
