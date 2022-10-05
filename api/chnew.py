@@ -52,21 +52,29 @@ def getDateTime():
     
 def playSound(path, speaker, volume, speed, balence, waitBool):
     if speaker == 0:
-        speakern = "clock.exe"
+        speakern = ["clock.exe"]
     elif speaker == 1:
-        speakern = "fireplace.exe"
+        speakern = ["fireplace.exe"]
     elif speaker == 2:
-        speakern = "window.exe"
+        speakern = ["window.exe"]
     elif speaker == 3:
-        speakern = "outside.exe"
+        speakern = ["outside.exe"]
     else:
-        speakern = "windown.exe"
+        speakern = ["windown.exe"]
     if waitBool == 0:
-        os.system('cmd.exe /c start /b "" ' + speakern + ' runaudio.vbs ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
-        print("Playing sound " + path + " on speaker " + speakern + " with volume " + str(volume) + " with speed of " + str(speed) + " with balence of " + str(balence) + "...")
+        for n in speakern:
+            os.system('cmd.exe /c start /b "" ' + n + ' runaudio.vbs ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
+            print("Playing sound " + path + " on speaker " + n + " with volume " + str(volume) + " with speed of " + str(speed) + " with balence of " + str(balence) + "...")
     else:
-        os.system('cmd.exe /c start /b /wait "" ' + speakern + ' runaudio.vbs ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
-        print("Playing sound " + path + " on speaker " + speakern + " with volume " + str(volume) + " with speed of " + str(speed) + " with balence of " + str(balence) + ". Waiting...")
+        i = 0
+        while i < len(speakern):
+            if i == (len(speakern) - 1):
+                os.system('cmd.exe /c start /b /wait "" ' + speakern[i] + ' runaudio.vbs ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
+                print("Playing sound " + path + " on speaker " + speakern[i] + " with volume " + str(volume) + " with speed of " + str(speed) + " with balence of " + str(balence) + ". Waiting...")
+            else:
+                os.system('cmd.exe /c start /b "" ' + speakern[i] + ' runaudio.vbs ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
+                print("Playing sound " + path + " on speaker " + speakern[i] + " with volume " + str(volume) + " with speed of " + str(speed) + " with balence of " + str(balence) + ". Waiting...")
+            i = i + 1
 
 def dayTic(dateArray):
     tic = (dateArray[3] * 60 * 60) + (dateArray[4] * 60) + dateArray[5]

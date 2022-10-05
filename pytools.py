@@ -265,6 +265,7 @@ class sound:
                         os.system('cmd.exe /c start /b /wait "" ' + speakern[i] + ' ' + execPath + ' ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
                     else:
                         os.system('cmd.exe /c start /wait "" ' + speakern[i] + ' ' + execPath + ' ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
+                    i = i + 1
 class winAPI:
     def getWallpaper():
         sbuf = ctypes.create_string_buffer(512) # ctypes.c_buffer(512)
