@@ -222,9 +222,9 @@ class sound:
                 sound.main.playSound(path.split(";")[1], 3,  volumeO, speed, balence, waitBool)
 
         def playSoundAll(path, volume, speed, balence, waitBool, remember=False):
-            sound.main.playSound(path, 0, volume, speed, balence, 0, clock=False)
-            sound.main.playSound(path, 1, volume, speed, balence, 0, clock=False)
-            sound.main.playSound(path, 4, volume, speed, balence, waitBool, remember, clock=False)
+            sound.main.playSound(path, 0, volume, speed, balence, 0)
+            sound.main.playSound(path, 1, volume, speed, balence, 0)
+            sound.main.playSound(path, 4, volume, speed, balence, waitBool, remember)
 
     class player:
         def playSound(path, speaker, volume, speed, balence, waitBool, clock=True):
