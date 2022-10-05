@@ -349,6 +349,7 @@ class system:
             subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im ambience.exe")[0]
             subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im clock.exe")[0]
             subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im fireplace.exe")[0]
+            subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im generic.exe")[0]
             subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im window.exe")[0]
             subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im outside.exe")[0]
             subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "taskkill /f /im windown.exe")[0]
