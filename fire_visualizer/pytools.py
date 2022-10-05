@@ -185,7 +185,7 @@ class sound:
             try:
                 if globals.sound.soundArray[0] == []:
                     globals.sound.initializeSoundArray(200)
-                n = 'sound.player.playSound("' + str(argsArray[0]) + '", ' + str(argsArray[1]) + ', ' + str(argsArray[2]) + ', ' + str(argsArray[3]) + ', ' + str(argsArray[4]) + ', ' + str(argsArray[5]) + ', ' + str(argsArray[6]) + ')'
+                n = 'sound.player.playSound("' + str(argsArray[0]) + '", ' + str(argsArray[1]) + ', ' + str(argsArray[2]) + ', ' + str(argsArray[3]) + ', ' + str(argsArray[4]) + ', ' + str(argsArray[5]) + ')'
                 globals.sound.soundArray[0][globals.sound.soundArray[1]] = threading.Thread(target=sound.handler.sn, args=n)
                 globals.sound.soundArray[0][globals.sound.soundArray[1]].start()
                 globals.sound.soundArray[0][globals.sound.soundArray[1]].join()
@@ -204,9 +204,9 @@ class sound:
             exit()
 
     class main:
-        def playSound(path, speaker, volume, speed, balence, waitBool, remember=False, clock=True):
+        def playSound(path, speaker, volume, speed, balence, waitBool, remember=False):
             if (os.path.exists(".\\remember.derp") == False) or remember:
-                sound.handler.handle([path, speaker, volume, speed, balence, waitBool, clock])
+                sound.handler.handle([path, speaker, volume, speed, balence, waitBool])
 
         def playSoundWindow(path, volume, speed, balence, waitBool):
             if str(volume)[0] == "[":
@@ -222,47 +222,39 @@ class sound:
                 sound.main.playSound(path.split(";")[1], 3,  volumeO, speed, balence, waitBool)
 
         def playSoundAll(path, volume, speed, balence, waitBool, remember=False):
-            sound.main.playSound(path, 0, volume, speed, balence, 0, clock=False)
-            sound.main.playSound(path, 1, volume, speed, balence, 0, clock=False)
-            sound.main.playSound(path, 4, volume, speed, balence, waitBool, remember, clock=False)
+            sound.main.playSound(path, 0, volume, speed, balence, 0)
+            sound.main.playSound(path, 1, volume, speed, balence, 0)
+            sound.main.playSound(path, 4, volume, speed, balence, waitBool, remember)
 
     class player:
-        def playSound(path, speaker, volume, speed, balence, waitBool, clock=True):
+        def playSound(path, speaker, volume, speed, balence, waitBool):
             if speaker == 0:
-                if clock:
-                    speakern = ["clock.exe", "generic.exe"]
-                else:
-                    speakern = ["clock.exe"]
+                speakern = "clock.exe"
             elif speaker == 1:
-                speakern = ["fireplace.exe"]
+                speakern = "fireplace.exe"
             elif speaker == 2:
-                speakern = ["window.exe"]
+                speakern = "window.exe"
             elif speaker == 3:
-                speakern = ["outside.exe"]
+                speakern = "outside.exe"
             elif speaker == 5:
-                speakern = ["light.exe"]
+                speakern = "light.exe"
             else:
-                speakern = ["windown.exe"]
+                speakern = "windown.exe"
             if sound.globals.bypass != 1:
                 execPath = 'runaudio.vbs'
             else:
                 execPath = 'bypassRunAudio.vbs'
             if waitBool == 0:
-                for n in speakern:
-                    os.system('cmd.exe /c start /b "" ' + n + ' ' + execPath + ' ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
-                    if sound.globals.bypass == 1:
-                        print("WARNING: Audio State Bypass Enabled.")
-                    print("Playing sound " + path + " on speaker " + n + " with volume " + str(volume) + " with speed of " + str(speed) + " with balence of " + str(balence) + "...")
+                os.system('cmd.exe /c start /b "" ' + speakern + ' ' + execPath + ' ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
+                if sound.globals.bypass == 1:
+                    print("WARNING: Audio State Bypass Enabled.")
+                print("Playing sound " + path + " on speaker " + speakern + " with volume " + str(volume) + " with speed of " + str(speed) + " with balence of " + str(balence) + "...")
             else:
-                i = 0
-                while i < len(speakern):
-                    if sound.globals.bypass == 1:
-                        print("WARNING: Audio State Bypass Enabled.")
-                    print("Playing sound " + path + " on speaker " + speakern[i] + " with volume " + str(volume) + " with speed of " + str(speed) + " with balence of " + str(balence) + ". Waiting...")
-                    if i == (len(speakern) - 1):
-                        os.system('cmd.exe /c start /b /wait "" ' + speakern[i] + ' ' + execPath + ' ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
-                    else:
-                        os.system('cmd.exe /c start /wait "" ' + speakern[i] + ' ' + execPath + ' ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
+                if sound.globals.bypass == 1:
+                    print("WARNING: Audio State Bypass Enabled.")
+                print("Playing sound " + path + " on speaker " + speakern + " with volume " + str(volume) + " with speed of " + str(speed) + " with balence of " + str(balence) + ". Waiting...")
+                os.system('cmd.exe /c start /b /wait "" ' + speakern + ' ' + execPath + ' ' + path + ' ' + str(volume) + ' ' + str(balence) + ' ' + str(speed) + ' ' + path.split(".")[0])
+
 class winAPI:
     def getWallpaper():
         sbuf = ctypes.create_string_buffer(512) # ctypes.c_buffer(512)

@@ -190,10 +190,10 @@ def main():
             # print("Bird " + bird + " activity is registering at " + str(int(math.floor(activity * 100))) + "%" + " " + str(monthActivity) + " " + str(dayActivity))
             if random.random() < activity:
                 if utils.testWindow():
-                    pytools.sound.main.playSound(birds[bird]["sounds"][int(math.floor(random.random() * len(birds[bird]["sounds"])))], 6, (((activity / 5) * 10)) * random.random() * tools.isWater(bird) * tools.tempDiff(birds[bird], dataArray) * tools.isRaven(bird) * tools.isCrow(bird), 1, 0, 0)
+                    pytools.sound.main.playSound(birds[bird]["sounds"][int(math.floor(random.random() * len(birds[bird]["sounds"])))], 6, (((activity / 15) * 10)) * random.random() * tools.isWater(bird) * tools.tempDiff(birds[bird], dataArray) * tools.isRaven(bird) * tools.isCrow(bird), 1, 0, 0)
                 else:
-                    pytools.sound.main.playSound(birds[bird]["sounds"][int(math.floor(random.random() * len(birds[bird]["sounds"])))], 2, (((activity / 5) * 10)) * random.random() * tools.isWater(bird) * tools.isRaven(bird) * tools.tempDiff(birds[bird], dataArray) * tools.isCrow(bird), 1, 0, 0)
-                    pytools.sound.main.playSound(birds[bird]["sounds"][int(math.floor(random.random() * len(birds[bird]["sounds"])))], 3, (((activity / 5) / 16) * 10) * random.random() * tools.isWater(bird) * tools.isRaven(bird) * tools.tempDiff(birds[bird], dataArray) * tools.isCrow(bird), 1, 0, 0)
+                    pytools.sound.main.playSound(birds[bird]["sounds"][int(math.floor(random.random() * len(birds[bird]["sounds"])))], 2, (((activity / 15) * 10)) * random.random() * tools.isWater(bird) * tools.isRaven(bird) * tools.tempDiff(birds[bird], dataArray) * tools.isCrow(bird), 1, 0, 0)
+                    pytools.sound.main.playSound(birds[bird]["sounds"][int(math.floor(random.random() * len(birds[bird]["sounds"])))], 3, (((activity / 15) / 16) * 10) * random.random() * tools.isWater(bird) * tools.isRaven(bird) * tools.tempDiff(birds[bird], dataArray) * tools.isCrow(bird), 1, 0, 0)
             time.sleep(0.1)
             status.vars["lastLoop"] = pytools.clock.getDateTime()
 def run():

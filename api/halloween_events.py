@@ -35,23 +35,23 @@ def main():
         if halloweenMode:
             if dateArray[3] == dayTimes[5][3]:
                 if dateArray[4] == dayTimes[5][4]:
-                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100, 1.0, 0.0, 0)
+                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100 / ((((((32 - dateArray[2]) * 24 * 60) + ((24 - dateArray[3]) * 60) + (60 - dateArray[4])) / (24 * 60)) / 6) + (1 - 0.17372685185185185)), 1.0, 0.0, 0)
                     time.sleep(60)
             if dateArray[3] == cestj:
                 if dateArray[4] == dayTimes[5][4]:
-                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100, 1.0, 0.0, 0)
+                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100 / ((((((32 - dateArray[2]) * 24 * 60) + ((24 - dateArray[3]) * 60) + (60 - dateArray[4])) / (24 * 60)) / 6) + (1 - 0.17372685185185185)), 1.0, 0.0, 0)
                     time.sleep(60)
             if dateArray[3] == dayTimes[6][3]:
                 if dateArray[4] == dayTimes[6][4]:
-                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100, 1.0, 0.0, 0)
+                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100 / ((((((32 - dateArray[2]) * 24 * 60) + ((24 - dateArray[3]) * 60) + (60 - dateArray[4])) / (24 * 60)) / 6) + (1 - 0.17372685185185185)), 1.0, 0.0, 0)
                     time.sleep(60)
             if dateArray[3] == dayTimes[7][3]:
                 if dateArray[4] == dayTimes[7][4]:
-                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100, 1.0, 0.0, 0)
+                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100 / ((((((32 - dateArray[2]) * 24 * 60) + ((24 - dateArray[3]) * 60) + (60 - dateArray[4])) / (24 * 60)) / 6) + (1 - 0.17372685185185185)), 1.0, 0.0, 0)
                     time.sleep(60)
             if dateArray[3] == dayTimes[8][3]:
                 if dateArray[4] == dayTimes[8][4]:
-                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100, 1.0, 0.0, 0)
+                    pytools.sound.main.playSoundAll("darkrumble.mp3", 100 / ((((((32 - dateArray[2]) * 24 * 60) + ((24 - dateArray[3]) * 60) + (60 - dateArray[4])) / (24 * 60)) / 6) + (1 - 0.17372685185185185)), 1.0, 0.0, 0)
                     time.sleep(60)
             if dateArray[2] == 31:
                 if dateArray[3] == 23:
