@@ -185,7 +185,7 @@ class sound:
             try:
                 if globals.sound.soundArray[0] == []:
                     globals.sound.initializeSoundArray(200)
-                n = 'sound.player.playSound("' + str(argsArray[0]) + '", ' + str(argsArray[1]) + ', ' + str(argsArray[2]) + ', ' + str(argsArray[3]) + ', ' + str(argsArray[4]) + ', ' + str(argsArray[5]) + ', ' + str(argsArray[6]) + ')'
+                n = 'sound.player.playSound("' + str(argsArray[0]) + '", ' + str(argsArray[1]) + ', ' + str(argsArray[2]) + ', ' + str(argsArray[3]) + ', ' + str(argsArray[4]) + ', ' + str(argsArray[5]) + ', clock=' + str(argsArray[6]) + ')'
                 globals.sound.soundArray[0][globals.sound.soundArray[1]] = threading.Thread(target=sound.handler.sn, args=n)
                 globals.sound.soundArray[0][globals.sound.soundArray[1]].start()
                 globals.sound.soundArray[0][globals.sound.soundArray[1]].join()
