@@ -241,6 +241,8 @@ class sound:
                 speakern = ["outside.exe"]
             elif speaker == 5:
                 speakern = ["light.exe"]
+            elif speaker == 7:
+                speakern = ["generic.exe"]
             else:
                 speakern = ["windown.exe"]
             if sound.globals.bypass != 1:

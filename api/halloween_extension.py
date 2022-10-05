@@ -76,9 +76,7 @@ def closetomidTest(dateArray, hour, day, minute, noA):
         if dateArray[2] > day:
             if dateArray[4] == minute:
                 if noA != 1:
-                    playSound('closetomidnight.mp3', 0, 40, 1, 0, 0)
-                    playSound('closetomidnight.mp3', 1, 40, 1, 0, 0)
-                    playSound('closetomidnight.mp3', 2, 40, 1, 0, 0)
+                    pytools.sound.main.playSoundAll('closetomidnight.mp3', 40, 1, 0, 0)
                     noA = 1
             else:
                 noA = 0
@@ -103,14 +101,20 @@ def testGhosts(hourZ, minZ, dateArray):
                     deathGhostChance = (dateArray[3] - (int(hourZ))) * dateArray[4]
                     deathGhostChance = deathGhostChance / (32 - dateArray[2])
                 if random.randrange(0, 500000000) < deathGhostChance:
-                    playSound('death_ghost_' + str(random.randrange(0, 2)) + ".mp3", random.randrange(0, 3), 40, 1, 0, 0)
+                    ghSpeaker = 5
+                    while ghSpeaker == 5:
+                        ghSpeaker = random.randrange(0, 8)
+                    pytools.sound.main.playSound('death_ghost_' + str(random.randrange(0, 2)) + ".mp3", ghSpeaker, 40, 1, 0, 0)
         elif dateArray[3] > hourZ:
             deathGhostChance = 0
             if dateArray[3] < (24):
                 deathGhostChance = (dateArray[3] - (int(hourZ))) * dateArray[4]
                 deathGhostChance = deathGhostChance / (32 - dateArray[2])
             if random.randrange(0, 500000000) < deathGhostChance:
-                playSound('death_ghost_' + str(random.randrange(0, 2)) + ".mp3", random.randrange(0, 3), 40, 1, 0, 0)
+                ghSpeaker = 5
+                while ghSpeaker == 5:
+                    ghSpeaker = random.randrange(0, 8)
+                pytools.sound.main.playSound('death_ghost_' + str(random.randrange(0, 2)) + ".mp3", ghSpeaker, 40, 1, 0, 0)
     if dateArray[2] > 19:
         if dateArray[3] >= hourZ:
             if dateArray[4] >= minZ:
@@ -119,14 +123,20 @@ def testGhosts(hourZ, minZ, dateArray):
                     dyingGhostChance = (dateArray[3] - (int(hourZ))) * dateArray[4]
                     dyingGhostChance = dyingGhostChance / (32 - dateArray[2])
                 if random.randrange(0, 500000000) < dyingGhostChance:
-                    playSound('dying_ghost_' + str(random.randrange(0, 3)) + ".mp3", random.randrange(0, 3), 40, 1, 0, 0)
+                    ghSpeaker = 5
+                    while ghSpeaker == 5:
+                        ghSpeaker = random.randrange(0, 8)
+                    pytools.sound.main.playSound('dying_ghost_' + str(random.randrange(0, 3)) + ".mp3", ghSpeaker, 40, 1, 0, 0)
         elif dateArray[3] > hourZ:
             dyingGhostChance = 0
             if dateArray[3] < (24):
                 dyingGhostChance = (dateArray[3] - (int(hourZ))) * dateArray[4]
                 dyingGhostChance = dyingGhostChance / (32 - dateArray[2])
             if random.randrange(0, 500000000) < dyingGhostChance:
-                playSound('dying_ghost_' + str(random.randrange(0, 3)) + ".mp3", random.randrange(0, 3), 40, 1, 0, 0)
+                ghSpeaker = 5
+                while ghSpeaker == 5:
+                    ghSpeaker = random.randrange(0, 8)
+                pytools.sound.main.playSound('dying_ghost_' + str(random.randrange(0, 3)) + ".mp3", ghSpeaker, 40, 1, 0, 0)
     if dateArray[2] > 9:
         if dateArray[3] >= hourZ:
             if dateArray[4] >= minZ:
@@ -135,14 +145,20 @@ def testGhosts(hourZ, minZ, dateArray):
                     ghostChance = (dateArray[3] - (int(hourZ))) * dateArray[4]
                     ghostChance = ghostChance / (32 - dateArray[2])
                 if random.randrange(0, 500000000) < ghostChance:
-                    playSound('ghost_' + str(random.randrange(0, 2)) + ".mp3", random.randrange(0, 3), 40, 1, 0, 0)
+                    ghSpeaker = 5
+                    while ghSpeaker == 5:
+                        ghSpeaker = random.randrange(0, 8)
+                    pytools.sound.main.playSound('ghost_' + str(random.randrange(0, 2)) + ".mp3", ghSpeaker, 40, 1, 0, 0)
         elif dateArray[3] > hourZ:
             ghostChance = 0
             if dateArray[3] < (24):
                 ghostChance = (dateArray[3] - (int(hourZ))) * dateArray[4]
                 ghostChance = ghostChance / (32 - dateArray[2])
             if random.randrange(0, 500000000) < ghostChance:
-                playSound('ghost_' + str(random.randrange(0, 2)) + ".mp3", random.randrange(0, 3), 40, 1, 0, 0)
+                ghSpeaker = 5
+                while ghSpeaker == 5:
+                    ghSpeaker = random.randrange(0, 8)
+                pytools.sound.main.playSound('ghost_' + str(random.randrange(0, 2)) + ".mp3", ghSpeaker, 40, 1, 0, 0)
     return [deathGhostChance, dyingGhostChance, ghostChance]
 
 def main():
@@ -200,14 +216,20 @@ def main():
             if dateArray[3] < (int(sunJson['csth'])):
                 draftChance = ((int(sunJson['csth'])) - dateArray[3]) * dateArray[4]
             if random.randrange(0, 100000000) < draftChance:
-                playSound('draft_' + str(random.randrange(0, 3)) + ".mp3", random.randrange(0, 3), 40, 1, 0, 0)
+                ghSpeaker = 5
+                while ghSpeaker == 5:
+                    ghSpeaker = random.randrange(0, 8)
+                pytools.sound.main.playSound('draft_' + str(random.randrange(0, 3)) + ".mp3", ghSpeaker, 40, 1, 0, 0)
             
             breathChance = 0
             if dateArray[3] < (int(sunJson['csth'])):
                 breathChance = ((int(sunJson['csth'])) - dateArray[3]) * dateArray[4]
             breathChance = breathChance / (32 - dateArray[2])
             if random.randrange(0, 100000000) < breathChance:
-                playSound('h_breath_' + str(random.randrange(0, 4)) + ".mp3", random.randrange(0, 3), 40, 1, 0, 0)
+                ghSpeaker = 5
+                while ghSpeaker == 5:
+                    ghSpeaker = random.randrange(0, 8)
+                pytools.sound.main.playSound('h_breath_' + str(random.randrange(0, 4)) + ".mp3", ghSpeaker, 40, 1, 0, 0)
             
             moodChance = 0
             if os.path.isfile('halloweenmode.derp') == True:
@@ -243,9 +265,7 @@ def main():
                     elif hGeneralSpeedModifier < 0:
                         hGeneralSpeedModifier = 0
                     hGeneralSpeedModifier = hGeneralSpeedModifier * (monthC / (monthE - monthS))
-                    playSound('h_general.mp3', 0, hGeneralVol, 1 - hGeneralSpeedModifier, 0, 0)
-                    playSound('h_general.mp3', 1, hGeneralVol, 1 - hGeneralSpeedModifier, 0, 0)
-                    playSound('h_general.mp3', 2, hGeneralVol, 1 - hGeneralSpeedModifier, 0, 0)
+                    pytools.sound.main.playSoundAll('h_general.mp3', hGeneralVol, 1 - hGeneralSpeedModifier, 0, 0)
                     prevMin = dateArray[4]
                 moodChance = 0
                 if dateArray[3] < 24:
@@ -253,25 +273,24 @@ def main():
                 if dateArray[3] < (int(sunJson['csth'])):
                     moodChance = ((int(sunJson['csth'])) - dateArray[3]) * dateArray[4]
                 if random.randrange(0, 100000000) < moodChance:
-                    playSound('h_general_mood.mp3', 0, 40, 1, 0, 0)
-                    playSound('h_general_mood.mp3', 1, 40, 1, 0, 0)
-                    playSound('h_general_mood.mp3', 2, 40, 1, 0, 0)
+                    pytools.sound.main.playSoundAll('h_general_mood.mp3', 40, 1, 0, 0)
                     
             knockChance = 0
             if dateArray[3] < 24:
                 knockChance = (dateArray[3] - (int(sunJson['cesth']))) * dateArray[4]
             knockChance = knockChance / (32 - dateArray[2])
             if random.randrange(0, 60000000) < knockChance:
-                playSound('h_knock_' + str(random.randrange(0, 6)) + ".mp3", random.randrange(0, 3), 40, 1, 0, 0)
+                ghSpeaker = 5
+                while ghSpeaker == 5:
+                    ghSpeaker = random.randrange(0, 8)
+                pytools.sound.main.playSound('h_knock_' + str(random.randrange(0, 6)) + ".mp3", ghSpeaker, 40, 1, 0, 0)
                 
             if dateArray[2] > 19:
                 if dateArray[4] == 35:
                     if noE != 1:
                         if random.randrange(dateArray[3], 24) == 23:
                             rumbleNum = random.randrange(0, 2)
-                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 0, 40, 1, 0, 0)
-                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 1, 40, 1, 0, 0)
-                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 2, 40, 1, 0, 0)
+                            pytools.sound.main.playSoundAll('h_rumble_' + str(rumbleNum) + '.mp3', 40, 1, 0, 0)
                         noE = 1
                 else:
                     noE = 0
@@ -283,17 +302,13 @@ def main():
                     if noF != 1:
                         if random.randrange(dateArray[3], 24) == 23:
                             rumbleNum = random.randrange(0, 2)
-                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 0, 40, 1, 0, 0)
-                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 1, 40, 1, 0, 0)
-                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 2, 40, 1, 0, 0)
+                            pytools.sound.main.playSoundAll('h_rumble_' + str(rumbleNum) + '.mp3', 40, 1, 0, 0)
                         noF = 1
                 elif dateArray[4] == 40:
                     if noF != 1:
                         if random.randrange(dateArray[3], 24) == 23:
                             rumbleNum = random.randrange(0, 2)
-                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 0, 40, 1, 0, 0)
-                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 1, 40, 1, 0, 0)
-                            playSound('h_rumble_' + str(rumbleNum) + '.mp3', 2, 40, 1, 0, 0)
+                            pytools.sound.main.playSoundAll('h_rumble_' + str(rumbleNum) + '.mp3', 40, 1, 0, 0)
                         noF = 1
                 else:
                     noF = 0
@@ -304,7 +319,7 @@ def main():
                 if dateArray[4] == int(sunJson['cestm']):
                     if noG != 1:
                         if random.randrange(dateArray[2], 32) == 31:
-                            playSound('h_sunset.mp3', 2, 40, 1, 0, 0)
+                            pytools.sound.main.playSoundWindow('h_sunset.mp3;h_sunset.mp3', [40, 80], 1, 0, 0)
                         noG = 1
                 else:
                     noG = 0
