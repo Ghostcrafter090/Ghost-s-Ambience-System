@@ -97,7 +97,7 @@ class background:
             whisperChance = background.whispers.calc(dateArray, dayTimes)
             if random.randint(0, 100) < whisperChance:
                 ghSpeaker = 5
-                while ghSpeaker != 5:
+                while ghSpeaker == 5:
                     ghSpeaker = random.randint(0, 8)
                 min = int(math.floor(25 + (whisperChance / 4)))
                 max = int(math.floor(60 + (whisperChance / 2.5)))
@@ -106,11 +106,11 @@ class background:
                 if min > 100:
                     min = 100
                 if max < 0:
-                    max = 100
+                    max = 0
                 if max > 100:
                     max = 100
                 pytools.sound.main.playSound("whispering.mp3", ghSpeaker, random.randint(min, max), (random.random() / 3) + 0.6 + 0.15, 0, 0)
-
+                
     def death_wind(dateArray, dayTimes):
         dateArray[2] = dateArray[2] + 1
         start = pytools.clock.dateArrayToUTC(pytools.clock.solveForDialation([0, 0, 0, 0, -11, 0], dayTimes[5]))

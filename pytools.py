@@ -25,6 +25,7 @@ from ctypes import *
 import zipfile
 import shutil
 import pickle
+import xmltodict
 
 class globals:
     class sound:
@@ -66,6 +67,12 @@ class IO:
         if error != 0:
             jsonData = error
         return jsonData
+    
+    def getXml(path, doPrint=True):
+        return xmltodict.parse(IO.getFile(path, doPrint=doPrint))
+    
+    def saveXml(path, doPrint=True):
+        pass
 
     def saveJson(path, jsonData):
         error = 0
