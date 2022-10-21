@@ -53,14 +53,15 @@ class system:
         return temp
 
 class IO:
-    def getJson(path):
+    def getJson(path, doPrint=True):
         error = 0
         try:
             file = open(path, "r")
             jsonData = json.loads(file.read())
             file.close()
         except:
-            print("Unexpected error:", sys.exc_info())
+            if doPrint:
+                print("Unexpected error:", sys.exc_info())
             error = 1
         if error != 0:
             jsonData = error
@@ -77,14 +78,15 @@ class IO:
             error = 1
         return error
 
-    def getFile(path):
+    def getFile(path, doPrint=True):
         error = 0
         try:
             file = open(path, "r")
             jsonData = file.read()
             file.close()
         except:
-            print("Unexpected error:", sys.exc_info())
+            if doPrint:
+                print("Unexpected error:", sys.exc_info())
             error = 1
         if error != 0:
             jsonData = error
@@ -127,7 +129,7 @@ class IO:
             error = 1
         return error
 
-    def getList(path):
+    def getList(path, doPrint=True):
         list = []
         error = 0
         try:
@@ -135,7 +137,8 @@ class IO:
             jsonData = pickle.load(file)
             file.close()
         except:
-            print("Unexpected error:", sys.exc_info())
+            if doPrint:
+                print("Unexpected error:", sys.exc_info())
             error = 1
         if error != 0:
             jsonData = error

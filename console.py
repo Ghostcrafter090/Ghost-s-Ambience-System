@@ -85,7 +85,7 @@ class tools:
 class comm:
     def wait(timeout):
         n = 0
-        while (pytools.IO.getJson("serverCommands.json")["execute"] != 0) or (timeout < n):
+        while (pytools.IO.getJson("serverCommands.json", False)["execute"] != 0) or (timeout < n):
             n = n + 1
             time.sleep(0.001)
         if timeout < n:
@@ -213,7 +213,7 @@ class system:
         if flags.remote == False:
             if restart:
                 system.stop()
-            noUpdate = pytools.IO.getJson("noUpdate.json")
+            noUpdate = pytools.IO.getJson("noUpdate.json", False)
             print("reading noUpdate...")
             for n in noUpdate["list"]:
                 fileName = n.split("\\")[-1]
@@ -275,7 +275,7 @@ class system:
         
     def changeCred():
         if os.path.exists("server.json"):
-            cred = pytools.IO.getJson("server.json")
+            cred = pytools.IO.getJson("server.json", False)
         else:
             cred = {
                 "username": "",
@@ -314,10 +314,10 @@ class system:
             i = i + 1
         if bypass == False:
             if os.path.exists("server.json"):
-                cred = pytools.IO.getJson("server.json")
+                cred = pytools.IO.getJson("server.json", False)
             else:
                 system.changeCred()
-                cred = pytools.IO.getJson("server.json")
+                cred = pytools.IO.getJson("server.json", False)
             if cred["username"] == "":
                 if cred["password"] == "":
                     system.changeCred()
@@ -501,7 +501,7 @@ class menu:
                 menu.plugN = 2
                 menu.plugI = 0
                 printColor(40, 0, plugin, "green")
-                json = pytools.IO.getJson(".\\vars\\pluginVarsJson\\" + plugin)
+                json = pytools.IO.getJson(".\\vars\\pluginVarsJson\\" + plugin, False)
                 for key in json:
                     menu.readInfo(json[key], key)
                     menu.plugN = menu.plugN + 1
@@ -517,7 +517,7 @@ class menu:
                         # print(os.listdir())
                         # print(os.listdir(".\\working"))
                         # print(".\\working\\plugin." + plugin + ".run()_errorlog.log")
-                        f = pytools.IO.getFile(".\\working\\plugin." + plugin.split("_keys.json")[0] + ".run()_errorlog.log").split("\n")
+                        f = pytools.IO.getFile(".\\working\\plugin." + plugin.split("_keys.json")[0] + ".run()_errorlog.log", False).split("\n")
                         printColor(40 + menu.plugI, menu.plugN + 3, "", "green")
                         menu.plugN = menu.plugN + 1
                         menu.plugN = menu.plugN + 1
@@ -583,7 +583,7 @@ spaces = "                                                                    "
 
 def getSection():
     dateArray = pytools.clock.getDateTime()
-    dayTimes = pytools.IO.getList(".\\working\\daytimes.pyl")[1]
+    dayTimes = pytools.IO.getList(".\\working\\daytimes.pyl", False)[1]
     phases = ["Daylight Phase", "Uncanny Phase", "Dark Phase", "Evil Phase", "Sinister Phase", "Dying Phase P1", "Dying Phase P2", "Dying Phase P3", "Dying Phase P4", "Death Phase", "Necro Phase", "Reserect Phase", "Safe Phase"]
     if pytools.clock.dateArrayToUTC(dateArray) < pytools.clock.dateArrayToUTC(dayTimes[5]):
         return phases[0]
@@ -591,15 +591,15 @@ def getSection():
         if dateArray[3] > 12:
             if dateArray[3] < 22:
                 try:
-                    if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["death_wind"]["state"] == 0:
+                    if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json", False)["death_wind"]["state"] == 0:
                         return phases[1]
                     else:
                         try:
-                            if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["monsters"]["state"] == 0:
+                            if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json", False)["monsters"]["state"] == 0:
                                 return phases[2]
                             else:
                                 try:
-                                    if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["ghosts"]["state"] == 0:
+                                    if pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json", False)["ghosts"]["state"] == 0:
                                         return phases[3]
                                     else:
                                         return phases[4]
@@ -640,7 +640,7 @@ def main():
         while True:
             try:
                 if os.path.exists(".\\systemLoop.json"):
-                    if (pytools.clock.dateArrayToUTC(pytools.IO.getJson(".\\systemLoop.json")["lastLoop"]) + 5) < (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime())):
+                    if (pytools.clock.dateArrayToUTC(pytools.IO.getJson(".\\systemLoop.json", False)["lastLoop"]) + 5) < (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime())):
                         system.status.active = False
                         subprocess.getstatusoutput("echo {\"loopTime\":[9999, 0, 0, 0, 0, 0]} > \\\\" + tools.getRemote() + "\\ambience\\systemLoop.json")[0]
                     else:
@@ -659,7 +659,7 @@ def main():
                             pytools.IO.console.printAt(n, i, "          ")
                             n = n + 10
                         i = i + 1
-                weather = pytools.IO.getFile(".\\vars\\dispstring.cx")
+                weather = pytools.IO.getFile(".\\vars\\dispstring.cx", False)
                 try:
                     gh = weather[0:23]
                 except:
@@ -673,10 +673,10 @@ def main():
                         subprocess.getstatusoutput("pushd \"\\" + tools.getRemote() + "\\ambience\" & " + "mkdir \"" + "\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson" + "\"")[0]
                     for plugin in os.listdir("\\\\" + tools.getRemote() + "\\ambience\\vars\\pluginVarsJson"):
                         pytools.IO.console.printAt(2, i, plugin.split("_keys")[0][0:19])
-                        pInfo = pytools.IO.getJson(".\\vars\\pluginVarsJson\\" + plugin)
+                        pInfo = pytools.IO.getJson(".\\vars\\pluginVarsJson\\" + plugin, False)
                         if system.status.active == True:
                             if os.path.exists(".\\vars\\plugins\\plugin." + plugin.split("_keys")[0] + ".run()-error.cx"):
-                                pError = pytools.IO.getFile(".\\vars\\plugins\\plugin." + plugin.split("_keys")[0] + ".run()-error.cx")
+                                pError = pytools.IO.getFile(".\\vars\\plugins\\plugin." + plugin.split("_keys")[0] + ".run()-error.cx", False)
                                 if flash == 0:
                                     try:
                                         if (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()) - pytools.clock.dateArrayToUTC(pInfo["lastLoop"])) > 600:
@@ -706,10 +706,10 @@ def main():
                     y = i
                     
                     try:
-                        soundsClock = pytools.IO.getFile(".\\vars\\sounds\\clock.cxl").split("\n")
-                        soundsFireplace = pytools.IO.getFile(".\\vars\\sounds\\fireplace.cxl").split("\n")
-                        soundsOutside = pytools.IO.getFile(".\\vars\\sounds\\outside.cxl").split("\n")
-                        soundsWindow = pytools.IO.getFile(".\\vars\\sounds\\window.cxl").split("\n")
+                        soundsClock = pytools.IO.getFile(".\\vars\\sounds\\clock.cxl", False).split("\n")
+                        soundsFireplace = pytools.IO.getFile(".\\vars\\sounds\\fireplace.cxl", False).split("\n")
+                        soundsOutside = pytools.IO.getFile(".\\vars\\sounds\\outside.cxl", False).split("\n")
+                        soundsWindow = pytools.IO.getFile(".\\vars\\sounds\\window.cxl", False).split("\n")
                     except:
                         pass
                     
@@ -777,34 +777,34 @@ def main():
                         if system.status.active == True:
                             if os.path.exists(".\\working\\halloweenmode.derp"):
                                 if flash == 0:
-                                    printColor(3, y + 4, "        X", "red")
-                                    printColor(3, y + 5, "       X X", "red")
-                                    printColor(3, y + 6, "      X   X", "red")
-                                    printColor(3, y + 7, "     X  X  X", "red")
-                                    printColor(3, y + 8, "    X   X   X", "red")
-                                    printColor(3, y + 9, "   X    X    X", "red")
-                                    printColor(3, y + 10, "  X           X", "red")
-                                    printColor(3, y + 11, " X      X      X", "red")
-                                    printColor(3, y + 12, "X               X", "red")
-                                    printColor(3, y + 13, "XXXXXXXXXXXXXXXXX", "red")
+                                    printColor(30, globals.maxY - 11, "        X", "red")
+                                    printColor(30, globals.maxY - 10, "       X X", "red")
+                                    printColor(30, globals.maxY - 9, "      X   X", "red")
+                                    printColor(30, globals.maxY - 8, "     X  X  X", "red")
+                                    printColor(30, globals.maxY - 7, "    X   X   X", "red")
+                                    printColor(30, globals.maxY - 6, "   X    X    X", "red")
+                                    printColor(30, globals.maxY - 5, "  X           X", "red")
+                                    printColor(30, globals.maxY - 4, " X      X      X", "red")
+                                    printColor(30, globals.maxY - 3, "X               X", "red")
+                                    printColor(30, globals.maxY - 2, "XXXXXXXXXXXXXXXXX", "red")
                                 else:
                                     r = 0
                                     while r < 14:
-                                        pytools.IO.console.printAt(3, y + r, "                  ")
+                                        pytools.IO.console.printAt(30, globals.maxY - r, "                  ")
                                         r = r + 1
                                 section = getSection()
-                                printColor(23, y + 6, "DEATH NIGHT ACTIVITY", "red")
-                                printColor(23, y + 7, "--------------------", "red")
-                                printColor(23, y + 9, "Horror Index        : " + pytools.IO.getFile(".\\working\\horrorIndex.cx") + "Hi" + spaces[0:10], "red")
+                                printColor(50, globals.maxY - 9, "DEATH NIGHT ACTIVITY", "red")
+                                printColor(50, globals.maxY - 8, "--------------------", "red")
+                                printColor(50, globals.maxY - 6, "Horror Index        : " + pytools.IO.getFile(".\\working\\horrorIndex.cx", False) + "Hi" + spaces[0:10], "red")
                                 try:
-                                    printColor(23, y + 10, "Whispering Index    : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["whisperIndex"]) + "Hi" + spaces[0:10], "red")
+                                    printColor(50, globals.maxY - 5, "Whispering Index    : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json", False)["whisperIndex"]) + "Hi" + spaces[0:10], "red")
                                 except:
-                                    printColor(23, y + 10, "Whispering Index    : " + "0" + "Hi" + spaces[0:10], "red")
+                                    printColor(50, globals.maxY - 5, "Whispering Index    : " + "0" + "Hi" + spaces[0:10], "red")
                                 try:
-                                    printColor(23, y + 11, "Hallowed Wolf Index : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json")["hallowedWolfIndex"]) + "Hi" + spaces[0:10], "red")
+                                    printColor(50, globals.maxY - 4, "Hallowed Wolf Index : " + str(pytools.IO.getJson(".\\vars\\pluginVarsJson\\deathmode_keys.json", False)["hallowedWolfIndex"]) + "Hi" + spaces[0:10], "red")
                                 except:
-                                    printColor(23, y + 11, "Hallowed Wolf Index : " + "0" + "Hi" + spaces[0:10], "red")
-                                printColor(23, y + 12, "Current Section     : " + section + spaces[0:10], "red")
+                                    printColor(50, globals.maxY - 4, "Hallowed Wolf Index : " + "0" + "Hi" + spaces[0:10], "red")
+                                printColor(50, globals.maxY - 3, "Current Section     : " + section + spaces[0:10], "red")
                     except:
                         pass
                                 
