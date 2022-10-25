@@ -100,7 +100,7 @@ class handlers:
                     except:
                         print("plugin_mon_error;")
                     i = i + 1
-                time.sleep(3)
+                time.sleep(1)
             return 0
 
     class error:

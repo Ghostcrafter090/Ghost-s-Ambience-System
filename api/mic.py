@@ -35,8 +35,10 @@ def print_sound(indata, outdata, frames, time, status):
     except:
         sounds.max[sd.default.device[0]] = volume_norm
     if (sounds.max[sd.default.device[0]] * 0.75) < volume_norm:
-        sounds.events[sd.default.device[0]] = pytools.clock.getDateTime()
-        pytools.IO.saveJson("soundEvents.json", sounds.events)
+        if volume_norm > 1:
+            sounds.events[sd.default.device[0]] = pytools.clock.getDateTime()
+            print("Sound event on mic " + str(sd.default.device[0]) + " detected at volume " + str(volume_norm) + ".") 
+            pytools.IO.saveJson("soundEvents.json", sounds.events)
     
 
 def run():
@@ -48,33 +50,35 @@ def run():
                     sd.default.device[0] = n["index"]
                     do = True
                     try:
-                        if globals.micSettings[n["index"]]:
-                            if globals.micSettings[n["index"]] != -1:
-                                sd.default.device[1] = globals.micSettings[n["index"]]
-                                try:
-                                    with sd.Stream(callback=print_sound):
-                                        sd.sleep(30)
-                                    globals.micSettings[n["index"]] = [f["index"]]
-                                    do = False
-                                except:
-                                    pass
-                            else:
-                                if (dateArray[5] % 30) != 0:
-                                    do = False
+                        if n["hostapi"] == 0:
+                            if globals.micSettings[n["index"]]:
+                                if globals.micSettings[n["index"]] != -1:
+                                    sd.default.device[1] = globals.micSettings[n["index"]]
+                                    try:
+                                        with sd.Stream(callback=print_sound):
+                                            sd.sleep(30)
+                                        globals.micSettings[n["index"]] = [f["index"]]
+                                        do = False
+                                    except:
+                                        pass
+                                else:
+                                    if (dateArray[5] % 30) != 0:
+                                        do = False
                     except:
                         pass
                     if do:
                         notFound = True
                         for f in sd.query_devices():
                             if f["max_output_channels"] > 0:
-                                sd.default.device[1] = f["index"]
-                                try:
-                                    with sd.Stream(callback=print_sound):
-                                        sd.sleep(100)
-                                    globals.micSettings[n["index"]] = [f["index"]]
-                                    notFound = False
-                                except:
-                                    pass
+                                if f["hostapi"] == 0:
+                                    sd.default.device[1] = f["index"]
+                                    try:
+                                        with sd.Stream(callback=print_sound):
+                                            sd.sleep(100)
+                                        globals.micSettings[n["index"]] = [f["index"]]
+                                        notFound = False
+                                    except:
+                                        pass
                         if notFound:
                             globals.micSettings[n["index"]] = -1
                 except:

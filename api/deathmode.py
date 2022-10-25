@@ -61,7 +61,6 @@ class background:
                 r = 0.0008
                 j = 0.000000002
                 n = a * (e ** (-f * ((x - 86000) ** 2)))
-                print(x > g)
                 l = k * (e ** ((-3) * r * ((x - g - 100) ** 1.12)))
                 try:
                     pass
@@ -113,9 +112,19 @@ class background:
                 
     def death_wind(dateArray, dayTimes):
         dateArray[2] = dateArray[2] + 1
-        start = pytools.clock.dateArrayToUTC(pytools.clock.solveForDialation([0, 0, 0, 0, -11, 0], dayTimes[5]))
+        startf = dayTimes[5]
+        startf[4] = startf[4] + 11
+        if startf[4] > 60:
+            startf[4] = startf[4] - 60
+            startf[3] = startf[3] + 1
+        endf = dayTimes[2]
+        endf[4] = endf[4] - 11
+        if endf[4] < 0:
+            end[4] = endf[4] + 60
+            end[3] = endf[3] - 1
+        start = pytools.clock.dateArrayToUTC(startf)
         current = pytools.clock.dateArrayToUTC(dateArray)
-        end = pytools.clock.dateArrayToUTC(pytools.clock.solveForDialation([0, 0, 0, 0, -11, 0], dayTimes[2]))
+        end = pytools.clock.dateArrayToUTC(endf)
         if (start < current) or (current < end):
             globals.deathWind.run = 1
             if globals.deathWind.state != 1:
@@ -130,9 +139,20 @@ class background:
         status.vars["death_wind"]["state"] = globals.deathWind.state
 
     def monsters(dateArray, dayTimes):
-        start = pytools.clock.dateArrayToUTC(pytools.clock.solveForDialation([0, 0, 0, 0, -26, 0], dayTimes[5]))
+        dayTimes = utils.dayTimesGrabber()
+        startf = dayTimes[5]
+        startf[4] = startf[4] + 26
+        if startf[4] > 60:
+            startf[4] = startf[4] - 60
+            startf[3] = startf[3] + 1
+        endf = dayTimes[2]
+        endf[4] = endf[4] - 26
+        if endf[4] < 0:
+            endf[4] = endf[4] + 60
+            endf[3] = endf[3] - 1
+        start = pytools.clock.dateArrayToUTC(startf)
         current = pytools.clock.dateArrayToUTC(dateArray)
-        end = pytools.clock.dateArrayToUTC(pytools.clock.solveForDialation([0, 0, 0, 0, -26, 0], dayTimes[2]))
+        end = pytools.clock.dateArrayToUTC(endf)
         print("Monsters: " + str(start) + " ;;; " + str(current))
         midnight = pytools.clock.dateArrayToUTC(pytools.clock.getMidnight(dateArray))
         dis = midnight - start

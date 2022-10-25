@@ -1,9 +1,11 @@
+from tempfile import TemporaryFile
 import speech_recognition as sr
 import pyttsx3
 import pytools
 import threading
 import time
 import importlib
+import os
 
 class status:
     apiKey = ""
@@ -31,7 +33,7 @@ mics = {}
 
 class globals:
     speech = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
+    writing = False
     speeches = 0
  
 class micInstance:
@@ -43,7 +45,7 @@ class micInstance:
     name = ""
     
     def getText(self, mic):
-        while(1):   
+        while(1):
         
             # Exception handling to handle
             # exceptions at the runtime
@@ -82,31 +84,36 @@ class micInstance:
             text = micInstance.getText(self, self.mic)
             print(text)
             n = True
-            try:
-                file = pytools.IO.getFile("transcript.cxl").split("\n")
-                if len(file) > 10:
-                    file = file[1:]
-                    file.append(text + ";" + str(self.name))
-                    n = False
-                filef = ""
-                for r in file:
-                    filef = filef + r + "\n"
-                pytools.IO.saveFile("transcript.cxl", filef.replace("\n\n", "\n"))
-            except:
-                n = True
-            if n:
-                if text:
-                    pytools.IO.appendFile("transcript.cxl", text + ";" + str(self.name) + "\n")
-        
-micHandlers = []
+            if text != False:
+                if os.path.exists("transcripts\\" + str(self.mic) + ".cxl") == False:
+                    pytools.IO.saveFile("transcripts\\" + str(self.mic) + ".cxl", text + ";" + str(self.name) + "\n")
+                else:
+                    try:
+                        file = pytools.IO.getFile("transcripts\\" + str(self.mic) + ".cxl").split("\n")
+                        if len(file) > 10:
+                            file = file[1:]
+                            file.append(text + ";" + str(self.name))
+                            n = False
+                        filef = ""
+                        for r in file:
+                            filef = filef + r + "\n"
+                        pytools.IO.saveFile("transcripts\\" + str(self.mic) + ".cxl", filef.replace("\n\n", "\n"))
+                    except:
+                        n = True
+                    if n:
+                        if text:
+                            pytools.IO.appendFile("transcripts\\" + str(self.mic) + ".cxl", text + ";" + str(self.name) + "\n")
+
+class handlers:    
+    mics = []
 
 def runMic(*args):
     string = ""
     for x in args:
         string += x
-        print(int(micHandlers[int(x)][0][0]))
-    n = micInstance(int(micHandlers[int(x)][0][0]), micHandlers[int(x)][0][1])
-    print(x)
+        # print(int(handlers.mics[int(x)][0][0]))
+    n = micInstance(int(handlers.mics[int(x)][0][0]), handlers.mics[int(x)][0][1])
+    print(int(handlers.mics[int(x)][0][0]))
     n.micRun()
         
 def run():
@@ -116,15 +123,15 @@ def run():
     n = 0
     f = 0
     while n < sr.Microphone.get_pyaudio().PyAudio().get_device_count():
-        for key in mics:
-            # if key == sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["name"]:
-            if sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["hostApi"] == 2:
-                micHandlers.append(["", ""])
-                micHandlers[f][0] = [n, sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["name"]]
-                micHandlers[f][1] = threading.Thread(target=runMic, args=str(f))
-                f = f + 1
+        # if key == sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["name"]:
+        if sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["hostApi"] == 0:
+            handlers.mics.append(["", ""])
+            handlers.mics[f][0] = [n, sr.Microphone.get_pyaudio().PyAudio().get_device_info_by_index(n)["name"]]
+            handlers.mics[f][1] = threading.Thread(target=runMic, args=str(f))
+            f = f + 1
         n = n + 1
-    for n in micHandlers:
+    print(handlers.mics)
+    for n in handlers.mics:
         n[1].start()
     while True:
         pytools.IO.saveFile("speechPerMinute.cx", "0")

@@ -7,6 +7,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelWithLMHead
 import modules.ghostAudio as audio
 import speech_recognition as sr
+import os
 
 class status:
     apiKey = ""
@@ -302,20 +303,21 @@ class ghost:
     spm = 0
     
     def speak(self, words, type):
-        inputs = speech.tokenizer.encode(words.split(";")[0], return_tensors='pt')
-        outputs = speech.model.generate(inputs, max_length=(10 + int(random.random() * 20)), do_sample=True)
-        text = speech.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        speechf = "null"
-        try:
+        if random.random() < 0.05:
+            inputs = speech.tokenizer.encode(words.split(";")[0], return_tensors='pt')
+            outputs = speech.model.generate(inputs, max_length=(10 + int(random.random() * 20)), do_sample=True)
+            text = speech.tokenizer.decode(outputs[0], skip_special_tokens=True)
+            speechf = "null"
             try:
-                speechf = text.split("\n")[1:math.floor(int((((len(text.split("\n")) - 1) * random.random()) + 1)))]
-                audio.speak(speechf, self.prop["name"].replace(" ", ".").replace(".", "_"), type, self.mood, self.prop["details"]["voice"], self.activity, [self.x, self.y], 0)
+                try:
+                    speechf = text.split("\n")[1:math.floor(int((((len(text.split("\n")) - 1) * random.random()) + 1)))]
+                    audio.speak(speechf, self.prop["name"].replace(" ", ".").replace(".", "_"), type, self.mood, self.prop["details"]["voice"], self.activity, [self.x, self.y], 0)
+                except:
+                    speechf = text.split("\n")[0]
+                    audio.speak(speechf, self.prop["name"].replace(" ", ".").replace(".", "_"), type, self.mood, self.prop["details"]["voice"], self.activity, [self.x, self.y], 0)
             except:
-                speechf = text.split("\n")[0]
-                audio.speak(speechf, self.prop["name"].replace(" ", ".").replace(".", "_"), type, self.mood, self.prop["details"]["voice"], self.activity, [self.x, self.y], 0)
-        except:
-            pass
-        print("Ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has spoken. It has said: " + speechf)
+                pass
+            print("Ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has spoken. It has said: " + speechf)
     
     def getSpm(self):
         try:
@@ -407,7 +409,8 @@ class ghost:
                 if self.mood > 0:
                     n = random.random() < (0.1 / ((10 - self.activity) + 1))
                     if (self.activeMemmory == False) and n:
-                        transcript = pytools.IO.getFile("transcript.cxl").split("\n")
+                        file = os.listdir(".\\transcripts")[int(math.floor(random.random() * len(os.listdir(".\\transcripts"))))]
+                        transcript = pytools.IO.getFile(".\\transcripts\\" + file).split("\n")
                         try:
                             indexf = int(math.floor(random.random() * len(transcript)))
                             self.activeMemmory = [pytools.clock.getDateTime(), pytools.IO.getJson("mics.json")[transcript[indexf].split(";")[1]]]
@@ -422,7 +425,8 @@ class ghost:
                     n = random.random() < (((0.1 / ((10 - self.activity) + 1)) / self.speechModifier))
                     if (self.activeMemmory == False) and n:
                         try:
-                            transcript = pytools.IO.getFile("transcript.cxl").split("\n")
+                            file = os.listdir(".\\transcripts")[int(math.floor(random.random() * len(os.listdir(".\\transcripts"))))]
+                            transcript = pytools.IO.getFile(".\\transcripts\\" + file).split("\n")
                             indexf = int(math.floor(random.random() * len(transcript)))
                             self.speak(transcript[indexf], self.prop["type"])
                             print(str(n) + " spirit-0")
@@ -552,7 +556,8 @@ class ghost:
                                                 self.activeMemmory = [pytools.clock.getDateTime(), pytools.IO.getJson("mics.json")[n]]
                                             try:
                                                 ghostWords = pytools.IO.getJson("ghost_pg_words.json")
-                                                transcript = pytools.IO.getFile("transcript.cxl").split("\n")
+                                                file = os.listdir(".\\transcripts")[int(math.floor(random.random() * len(os.listdir(".\\transcripts"))))]
+                                                transcript = pytools.IO.getFile(".\\transcripts\\" + file).split("\n")
                                                 indexf = int(math.floor(random.random() * len(transcript)))
                                                 words = ghostWords["words"][int(math.floor(random.random() * len(ghostWords["words"])))]
                                                 sentence = words.replace(",", ".").split(".")[int(math.floor(random.random() * len(words.replace(",", ".").split("."))))]
@@ -624,8 +629,9 @@ class ghost:
                             print("Ghost reaction response " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been triggered.")
                     n = random.random() < (0.1 / ((10 - self.activity) + 1))
                     if (self.activeMemmory == False) and n:
-                        transcript = pytools.IO.getFile("transcript.cxl").split("\n")
                         try:
+                            file = os.listdir(".\\transcripts")[int(math.floor(random.random() * len(os.listdir(".\\transcripts"))))]
+                            transcript = pytools.IO.getFile(".\\transcripts\\" + file).split("\n")
                             indexf = int(math.floor(random.random() * len(transcript)))
                             self.activeMemmory = [pytools.clock.getDateTime(), pytools.IO.getJson("mics.json")[transcript[indexf].split(";")[1]]]
                         except:
@@ -639,17 +645,18 @@ class ghost:
                     n = random.random() < ((0.1 / ((10 - self.activity) + 1)) / self.speechModifier)
                     if n:
                         try:
-                                ghostWords = pytools.IO.getJson("ghost_dm_words.json")
-                                transcript = pytools.IO.getFile("transcript.cxl").split("\n")
-                                indexf = int(math.floor(random.random() * len(transcript)))
-                                words = ghostWords["words"][int(math.floor(random.random() * len(ghostWords["words"])))]
+                            ghostWords = pytools.IO.getJson("ghost_dm_words.json")
+                            file = os.listdir(".\\transcripts")[int(math.floor(random.random() * len(os.listdir(".\\transcripts"))))]
+                            transcript = pytools.IO.getFile(".\\transcripts\\" + file).split("\n")
+                            indexf = int(math.floor(random.random() * len(transcript)))
+                            words = ghostWords["words"][int(math.floor(random.random() * len(ghostWords["words"])))]
+                            sentence = words.replace(",", ".").split(".")[int(math.floor(random.random() * len(words.replace(",", ".").split("."))))]
+                            k = 0
+                            while (sentence == "") and (k < 100):
                                 sentence = words.replace(",", ".").split(".")[int(math.floor(random.random() * len(words.replace(",", ".").split("."))))]
-                                k = 0
-                                while (sentence == "") and (k < 100):
-                                    sentence = words.replace(",", ".").split(".")[int(math.floor(random.random() * len(words.replace(",", ".").split("."))))]
-                                    k = k + 1
-                                self.speak(sentence + ". " + transcript[indexf], self.prop["type"])
-                                print(str(n) + " demon-0")
+                                k = k + 1
+                            self.speak(sentence + ". " + transcript[indexf], self.prop["type"])
+                            print(str(n) + " demon-0")
                         except:
                             pass
                 else:
@@ -662,7 +669,8 @@ class ghost:
                             self.activeMemmory = [pytools.clock.getDateTime(), [floorplan.level[0][1][0] * random.random(), floorplan.level[0][1][1] * random.random()]]
                             try:
                                 ghostWords = pytools.IO.getJson("ghost_dm_words.json")
-                                transcript = pytools.IO.getFile("transcript.cxl").split("\n")
+                                file = os.listdir(".\\transcripts")[int(math.floor(random.random() * len(os.listdir(".\\transcripts"))))]
+                                transcript = pytools.IO.getFile(".\\transcripts\\" + file).split("\n")
                                 indexf = int(math.floor(random.random() * len(transcript)))
                                 words = ghostWords["words"][int(math.floor(random.random() * len(ghostWords["words"])))]
                                 sentence = words.replace(",", ".").split(".")[int(math.floor(random.random() * len(words.replace(",", ".").split("."))))]
@@ -700,7 +708,8 @@ class ghost:
                                                 self.activeMemmory = [pytools.clock.getDateTime(), pytools.IO.getJson("mics.json")[n]]
                                             try:
                                                 ghostWords = pytools.IO.getJson("ghost_dm_words.json")
-                                                transcript = pytools.IO.getFile("transcript.cxl").split("\n")
+                                                file = os.listdir(".\\transcripts")[int(math.floor(random.random() * len(os.listdir(".\\transcripts"))))]
+                                                transcript = pytools.IO.getFile(".\\transcripts\\" + file).split("\n")
                                                 indexf = int(math.floor(random.random() * len(transcript)))
                                                 words = ghostWords["words"][int(math.floor(random.random() * len(ghostWords["words"])))]
                                                 sentence = words.replace(",", ".").split(".")[int(math.floor(random.random() * len(words.replace(",", ".").split("."))))]

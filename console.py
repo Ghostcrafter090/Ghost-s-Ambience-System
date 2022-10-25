@@ -632,6 +632,7 @@ def main():
         i = 0
         # subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "mode con cols=200 lines=63")
         flash = 0
+        restartMod = 0
         while i < globals.maxY:
             n = 0
             while n < 200:
@@ -648,6 +649,14 @@ def main():
                         system.status.active = True
             except:
                 pass
+            if flags.defaultSystemState == True:
+                if system.status.active != True:
+                    if (pytools.clock.getDateTime()[5] % 5) == 0:
+                        restartMod = restartMod + 1
+                    if restartMod > 12:
+                        system.stop()
+                        system.start()
+                        restartMod = 0
             if flags.exitf == True:
                 exit()
             if flags.display == True:
