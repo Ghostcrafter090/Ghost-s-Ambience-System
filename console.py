@@ -657,6 +657,8 @@ def main():
                         system.stop()
                         system.start()
                         restartMod = 0
+                else:
+                    restartMod = 0
             if flags.exitf == True:
                 exit()
             if flags.display == True:
