@@ -31,13 +31,14 @@ class utils:
 class secs:
     def window(dataList):
         windowf = 0
+        if globals.windowBroken == 1:
+            windowf = 1
         if dataList[0][7] >= 12:
             if dataList[0][1] <= 15:
                 if dataList[0][4] != "rain":
                     if dataList[0][4] != "lightrain":
                         if dataList[0][4] != "thunder":
-                            if globals.windowBroken == 0:
-                                windowf = 1
+                            windowf = 1
         if windowf == 1:
             if os.path.isfile("nomufflewn.derp") == False:
                 if globals.windowBroken == 0:
@@ -51,17 +52,26 @@ class secs:
                 os.system('del nomufflewn.derp /f /s /q')
 
     def windowBreakState(dataList):
-        rand = 37 * (dataList[0][1] - 19)
+        rand = 37 * ((dataList[0][1] - 19) ** 1.55)
+        print(rand)
+        randf = random.random() * 32768
+        print(randf)
         if dataList[0][1] > 20:
-            if (random.random() * 32768) < rand:
+            if randf < rand:
                 if globals.windowBroken == 0:
-                    pytools.sound.main.playSound("windowsmash.mp3", 6, 100, 1.0, 0.0, 0)
+                    pytools.sound.main.playSound("windowsmash.mp3", 6, 50, 1.0, 0.0, 0)
                     time.sleep(6)
                     globals.windowBroken = 1
-                    windowFixArray = pytools.clock.getMidnight(pytools.clock.getDateTime())
+                    windowFixArray = pytools.clock.getDateTime()
                     windowFixArray[2] = windowFixArray[2] + 1
+                    if windowFixArray[2] > pytools.clock.getMonthEnd(windowFixArray[1]):
+                        windowFixArray[2] = 1
+                        windowFixArray[1] = windowFixArray[1] + 1
+                        if windowFixArray[1] > 12:
+                            windowFixArray[1] = 1
+                            windowFixArray[0] = windowFixArray[0] + 1
                     windowFixArray[3] = 15
-                    globals.windowFixUtc = pytools.clock.dateArrayToUTC(pytools.clock.fixDateArray(windowFixArray))
+                    globals.windowFixUtc = pytools.clock.dateArrayToUTC(windowFixArray)
                     secs.window(dataList)
                 else:
                     windowFixArray = pytools.clock.getMidnight(pytools.clock.getDateTime())
@@ -86,6 +96,8 @@ def main():
         secs.window(dataList)
         secs.windowBreakState(dataList)
         if globals.windowBroken == 1:
+            print(globals.windowFixUtc)
+            print(pytools.clock.dateArrayToUTC(dateArray))
             if globals.windowFixUtc < pytools.clock.dateArrayToUTC(dateArray):
                 secs.fixWindow(dataList)
         

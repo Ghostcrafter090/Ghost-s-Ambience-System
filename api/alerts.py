@@ -29,11 +29,14 @@ def main():
                 if (pytools.clock.dateArrayToUTC(dayTimes[3]) < pytools.clock.dateArrayToUTC(dateArray) < pytools.clock.dateArrayToUTC(dayTimes[5])):
                     pytools.sound.main.playSoundWindow("alert_incoming.mp3;alert_incoming.mp3", 25, 1.0, 0.0, 1)
                 else:
-                    pytools.sound.main.playSoundWindow("alert_incoming_night.mp3;alert_incoming_night.mp3", 25, 1.0, 0.0, 1)
+                    pytools.sound.main.playSoundWindow("alert_incoming_night.mp3;alert_incoming_night.mp3", 10, 1.0, 0.0, 1)
                 for n in texts:
                     try:
                         gtts.gTTS(text=n, lang="en", slow=False).save(".\\sound\\assets\\alerts.mp3")
-                        pytools.sound.main.playSoundWindow("alerts.mp3;alerts.mp3", 25, 1.0, 0.0, 1)
+                        if (pytools.clock.dateArrayToUTC(dayTimes[3]) < pytools.clock.dateArrayToUTC(dateArray) < pytools.clock.dateArrayToUTC(dayTimes[5])):
+                            pytools.sound.main.playSoundWindow("alerts.mp3;alerts.mp3", 25, 1.0, 0.0, 1)
+                        else:
+                            pytools.sound.main.playSoundWindow("alerts.mp3;alerts.mp3", 15, 1.0, 0.0, 1)
                     except:
                         pass
                 if (pytools.clock.dateArrayToUTC(dayTimes[3]) < pytools.clock.dateArrayToUTC(dateArray) < pytools.clock.dateArrayToUTC(dayTimes[5])):
@@ -46,11 +49,14 @@ def main():
                     if (pytools.clock.dateArrayToUTC(dayTimes[3]) < pytools.clock.dateArrayToUTC(dateArray) < pytools.clock.dateArrayToUTC(dayTimes[5])):
                         pytools.sound.main.playSoundWindow("alert_reproduce.mp3;alert_reproduce.mp3", 25, 1.0, 0.0, 1)
                     else:
-                        pytools.sound.main.playSoundWindow("alert_reproduce_night.mp3;alert_reproduce_night.mp3", 25, 1.0, 0.0, 1)
+                        pytools.sound.main.playSoundWindow("alert_reproduce_night.mp3;alert_reproduce_night.mp3", 10, 1.0, 0.0, 1)
                     for n in texts:
                         try:
                             gtts.gTTS(text=n, lang="en", slow=False).save(".\\sound\\assets\\alerts.mp3")
-                            pytools.sound.main.playSoundWindow("alerts.mp3;alerts.mp3", 25, 1.0, 0.0, 1)
+                            if (pytools.clock.dateArrayToUTC(dayTimes[3]) < pytools.clock.dateArrayToUTC(dateArray) < pytools.clock.dateArrayToUTC(dayTimes[5])):
+                                pytools.sound.main.playSoundWindow("alerts.mp3;alerts.mp3", 25, 1.0, 0.0, 1)
+                            else:
+                                pytools.sound.main.playSoundWindow("alerts.mp3;alerts.mp3", 15, 1.0, 0.0, 1)
                         except:
                             pass
                     if (pytools.clock.dateArrayToUTC(dayTimes[3]) < pytools.clock.dateArrayToUTC(dateArray) < pytools.clock.dateArrayToUTC(dayTimes[5])):
