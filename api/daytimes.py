@@ -51,7 +51,11 @@ set astm=""" + str(ats[4]) + """
 set aeth=""" + str(ate[3]) + """
 set aetm=""" + str(ate[4])
         pytools.IO.saveFile("daytimes.cmd", string)
-        time.sleep(600)
+        dateArray = pytools.clock.getDateTime()
+        if ((dateArray == 23) and (dateArray[4] > 40)) or ((dateArray[3] == 0) and (dateArray[4] < 30)):
+            time.sleep(10)
+        else:
+            time.sleep(600)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True
 

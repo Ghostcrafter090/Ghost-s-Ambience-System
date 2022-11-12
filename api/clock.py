@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import time
 import pytools
+import threading
 
 class status:
     apiKey = ""
@@ -9,6 +10,10 @@ class status:
     vars = {
         "lastLoop": []
     }
+
+class globals:
+    isChime = False
+    isGong = False
 
 def getDate():
     sequence = str(datetime.now()).replace(" ", "-").replace(":", "-").replace(".", "-")
@@ -25,13 +30,31 @@ class mech:
         print(str(datetime.now()) + " ;; Playing christmas chime...")
         os.system('cmd.exe /c start /wait /b /d ".\\sound\\clock" "" ..\..\clock.exe winding_clock.vbs')
         time.sleep(60)
+        
+class whirr:
+    def standard():
+        globals.isChime = True
+        while globals.isChime:
+            pytools.sound.main.playSound("whirr_cont.mp3", 0, 50, 1.0, 0.0, 0, clock=False)
+            time.sleep(1)
+        pytools.sound.main.playSound("whirr_ed.mp3", 0, 50, 1.0, 0.0, 0, clock=False)
+            
+    def gong():
+        globals.isGong = True
+        while globals.isGong:
+            pytools.sound.main.playSound("gong_whirr_cont.mp3", 0, 50, 1.0, 0.0, 0, clock=False)
+            time.sleep(1)
+        pytools.sound.main.playSound("gong_whirr_ed.mp3", 0, 50, 1.0, 0.0, 0, clock=False)
+            
+    
 
 class chime:
     def chimeFH():
         print(str(datetime.now()) + " ;; Starting whirr effect...")
         os.system('cmd.exe /c start /b /d ".\\sound\\clock" "" ..\..\clock.exe whirr_st.vbs')
         time.sleep(3)
-        os.system('cmd.exe /c start /b "" .\\clocks\\running\\wcont.bat')
+        gongWhirr = threading.Thread(target=whirr.standard)
+        gongWhirr.start()
         print(str(datetime.now()) + " ;; Playing hour chime...")
         os.system('cmd.exe /c start /b /d ".\\sound\\clock" "" ..\..\clock.exe hcs.vbs')
         file = open(".\\clocks\\default\\hcs_config.txt", "r")
@@ -40,13 +63,14 @@ class chime:
         print(str(datetime.now()) + " ;; Waiting for " + str(hcst) + " seconds...")
         time.sleep(hcst)
         print(str(datetime.now()) + " ;; Chime sequence finished.")
-        os.system('cmd.exe /c echo. > .\\clocks\\running\\wcont.derp')
+        globals.isChime = False
         
     def chimeQH():
         print(str(datetime.now()) + " ;; Starting whirr effect...")
         os.system('cmd.exe /c start /b /d ".\\sound\\clock" "" ..\..\clock.exe whirr_st.vbs')
         time.sleep(3)
-        os.system('cmd.exe /c start /b "" .\\clocks\\running\\wcont.bat')
+        gongWhirr = threading.Thread(target=whirr.standard)
+        gongWhirr.start()
         print(str(datetime.now()) + " ;; Playing quarter hour chime...")
         os.system('cmd.exe /c start /b /d ".\\sound\\clock" "" ..\..\clock.exe qhcs.vbs')
         file = open(".\\clocks\\default\\qhcs_config.txt", "r")
@@ -55,13 +79,14 @@ class chime:
         print(str(datetime.now()) + " ;; Waiting for " + str(hcst) + " seconds...")
         time.sleep(hcst)
         print(str(datetime.now()) + " ;; Chime sequence finished.")
-        os.system('cmd.exe /c echo. > .\\clocks\\running\\wcont.derp')
+        globals.isChime = False
         
     def chimeHH():
         print(str(datetime.now()) + " ;; Starting whirr effect...")
         os.system('cmd.exe /c start /b /d ".\\sound\\clock" "" ..\..\clock.exe whirr_st.vbs')
         time.sleep(3)
-        os.system('cmd.exe /c start /b "" .\\clocks\\running\\wcont.bat')
+        gongWhirr = threading.Thread(target=whirr.standard)
+        gongWhirr.start()
         print(str(datetime.now()) + " ;; Playing half hour chime...")
         os.system('cmd.exe /c start /b /d ".\\sound\\clock" "" ..\..\clock.exe hhcs.vbs')
         file = open(".\\clocks\\default\\hhcs_config.txt", "r")
@@ -70,13 +95,14 @@ class chime:
         print(str(datetime.now()) + " ;; Waiting for " + str(hcst) + " seconds...")
         time.sleep(hcst)
         print(str(datetime.now()) + " ;; Chime sequence finished.")
-        os.system('cmd.exe /c echo. > .\\clocks\\running\\wcont.derp')
+        globals.isChime = False
         
     def chimeTH():
         print(str(datetime.now()) + " ;; Starting whirr effect...")
         os.system('cmd.exe /c start /b /d ".\\sound\\clock" "" ..\..\clock.exe whirr_st.vbs')
         time.sleep(3)
-        os.system('cmd.exe /c start /b "" .\\clocks\\running\\wcont.bat')
+        gongWhirr = threading.Thread(target=whirr.standard)
+        gongWhirr.start()
         print(str(datetime.now()) + " ;; Playing third quarter hour chime...")
         os.system('cmd.exe /c start /b /d ".\\sound\\clock" "" ..\..\clock.exe tqhcs.vbs')
         file = open(".\\clocks\\default\\tqhcs_config.txt", "r")
@@ -85,23 +111,20 @@ class chime:
         print(str(datetime.now()) + " ;; Waiting for " + str(hcst) + " seconds...")
         time.sleep(hcst)
         print(str(datetime.now()) + " ;; Chime sequence finished.")
-        os.system('cmd.exe /c echo. > .\\clocks\\running\\wcont.derp')
+        globals.isChime = False
         
     def chimeHN():
         print(str(datetime.now()) + " ;; Starting gong whirr effect...")
         os.system('cmd.exe /c start /b /d ".\\sound\\clock" "" ..\..\clock.exe gong_whirr_st.vbs')
         time.sleep(3)
-        os.system('cmd.exe /c start /b "" .\\clocks\\running\\gwcont.bat')
+        gongWhirr = threading.Thread(target=whirr.gong)
+        gongWhirr.start()
         hour = int(getDate()[3])
         if hour > 12:
             hour = hour - 12
         if hour < 1:
             hour = 12
         hourn = hour
-        if int(getDate()[1]) == 12:
-            if hour == 12:
-                print(str(datetime.now()) + " ;; Playing christmas bells...")
-                os.system('cmd.exe /c start /b /wait /d ".\\sound\\clock" "" ..\..\clock.exe cotb.vbs')
         file = open(".\\clocks\\default\\gong_config.txt", "r")
         hcst = int(file.read())
         file.close()
@@ -112,11 +135,11 @@ class chime:
             time.sleep(hcst)
             hour = hour - 1
         print(str(datetime.now()) + " ;; Chime sequence finished.")
-        os.system('cmd.exe /c echo. > .\\clocks\\running\\gwcont.derp')
+        globals.isGong = False
         
     def chimeCH():
         print(str(datetime.now()) + " ;; Playing christmas chime...")
-        os.system('cmd.exe /c start /wait /b /d ".\\sound\\clock" "" ..\..\clock.exe cotb.vbs')
+        pytools.sound.main.playSound("cotb.mp3", 0, 10, 1.0, 0.0, 1, clock=False)
 
 def main():
     chime.chimeFH()
@@ -137,7 +160,8 @@ def main():
                 mech.chimePR()
             if int((getDate()[4])) == 0:
                 chime.chimeFH()
-                if int(getDate()[2]) == 12:
+                print(getDate())
+                if int(getDate()[1]) == 12:
                     if int(getDate()[3]) == 12:
                         chime.chimeCH()
                 chime.chimeHN()

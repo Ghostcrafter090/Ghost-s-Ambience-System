@@ -1276,6 +1276,9 @@ def dummy(*args):
     if args[0] == args[0]:
         pass
     return 0
+
+def dummyf(var):
+    pass
     
 def runFile(path):
     code = IO.getFile(path)

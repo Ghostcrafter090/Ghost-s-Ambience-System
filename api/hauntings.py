@@ -8,12 +8,15 @@ from transformers import AutoTokenizer, AutoModelWithLMHead
 import modules.ghostAudio as audio
 import speech_recognition as sr
 import os
+import traceback
+import threading
 
 class status:
     apiKey = ""
     finishedLoop = False
     vars = {
-        "lastLoop": []
+        "lastLoop": [],
+        "ghostInfo": {}
     }
 
 # Definitions:
@@ -58,6 +61,12 @@ class tools:
             return n[0]
         else:
             return n[1]
+
+class threads:
+    list = {}
+    
+    def register(n):
+        threads.list[n["name"]] = threading.Thread(target=haunts.ghosts[n["name"]].run)
 
 class haunts:
     ghosts = {}
@@ -140,6 +149,8 @@ class haunts:
         }
         haunts.save(prop)
         haunts.register(prop)
+        threads.register(prop)
+        threads.list[prop["name"]].start()
         print("A new ghost has arrived: " + prop["name"] + " of type " + str(prop["type"]))
     
     class handler:
@@ -221,11 +232,52 @@ class ghost:
     y = 20
     rotation = 0
     
+    def percuss(self, type=False):
+        if type == "walk":
+            if random.random() < (((0.000003 * self.activity * math.fabs(self.mood))) / (4 - self.prop["type"])):
+                ghSpeaker = 5
+                while ghSpeaker == 5:
+                    ghSpeaker = random.randrange(0, 8)
+                if random.random() < 0.3:
+                    pytools.sound.main.playSound("g_footsteps_" + str(random.randint(0, 2)) + ".mp3", ghSpeaker, random.random() * 100, 1.0, 0.0, 0)
+                else:
+                    pytools.sound.main.playSound("g_creak_" + "0" + ".mp3", ghSpeaker, random.random() * 100, 1.0, 0.0, 0)
+        if self.prop["type"] >= 1:
+            if type == "complete":
+                if random.random() < (((0.00004 * self.activity * math.fabs(self.mood))) / (4 - self.prop["type"])):
+                    chance = random.random()
+                    if (chance * 1000) > (math.fabs(self.mood) * self.activity):
+                        chance = self.mood * self.activity
+                    else:
+                        chance = chance * 1000
+                    ghSpeaker = 5
+                    while (ghSpeaker == 5) or ((300 < chance < 400) and (ghSpeaker == 2)) or ((400 < chance < 500) and ((ghSpeaker == 2) or (ghSpeaker == 0))):
+                        ghSpeaker = random.randrange(0, 8)
+                    print(chance)
+                    if 0 < chance < 166:
+                        pytools.sound.main.playSound("g_tap_" + str(random.randint(0, 7)) + ".mp3", ghSpeaker, random.random() * 100, 1.0, 0.0, 0)
+                    if 166 < chance < 332:
+                        pytools.sound.main.playSound("g_snap_" + str(random.randint(0, 8)) + ".mp3", ghSpeaker, random.random() * 100, 1.0, 0.0, 0)
+                    if 332 < chance < 498:
+                        pytools.sound.main.playSound("g_clap_" + str(random.randint(0, 1)) + ".mp3", ghSpeaker, random.random() * 100, 1.0, 0.0, 0)
+                    if 498 < chance < 664:
+                        pytools.sound.main.playSound("g_knock_" + str(random.randint(0, 4)) + ".mp3", ghSpeaker, random.random() * 100, 1.0, 0.0, 0)
+                    if 664 < chance < 830:
+                        pytools.sound.main.playSound("g_door_" + str(random.randint(0, 7)) + ".mp3", ghSpeaker, random.random() * 100, 1.0, 0.0, 0)
+                    if 830 < chance:
+                        fn = str(random.randint(0, 5))
+                        vol = random.random() * 100
+                        pytools.sound.main.playSoundWindow("g_window_" + fn + ".mp3;g_window_" + fn + ".mp3", [vol / 1.3, vol], 1.0, 0.0, 0)
+                        
+                        
+                            
+
     def move(self, x, y, r=False, d=1):
         # while self.rotation != r:
         #     self.rotation = self.rotation + 1
         #     if self.rotation > 359:
         #         self.rotation = 0
+        self.percuss(type="walk")
         if r == False:
             dial = self.getRot(x, y)
             wall = floorplan.map.vectorSearch(0, self.x, self.y, dial)
@@ -303,21 +355,32 @@ class ghost:
     spm = 0
     
     def speak(self, words, type):
-        if random.random() < 0.05:
-            inputs = speech.tokenizer.encode(words.split(";")[0], return_tensors='pt')
-            outputs = speech.model.generate(inputs, max_length=(10 + int(random.random() * 20)), do_sample=True)
-            text = speech.tokenizer.decode(outputs[0], skip_special_tokens=True)
-            speechf = "null"
-            try:
+        try:
+            if random.random() < 0.05:
+                speechError = False
+                inputs = speech.tokenizer.encode(words.split(";")[0], return_tensors='pt')
+                outputs = speech.model.generate(inputs, max_length=(10 + int(random.random() * 20)), do_sample=True)
+                text = speech.tokenizer.decode(outputs[0], skip_special_tokens=True)
+                speechf = "null"
                 try:
-                    speechf = text.split("\n")[1:math.floor(int((((len(text.split("\n")) - 1) * random.random()) + 1)))]
-                    audio.speak(speechf, self.prop["name"].replace(" ", ".").replace(".", "_"), type, self.mood, self.prop["details"]["voice"], self.activity, [self.x, self.y], 0)
+                    try:
+                        speechf = text.split("\n")[1:math.floor(int((((len(text.split("\n")) - 1) * random.random()) + 1)))]
+                        audio.speak(speechf, self.prop["name"].replace(" ", ".").replace(".", "_"), type, self.mood, self.prop["details"]["voice"], self.activity, [self.x, self.y], 0)
+                    except:
+                        speechf = text.split("\n")[0]
+                        audio.speak(speechf, self.prop["name"].replace(" ", ".").replace(".", "_"), type, self.mood, self.prop["details"]["voice"], self.activity, [self.x, self.y], 0)
                 except:
-                    speechf = text.split("\n")[0]
+                    speechError = True
+                    speechf = "I am the ghost of " + self.prop["name"] + "! And if you don't leave I'll kill you!"
                     audio.speak(speechf, self.prop["name"].replace(" ", ".").replace(".", "_"), type, self.mood, self.prop["details"]["voice"], self.activity, [self.x, self.y], 0)
-            except:
-                pass
-            print("Ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has spoken. It has said: " + speechf)
+                status.vars["ghostInfo"][self.prop["name"]]["speech"] = {
+                    "lastSpoke": pytools.clock.getDateTime(),
+                    "text": speechf,
+                    "error": speechError
+                }
+                print("Ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has spoken. It has said: " + speechf)
+        except:
+            status.vars["ghostInfo"][self.prop["name"]]["errorf"] = traceback.format_exc()
     
     def getSpm(self):
         try:
@@ -339,6 +402,7 @@ class ghost:
                 if self.activeMemmory != False:
                     self.prop["details"]["completedMemmories"][str(self.activeMemmory)] = True
                     print("Memmory " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been terminated out of anger.")
+                    self.percuss(type="complete")
                     self.activeMemmory = False
             if dateArray[2] != self.lastDay:
                 self.prop["details"]["completedMemmories"] = {}
@@ -362,6 +426,7 @@ class ghost:
                     if ((self.y - 5) < self.activeMemmory[1][1] < (self.y + 5)) or (self.wallAnger > 200):
                         self.prop["details"]["completedMemmories"][str(self.activeMemmory)] = True
                         print("Memmory " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been completed.")
+                        self.percuss(type="complete")
                         self.activeMemmory = False
             else:
                 if self.mood > 0:
@@ -379,6 +444,7 @@ class ghost:
                 if self.activeMemmory != False:
                     self.prop["details"]["completedMemmories"][str(self.activeMemmory)] = True
                     print("Memmory " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been terminated out of anger.")
+                    self.percuss(type="complete")
                     self.activeMemmory = False
             if dateArray[2] != self.lastDay:
                 self.prop["details"]["completedMemmories"] = {}
@@ -404,6 +470,7 @@ class ghost:
                     if ((self.y - 5) < self.activeMemmory[1][1] < (self.y + 5)) or (self.wallAnger > 200):
                         self.prop["details"]["completedMemmories"][str(self.activeMemmory)] = True
                         print("Memmory " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been completed.")
+                        self.percuss(type="complete")
                         self.activeMemmory = False
             else:
                 if self.mood > 0:
@@ -417,6 +484,7 @@ class ghost:
                         except:
                             pass
                         print("Ghost communication response " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been triggered.")
+                        self.percuss(type="complete")
                     if self.activeMemmory == False:
                         n = random.random() * random.random() < ((0.1 / (10 - self.activity)) * random.random() * random.random() * random.random())
                         if n:
@@ -428,7 +496,7 @@ class ghost:
                             file = os.listdir(".\\transcripts")[int(math.floor(random.random() * len(os.listdir(".\\transcripts"))))]
                             transcript = pytools.IO.getFile(".\\transcripts\\" + file).split("\n")
                             indexf = int(math.floor(random.random() * len(transcript)))
-                            self.speak(transcript[indexf], self.prop["type"])
+                            self.speak(self, transcript[indexf], self.prop["type"])
                             print(str(n) + " spirit-0")
                         except:
                             pass
@@ -449,6 +517,7 @@ class ghost:
                     self.prop["details"]["completedMemmories"][str(self.activeMemmory)] = True
                     print("Memmory " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been terminated out of anger.")
                     self.activeMemmory = False
+                    self.percuss(type="complete")
             if dateArray[2] != self.lastDay:
                 self.prop["details"]["completedMemmories"] = {}
                 self.lastDay = dateArray[2]
@@ -474,6 +543,7 @@ class ghost:
                         self.prop["details"]["completedMemmories"][str(self.activeMemmory)] = True
                         print("Memmory " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been completed.")
                         self.activeMemmory = False
+                        self.percuss(type="complete")
             else:
                 if self.mood < 0:
                     n = random.random() < (0.1 / ((10 - self.activity) + 1))
@@ -490,6 +560,7 @@ class ghost:
                         except:
                             pass
                         print("Ghost reaction response " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been triggered.")
+                        self.percuss(type="complete")
                     if self.activeMemmory == False:
                         n = random.random() * random.random() < ((0.1 / (10 - self.activity)) * random.random() * random.random() * random.random())
                         if n:
@@ -545,6 +616,7 @@ class ghost:
                             pass
                         if k:
                             print("Ghost reaction response " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been triggered.")
+                            self.percuss(type="complete")
                         if (self.activeMemmory == False) and n:
                             soundEvents = pytools.IO.getJson("soundEvents.json")
                             try:
@@ -585,6 +657,7 @@ class ghost:
                     self.prop["details"]["completedMemmories"][str(self.activeMemmory)] = True
                     print("Memmory " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been terminated out of anger.")
                     self.activeMemmory = False
+                    self.percuss(type="complete")
             if dateArray[2] != self.lastDay:
                 self.prop["details"]["completedMemmories"] = {}
                 self.lastDay = dateArray[2]
@@ -609,6 +682,7 @@ class ghost:
                     if ((self.y - 5) < self.activeMemmory[1][1] < (self.y + 5)) or (self.wallAnger > 200):
                         self.prop["details"]["completedMemmories"][str(self.activeMemmory)] = True
                         print("Memmory " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been completed.")
+                        self.percuss(type="complete")
                         self.activeMemmory = False
             else:
                 if self.mood < 0:
@@ -627,6 +701,7 @@ class ghost:
                             pass
                         if self.activeMemmory != False:
                             print("Ghost reaction response " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been triggered.")
+                            self.percuss(type="complete")
                     n = random.random() < (0.1 / ((10 - self.activity) + 1))
                     if (self.activeMemmory == False) and n:
                         try:
@@ -637,6 +712,7 @@ class ghost:
                         except:
                             pass
                         print("Ghost communication response " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been triggered.")
+                        self.percuss(type="complete")
                     if self.activeMemmory == False:
                         n = random.random() * random.random() < ((0.1 / (10 - self.activity)) * random.random() * random.random() * random.random())
                         if n:
@@ -697,6 +773,7 @@ class ghost:
                             pass
                         if k:
                             print("Ghost reaction response " + str(self.activeMemmory) + " for ghost " + self.prop["name"] + " of type " + str(self.prop["type"]) + " has been triggered.")
+                            self.percuss(type="complete")
                         if (self.activeMemmory == False) and n:
                             soundEvents = pytools.IO.getJson("soundEvents.json")
                             try:
@@ -728,7 +805,13 @@ class ghost:
                     self.rotation = ((self.rotation * 10) + ((random.random() * 2) - 1)) / 11
                     self.move(self.x, self.y, self.rotation, 2 * ((self.activity / 10) * (-1 * (self.mood / 100))))
     
+    
     def tic(self):
+        try:
+            dummy(status.vars["ghostInfo"][self.prop["name"]])
+        except:
+            status.vars["ghostInfo"][self.prop["name"]] = {}
+        
         dateArray = pytools.clock.getDateTime()
         self.speechModifier = self.sM / (self.activity + 1)
         if self.prop["type"] == type.echo:
@@ -739,6 +822,28 @@ class ghost:
             self.ai.poltergeist(self, dateArray)
         if self.prop["type"] == type.demon:
             self.ai.demon(self, dateArray)
+        
+        status.vars["ghostInfo"][self.prop["name"]]["type"] = self.prop["type"]
+        status.vars["ghostInfo"][self.prop["name"]]["mood"] = self.mood
+        status.vars["ghostInfo"][self.prop["name"]]["activity"] = self.activity
+        status.vars["ghostInfo"][self.prop["name"]]["activeMemmory"] = self.activeMemmory
+        status.vars["ghostInfo"][self.prop["name"]]["x"] = self.x
+        status.vars["ghostInfo"][self.prop["name"]]["y"] = self.y
+        status.vars["ghostInfo"][self.prop["name"]]["rotation"] = self.rotation
+        status.vars["ghostInfo"][self.prop["name"]]["speechModifier"] = self.speechModifier
+        
+    def run(self):
+        exists = True
+        while exists:
+            try:
+                dummy(haunts.ghosts[self.prop["name"]])
+                try:
+                    self.tic()
+                except:
+                    pass
+            except:
+                exists = False
+            time.sleep(0.1)
             
 def dummy(var):
     pass
@@ -755,10 +860,13 @@ def main():
     for n in ghostsf["list"]:
         if n["type"] != 4:
             haunts.register(n)
+            threads.register(n)
+    
+    for n in threads.list:
+            threads.list[n].start()
+    
     while True:
         haunts.handler.handle()
-        for n in haunts.ghosts:
-            haunts.ghosts[n].tic()
         time.sleep(0.1)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True

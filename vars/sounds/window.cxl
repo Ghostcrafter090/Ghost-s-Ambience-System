@@ -1,12 +1,1 @@
-m peepers 0 fi
-leaves early m
-leaves mid m
-warm wn night
-active ghost.Dr  Newton Toy.wav
-wind.wav
-m peepers 1
-light wind.wav
-m peepers 2
-m peepers 0
-rain
-h general
+bypassRunAudio

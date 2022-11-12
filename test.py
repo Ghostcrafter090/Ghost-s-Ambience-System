@@ -1,3 +1,4 @@
+from tempfile import TemporaryFile
 import pytools
 import sys
 import os
@@ -11,6 +12,10 @@ class globals:
     apiKey = ""
 
 def debug(name, run=False):
+    try:
+        name = name.split("\\")[-1].split(".py")[0]
+    except:
+        pass
     global pl
     exec("""
 import api.""" + name + """

@@ -1,108 +1,99 @@
+from tkinter import E
 import pytools
-import os
 import threading
-import time
+import os
 import sys
 import traceback
+import time
 
-os.system("mkdir vars\\pluginVars")
-os.system("mkdir vars\\pluginVarsJson")
-
-class globals:
-    class thread:
-        list = [[], 0]
-        def initializeArray(n):
-            i = 0
-            while i < n:
-                globals.thread.list[0].append('print("system fucky!")')
-                i = i + 1
-            return 0
-        current = ''
-
+class threads:
+    list = {}
+    
+    def launch(id):
+        threads.list[id].start()
+    
+    def check(id):
+        try:
+            threads.list[id].join(timeout=0.5)
+        except:
+            pass
+        try:
+            if threads.list[id].is_alive():
+                print(id)
+                out = True
+            else:
+                out = False
+        except:
+            return False
+        return out
+    
 class plugin:
-    def register(pluginn):
-        if globals.thread.list[0] == []:
-            globals.thread.initializeArray(200)
-        n = pluginn + '.run()'
-        globals.thread.list[0][globals.thread.list[1]] = threading.Thread(target=plugin.run, args=n)
-        # globals.thread.list[0][globals.thread.list[1]].join()
-        globals.thread.list[1] = globals.thread.list[1] + 1
-        if globals.thread.list[1] > len(globals.thread.list[0]):
-            globals.thread.list[1] = 0
-
-    def activate():
-        i = 0
-        while i < globals.thread.list[1]:
-            globals.thread.list[0][i].start()
-            i = i + 1
-
-    def run(*args):
-        string = ""
-        for x in args:
-            string += x
-        print(str(string))
+    def __init__(self, pluginId, pluginObj, pluginString):
+        self.obj = pluginObj
+        self.id = pluginId
+        self.fileData = pluginString
+        
+    def run(self):
         while True:
-            error = 'File Closed Unexpectedly!'
-            # print('try:\n    ' + string + '\nexcept Exception as e:\n    error = e')
-            execString = 'try:\n    ' + string.replace('main.plugin.', 'plugin.') + '\nexcept Exception as e:\n    error = e\n    print(error)\n    handlers.error.log(str(error), \'' + string + '\', traceback.format_exc())'
-            exec(execString)
-            handlers.error.log(error, string, traceback.format_exc())
+            try:
+                if self.id != "old":
+                    if self.id != "__pycache__":
+                        self.obj.run()
+                    else:
+                        time.sleep(1000)
+                else:
+                    time.sleep(1000)
+            except Exception as ex:
+                try:
+                    handlers.error.log(str(sys.exc_info()[0]), self.id, traceback.format_exc())
+                    time.sleep(3)
+                except:
+                    print(str(pytools.clock.getDateTime()) + " ;;; log error.")
+                    time.sleep(3)
+    
+    obj = False
+    id = False
+    fileData = ""
 
+class plugins:
+    list = {}
+    
+    def register(name, obj, strf):
+        plugins.list[name] = plugin(name, obj, strf)
+        
+    def load(name):
+        threads.list[name] = threading.Thread(target=plugins.list[name].run)
+        
 class handlers:
-    class launcher:
-        def getImports():
-            list = os.listdir('.\\api\\')
-            i = 0
-            outlist = []
-            while i < len(list):
-                if list[i].find(".py") != -1:
-                    outlist.append(list[i].replace('.py', ''))
-                i = i + 1
-            return outlist
-
-        def importPlugins(list):
-            i = 0
-            global plugin
-            script = ""
-            while i < len(list):
-                script = script + "import api." + list[i] + "\nplugin." + list[i] + " = api." + list[i] + "\n" + "api." + list[i] + ".status.apiKey = '" + sys.argv[1] + "'\n"
-                os.system("mkdir .\\vars\\plugins")
-                i = i + 1
-            out = exec(script)
-            return out
-
-        def launch():
-            imports = handlers.launcher.getImports()
-            handlers.launcher.importPlugins(imports)
-            i = 0
-            pluginList = ";"
-            while i < len(imports):
-                pluginList = pluginList + 'plugin.' + str(imports[i]) + ";"
-                plugin.register('plugin.' + str(imports[i]))
-                i = i + 1
+    class main:
+        
+        regObjTemp = {}
+        
+        def registerPlugins():
+            os.system("mkdir .\\vars\\plugins")
+            pluginsf = os.listdir(".\\api")
+            keys = []
+            for pluginf in pluginsf:
+                print("Importing plugin " + pluginf + "...")
+                if pluginf.find(".py") != -1:
+                    exec("import api." + pluginf.split(".py")[0] + "\nhandlers.main.regObjTemp['" + pluginf.split(".py")[0] + "'] = api." + pluginf.split(".py")[0])
+                    plugins.register(pluginf.split(".py")[0], handlers.main.regObjTemp[pluginf.split(".py")[0]], pytools.IO.getFile(".\\api\\" + pluginf))    
+                    keys.append(pluginf.split(".py")[0])
             os.system("del .\\vars\\plugins\\*.cx /f /s /q")
             os.system("del .\\working\\*_errorlog.log")
-            pytools.IO.saveFile(".\\vars\\pluginsList.pyn", pluginList)
-            os.chdir('.\\working')
-            plugin.activate()
-            while True:
-                i = 0
-                while i < len(imports):
-                    try:
-                        compat = False
-                        for n in sys.argv:
-                            if n == "--compatMode":
-                                compat = True
-                        if compat:
-                            exec("for key in plugin." + imports[i] + ".status.vars:\n    if str(plugin." + str(imports[i]) + ".status.vars['lastLoop']).find('Time: ') == -1:\n        plugin." + str(imports[i]) + ".status.vars['lastLoop'] = 'Time: ' + str(plugin." + str(imports[i]) + ".status.vars['lastLoop'])\n    pytools.IO.saveJson('..\\\\vars\\\\pluginVars\\\\' + imports[i] + '-' + key + '.cx', plugin." + str(imports[i]) + ".status.vars[key])")
-                        # exec("for key in plugin." + imports[i] + ".status.vars:\n    if str(plugin." + str(imports[i]) + ".status.vars['lastLoop']).find('Time: ') == -1:\n        plugin." + str(imports[i]) + ".status.vars['lastLoop'] = 'Time: ' + str(plugin." + str(imports[i]) + ".status.vars['lastLoop'])\n    pytools.IO.saveJson('..\\\\vars\\\\pluginVars\\\\' + imports[i] + '-' + key + '.cx', plugin." + str(imports[i]) + ".status.vars[key])")
-                        exec("pytools.IO.saveJson('..\\\\vars\\\\pluginVarsJson\\\\' + imports[i] + '_keys.json', plugin." + imports[i] + ".status.vars)")
-                    except:
-                        print("plugin_mon_error;")
-                    i = i + 1
-                time.sleep(1)
-            return 0
-
+            pytools.IO.saveFile(".\\vars\\pluginsList.pyn", keys)
+        
+        def loadPlugins():
+            for pluginf in plugins.list:
+                print("Loading plugin " + pluginf + "...")
+                plugins.load(pluginf)
+        
+        def launchPlugins():
+            os.chdir(".\\working")
+            for threadf in threads.list:
+                print("Launching plugin " + threadf + "...")
+                threads.launch(threadf)
+    
     class error:
 
         errorStatus = {}
@@ -110,13 +101,70 @@ class handlers:
         def log(error, pluginf, tracebackf):
             if os.path.isfile(pluginf + '_errorlog.log') == False:
                 pytools.IO.saveFile(pluginf + '_errorlog.log', '')
-            # errorlog = pytools.IO.getFile(plugin + '_errorlog.log')
             pytools.IO.saveFile("..\\vars\\plugins\\" + pluginf + "-error.cx", error)
             errorlog = "\n" + str(pytools.clock.getDateTime()) + ' ::: ' + pluginf + "; " + tracebackf
             pytools.IO.appendFile(pluginf + '_errorlog.log', errorlog)
             print("handlers.error.errorStatus['" + pluginf.split(".")[1] + "'] = " + pluginf.replace(".run()", "") + ".status.finishedLoop")
             exec("handlers.error.errorStatus['" + pluginf.split(".")[1] + "'] = " + pluginf.replace(".run()", "") + ".status.finishedLoop")
             pytools.IO.saveFile("..\\vars\\plugins\\" + pluginf + "-loopStatus.cx", str(handlers.error.errorStatus[pluginf.split(".")[1]]))
-            time.sleep(3)
+            
+def run():
+    os.system("del .\\vars\\pluginVarsJson\\*.json /f /q")
+    handlers.main.registerPlugins()
+    handlers.main.loadPlugins()
+    handlers.main.launchPlugins()
+    while True:
+        try:
+            i = 0
+            for pluginf in plugins.list:
+                try:
+                    compat = False
+                    for n in sys.argv:
+                        if n.split("=")[0] == "--apiKey":
+                            pytools.IO.saveFile(".\\access.key", n.split("=")[1])
+                    pytools.IO.saveJson('..\\vars\\\\pluginVarsJson\\' + pluginf + '_keys.json', plugins.list[pluginf].obj.status.vars)
+                except:
+                    print(traceback.format_exc())
+                i = i + 1
+            pytools.IO.saveFile("..\\systemLoop.json", "{\"lastLoop\":" + str(pytools.clock.getDateTime()) + "}")
+            
+            for n in os.listdir("..\\api"):
+                if n != "old":
+                    if n != "__pycache__":
+                        try:
+                            pytools.dummyf(plugins.list[n.split(".py")[0]])
+                        except:
+                            try:
+                                error = 0
+                                out = True
+                                while error < 100:
+                                    try:
+                                        vars = pytools.IO.getJson("..\\vars\\pluginVarsJson\\" + n.split(".py")[0] + "_keys.json")
+                                        if (pytools.clock.dateArrayToUTC(vars["lastLoop"]) + 60) > pytools.clock.dateArrayToUTC(pytools.clock.getDateTime()):
+                                            out = False
+                                    except:
+                                        error = error + 1
+                                if out:
+                                    handlers.error.log("Handler for plugin " + n.split(".py")[0] + " has exited unexpectedly.", n.split(".py")[0], "\nAttempting to relaunch thread...")
+                                    exec("import api." + n.split(".py")[0] + "\nhandlers.main.regObjTemp['" + n.split(".py")[0] + "'] = api." + n.split(".py")[0])
+                                    plugins.register(n.split(".py")[0], handlers.main.regObjTemp[n.split(".py")[0]], pytools.IO.getFile(".\\api\\" + n.split(".py")[0] + ".py"))
+                                    plugins.load(n.split(".py")[0])
+                                    threads.launch(n.split(".py")[0])
+                            except:
+                                pass
+        
+        except:
+            pass
+        try:
+            time.sleep(1)
+        except:
+            pass
 
-handlers.launcher.launch()
+try:
+    for n in sys.argv:
+        if n == "--run":
+            run()
+except:
+    pytools.IO.saveFile("..\\crashlog.log", traceback.format_exc())
+    
+run()

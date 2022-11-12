@@ -194,7 +194,7 @@ class system:
                     subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "copy \"" + flags.pythonf + "python.exe\" \".\\ambience.exe\" /y")[0]
                 else:
                     subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "copy \"" + flags.pythonf + "\" \".\\ambience.exe\" /y")[0]
-                os.system("start /min \"\" ambience.exe main.py \"" + flags.apiKey + "\"")
+                os.system("start /min \"\" ambience.exe main.py --run --apiKey=" + flags.apiKey + "")
                 system.status.active = True
         else:
             while comm.connect() == False:
@@ -642,7 +642,7 @@ def main():
         while True:
             try:
                 if os.path.exists(".\\systemLoop.json"):
-                    if (pytools.clock.dateArrayToUTC(pytools.IO.getJson(".\\systemLoop.json", False)["lastLoop"]) + 5) < (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime())):
+                    if (pytools.clock.dateArrayToUTC(pytools.IO.getJson(".\\systemLoop.json", False)["lastLoop"]) + 10) < (pytools.clock.dateArrayToUTC(pytools.clock.getDateTime())):
                         system.status.active = False
                         subprocess.getstatusoutput("echo {\"loopTime\":[9999, 0, 0, 0, 0, 0]} > \\\\" + tools.getRemote() + "\\ambience\\systemLoop.json")[0]
                     else:

@@ -74,11 +74,11 @@ def makeString(listf):
     i = 0
     while i < len(listf):
         if listf[i][1] == "runaudio.vbs":
-            if string.find("\n" + listf[i][2].replace(".mp3", "").replace(".vbs", "").replace("_", " ") + "\n") == -1:
-                string = string + listf[i][2].replace(".mp3", "").replace(".vbs", "").replace("_", " ") + "\n"
+            if string.find("\n" + listf[i][2].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n") == -1:
+                string = string + listf[i][2].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n"
         else:
-            if string.find("\n" + listf[i][1].replace(".mp3", "").replace(".vbs", "").replace("_", " ") + "\n") == -1:
-                string = string + listf[i][1].replace(".mp3", "").replace(".vbs", "").replace("_", " ") + "\n"
+            if string.find("\n" + listf[i][1].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n") == -1:
+                string = string + listf[i][1].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n"
         i = i + 1
     return string[1:]
 

@@ -8,12 +8,24 @@ class status:
     vars = {
         "lastLoop": []
     }
+    
+class utils:
+    def dataGrabber():
+        out = pytools.IO.getList('.\\dataList.pyl')[1]
+        if out == 1:
+            out = [[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
+        return out
 
 def playMusic():
     mp3 = 'ch_music_' + str(random.randint(0, 1)) + ".mp3"
     pytools.sound.main.playSoundWindow(mp3 + ";" + mp3, 50, 1.0, 0, 1)
 
-def music(dateArray):
+def music(dateArray, dataArray=False):
+    if dataArray:
+        if dataArray[0][7] > 0.5:
+            if dataArray[0][3] == 0:
+                if dataArray[0][4] != "snow":
+                    return
     if dateArray[3] > 9:
         if dateArray[3] < 16:
             if (11 < dateArray[3] < 12) == False:
@@ -23,10 +35,11 @@ def music(dateArray):
 
 def main():
     while True:
+        dataArray = utils.dataGrabber()
         dateArray = pytools.clock.getDateTime()
         if dateArray[1] == 11:
             if dateArray[2] > 11:
-                music(dateArray)
+                music(dateArray, dataArray)
         if dateArray[1] == 12:
             music(dateArray)
         time.sleep(194)

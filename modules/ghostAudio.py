@@ -19,6 +19,8 @@ from pydub import AudioSegment
 import pytools
 import math
 import modules.floorplan as floorplan
+import pyttsx3
+import time
 
 class audio:
     def load_wav(filename):
@@ -106,6 +108,10 @@ class audio:
             outfile.writeframes(int16(output*32767.0).tostring())
 
             start_pos+=displace_pos
+            try:
+                time.sleep(start_pos / len(smp))
+            except:
+                pass
             if start_pos>=len(smp):
                 print ("100 %")
                 break
@@ -139,8 +145,13 @@ def getVolumes(floor, coords):
 
 # voice: [((1.3 * random.random()) + 0.3), (random.random() * 10) + 4, random.random()]
 def speak(words, name, type, mood, voice, activity=1, coords=[0, 0], floor=0):
-    gtts.gTTS(text=words, lang="en", slow=False).save(".\\sound\\assets\\active_ghost." + name + ".mp3")
-    sound = AudioSegment.from_file(".\\sound\\assets\\active_ghost." + name + ".mp3", format="mp3")
+    engine = pyttsx3.init()
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[1].id)
+    engine.setProperty('rate', 95)
+    engine.save_to_file(words, ".\\sound\\assets\\active_ghost." + name + ".wav")
+    # gtts.gTTS(text=words, lang="en", slow=False).save(".\\sound\\assets\\active_ghost." + name + ".mp3")
+    sound = AudioSegment.from_file(".\\sound\\assets\\active_ghost." + name + ".wav", format="wav")
     voiceCoeff = (voice[0] + ((random.random() * (mood / 100)) * (2 - type)))
     stretchCoeff = (voice[1] + ((random.random() * (mood / 100)) * (type - 1)))
     windowSize = (voice[2] + ((random.random() * (mood / 100)) * (type - 1)))
@@ -155,7 +166,7 @@ def speak(words, name, type, mood, voice, activity=1, coords=[0, 0], floor=0):
     hipitch_sound = hipitch_sound.set_frame_rate(44100)
     hipitch_sound.export(".\\sound\\assets\\active_ghost." + name + ".wav", format="wav")
     (samplerate, smp) = audio.load_wav(".\\sound\\assets\\active_ghost." + name + ".wav")
-    audio.paulstretch(samplerate, smp, stretchCoeff, windowSize, ".\\sound\\assets\\active_ghost." + name + ".wav")
+    audio.paulstretch(samplerate, smp, stretchCoeff / 1.5, windowSize, ".\\sound\\assets\\active_ghost." + name + ".wav")
     print((5 * random.random()) + math.fabs(mood))
     volumes = getVolumes(floor, coords)
     print(volumes)

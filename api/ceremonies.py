@@ -31,14 +31,14 @@ def main():
         dateArray = pytools.clock.getDateTime()
         if dateArray[1] == 11:
             if dateArray[2] == 11:
-                if dateArray[3] == 10:
-                    if dateArray[4] == 58:
+                if dateArray[3] == 11:
+                    if dateArray[4] == 9:
                         if dateArray[5] > 40:
                             RDC.run()
-                    if dateArray[4] == 59:
+                    if dateArray[4] == 10:
                         RDC.run()
                 if dateArray[3] == 11:
-                    if dateArray[4] == 0:
+                    if dateArray[4] == 11:
                         RDC.run()
         else:
             time.sleep(193)

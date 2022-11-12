@@ -27,7 +27,7 @@ def main():
                     if (32768 * random.random()) < randf4:
                         pytools.sound.main.playSound('doorbell.mp3', 0, 40, 1.0, 0.0, 0)
                         time.sleep(10)
-                        pytools.sound.main.playSound('distanttrt' + str(random.randint(0, 5)) + ".mp3", 0, 100, 1.0, 0.0, 0)
+                        pytools.sound.main.playSound('distanttrt' + str(random.randint(1, 5)) + ".mp3", 0, 100, 1.0, 0.0, 0)
         time.sleep(300)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True

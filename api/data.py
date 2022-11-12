@@ -139,7 +139,7 @@ class grabber:
         try:
             windGusts = float(data['windPeak'])
         except:
-            rainGusts = 0.0
+            windGusts = 0.0
         try:
             windSpeeds = float(data['windAvg'])
         except:

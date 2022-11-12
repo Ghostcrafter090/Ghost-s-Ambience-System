@@ -70,14 +70,9 @@ class micInstance:
                         return MyText
                     except:
                         return False
-                    
-            except sr.RequestError as e:
-                print("Could not request results; {0}".format(e))
-                return False
-                
-            except sr.UnknownValueError:
-                print("unknown error occured")
-                return False
+            
+            except:
+                pass
 
     def micRun(self):
         while True:
