@@ -107,12 +107,52 @@ class handlers:
             print("handlers.error.errorStatus['" + pluginf.split(".")[1] + "'] = " + pluginf.replace(".run()", "") + ".status.finishedLoop")
             exec("handlers.error.errorStatus['" + pluginf.split(".")[1] + "'] = " + pluginf.replace(".run()", "") + ".status.finishedLoop")
             pytools.IO.saveFile("..\\vars\\plugins\\" + pluginf + "-loopStatus.cx", str(handlers.error.errorStatus[pluginf.split(".")[1]]))
-            
+
+def soundsReporter():
+    while True:
+        window = "\n"
+        clock = "\n"
+        fireplace = "\n"
+        outside = "\n"
+        pluginf = "processreport"
+        sounds = plugins.list[pluginf].obj.pytools.sound.main.activeSounds
+        for n in sounds:
+            if sounds[n][1][0] == "window":
+                if window.find("\n"+ sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n") == -1:
+                    window = window + sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n"
+            elif sounds[n][1][0] == "clock":
+                if clock.find("\n"+ sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n") == -1:
+                    clock = clock + sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n"
+            elif sounds[n][1][0] == "fireplace":
+                if fireplace.find("\n"+ sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n") == -1:
+                    fireplace = fireplace + sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n"
+            elif sounds[n][1][0] == "outside":
+                if outside.find("\n"+ sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n") == -1:
+                    outside = outside + sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n"
+            elif sounds[n][1][0] == "windown":
+                if outside.find("\n"+ sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n") == -1:
+                    outside = outside + sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n"
+                if window.find("\n"+ sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n") == -1:
+                    window = window + sounds[n][0].replace(".mp3", "").replace(".vbs", "").replace("_", " ").replace("active ghost.", "g_") + "\n"
+            # except:
+                # pass
+        pytools.IO.saveJson("..\\vars\\sounds.json", {
+            "clock": clock,
+            "fireplace": fireplace,
+            "window": window,
+            "outside": outside
+        })
+        time.sleep(1)
+       
 def run():
     os.system("del .\\vars\\pluginVarsJson\\*.json /f /q")
     handlers.main.registerPlugins()
     handlers.main.loadPlugins()
     handlers.main.launchPlugins()
+    
+    soundsReport = threading.Thread(target=soundsReporter)
+    soundsReport.start()
+    
     while True:
         try:
             i = 0

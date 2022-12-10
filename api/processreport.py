@@ -95,6 +95,14 @@ def main():
         windowsounds = makeString(processes['window'])
         outsidesounds = makeString(processes['outside'])
         windownsounds = makeString(processes['windown'])
+        try:
+            newSystem = pytools.IO.getJson("..\\vars\\sounds.json")
+            clocksounds = clocksounds + newSystem["clock"]
+            fireplacesounds = fireplacesounds + newSystem["fireplace"]
+            windowsounds = windowsounds + newSystem["window"]
+            outsidesounds = outsidesounds + newSystem["outside"]
+        except:
+            pass
         windowsounds = windowsounds + windownsounds
         outsidesounds = outsidesounds + windownsounds
         saveFile("..\\vars\\sounds\\clock.cxl", clocksounds)

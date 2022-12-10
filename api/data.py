@@ -10,26 +10,28 @@ class status:
     }
 
 class globals:
-    urlBase = 'http://api.openweathermap.org/data/2.5/weather?lat=44.905463&lon=-63.483926&appid='
+    urlBase = 'https://api.openweathermap.org/data/2.5/weather?lat=44.649866&lon=-63.654005&appid='
     urlFast = 'http://gsweathermore.ddns.net:226/access.php?key=56c15c7d00df42d8815c7d00df42d8ab'
     urlSuperFast = 'http://gsweathermore.ddns.net:226/currentdata.json'
+    urlPrecip = "http://gsweathermore.ddns.net:226/access.php?key=makeitrain&grabrain=true"
     dataBaseOld = [0.0, 0.0, 15000, 0.0, 'clear', 0, 1000.0, 15.0, 50.0]
     dataFastOld = [0, 0, 1000.0, 15, 50, 0]
     dataSuperOld = [15, 50, 1000.0, 0, 0, 0]
+    dataPrecipOld = {"data": {"main": {"particles": {"avgCount": 0.00, "currentCount": 0, "speed": 1053.7, "speedMax": 1084, "particleSpeedMin": 580}, "precipitation": {"type": {"snow": 0.0, "rain": 0.0, "hail": 0.0}, "intensity": 0.01}, "avgSensorReading": 337.81, "loopTic": 204.03, "sensorCalibratedTo": 337.44}}, "grabbed": "yes"}
 
 class grabber:
     def getBaseData(url):
         try:
             print(str(pytools.clock.getDateTime()) + ' ::: Getting Base Data...')
             # url: http://api.openweathermap.org/data/2.5/weather?lat=44.7659964&lon=-63.6850686&appid=<apiKey>
-            url = url + status.apiKey
-            try:
-                data = pytools.net.getJsonAPI(url)
-            except:
-                data = globals.dataBaseOld
+            # try:
+            data = pytools.net.getJsonAPI(url + status.apiKey)
+            # except:
+            #     data = globals.dataBaseOld
             globals.dataBaseOld = data
             # [windspeeds, windgusts, visibility, snow, weather, modifier]
             r = 0
+            print(data)
             condf = 0
             weather = 'clear'
             while r < len(data['weather']):
@@ -157,8 +159,27 @@ class grabber:
         except:
             pressure = 0.0
         return [temp, humidity, pressure, rainRate, windSpeeds, windGusts]
-        
 
+    def getPrecipData(url):
+        try:
+            data = pytools.net.getJsonAPI(url)
+        except:
+            data = globals.dataPrecipOld
+        try:
+            snow = data["data"]["main"]["precipitation"]["type"]["snow"]
+        except:
+            snow = 0.0
+        try:
+            rain = data["data"]["main"]["precipitation"]["type"]["rain"]
+        except:
+            rain = 0.0
+        try:
+            hail = data["data"]["main"]["precipitation"]["type"]["hail"]
+        except:
+            hail = 0.0
+        precipDataOld = data
+        return [snow, rain, hail]
+        
 class bulk:
     def getData(oldBool: bool, oldData, bypass):
         dateArray = pytools.clock.getDateTime()
@@ -167,9 +188,11 @@ class bulk:
             baseDataf = [baseData[0], baseData[1]]
             fastData = grabber.getFastData(globals.urlFast)
             superData = grabber.getSuperFastData(globals.urlSuperFast)
+            precipData = grabber.getPrecipData(globals.urlPrecip)
             dateNewBase = dateArray[4]
             dateNewFast = dateArray[4]
             dateNewSuper = dateArray[5]
+            dateNewPrecip = dateArray[5]
         else:
             baseData = oldData[0]
             baseDataf = oldData[7]
@@ -178,6 +201,7 @@ class bulk:
             dateNewBase = oldData[4]
             dateNewFast = oldData[5]
             dateNewSuper = oldData[6]
+            dateNewPrecip = oldData[8]
             if (dateArray[4] % 15) == 0:
                 if oldData[4] != dateArray[4]:
                     dateNewBase = dateArray[4]
@@ -192,9 +216,14 @@ class bulk:
                 if oldData[6] != dateArray[5]:
                     dateNewSuper = dateArray[5]
                     superData = grabber.getSuperFastData(globals.urlSuperFast)
+            if (dateArray[5] % 15) == 0:
+                if oldData[8] != dateArray[5]:
+                    dateNewPrecip = dateArray[5]
+                    precipData = grabber.getSuperFastData(globals.urlPrecip)
         try:
             baseData[6] = superData[2]
-            baseData[7] = superData[0]
+            if baseData[7] > superData[0]:
+                baseData[7] = superData[0]
             baseData[8] = superData[1]
             if baseDataf[0] < superData[4]:
                 baseData[0] = superData[4]
@@ -202,6 +231,15 @@ class bulk:
                 baseData[1] = superData[5]
             if fastData == False:
                 fastData = [0, 0, baseData[6], baseData[7], baseData[8], 0]      
+            if (baseData[4] != "lightrain") and (baseData[4] != "rain") and (baseData[4] != "snow"):
+                if precipData[1] > 0:
+                    baseData[4] = "lightrain"
+            if (baseData[4] != "rain") and (baseData[4] != "snow"):
+                if precipData[1] > 0.13:
+                    baseData[4] = "rain"
+            if (baseData[4] != "snow"):
+                if precipData[2] > 0:
+                    baseData[4] = "snow"    
         except:
             pass
 
@@ -213,7 +251,7 @@ class bulk:
     set humidity=""" + str(superData[1]).split('.')[0] + """
     set weather=""" + str(baseData[4]).split('.')[0] + """
     set modifier=""" + str(baseData[5]).split('.')[0]
-        dispString = """Temperature (C)      : """ + str(superData[0]) + """C
+        dispString = """Temperature (C)      : """ + str(baseData[7]) + """C
 Wind Speeds (m/s)    : """ + str(baseData[0]) + """m/s
 Wind Gusts  (m/s)    : """ + str(baseData[1]) + """m/s
 Pressure    (hPa)    : """ + str(superData[2]) + """hPa
@@ -228,7 +266,7 @@ Time        (hh:mm)  : """ + str(dateArray[3]) + ":" + str(dateArray[4])
         })
         if oldBool == 1:
             pytools.IO.saveFile('cond.cmd', outString)
-        return [baseData, fastData, superData, outString, dateNewBase, dateNewFast, dateNewSuper, baseDataf]
+        return [baseData, fastData, superData, outString, dateNewBase, dateNewFast, dateNewSuper, baseDataf, dateNewPrecip]
 
 def main():
     if status.apiKey == "":

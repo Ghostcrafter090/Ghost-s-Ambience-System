@@ -187,7 +187,7 @@ def main():
                 if dateArray[3] >= dayTimes[2][3]:
                     pytools.sound.main.playSoundWindow("cicada_windowclosed.mp3;cicada_windowopen.mp3", 50, speed, 0, 0)
         status.vars['locustChances'] = chance
-        time.sleep(30)
+        time.sleep(30 / speed)
         status.vars['lastLoop'] = pytools.clock.getDateTime()
         status.finishedLoop = True
 

@@ -155,11 +155,15 @@ class haunts:
     
     class handler:
         def handle(current=False):
+            
+            # https://www.desmos.com/calculator/2kbtzpnmad
+            
             dateArray = pytools.clock.getDateTime()
             if current != False:
                 dateArray = current
             startOfYear = pytools.clock.dateArrayToUTC([dateArray[0], 1, 1, 0, 0, 0])
             current = pytools.clock.dateArrayToUTC(dateArray) - startOfYear
+            current = current - (24 * 60 * 60)
             a = 100
             b = 26265600
             c = 3000000000000
@@ -168,8 +172,8 @@ class haunts:
             g = 300000000000
             p = 3.14159265359
             h = 50
-            j = 10 * math.sin((p / 1180290.0) * (-current - (dateArray[0] * 365.25 * 24 * 60 * 60) - (13 * 24 * 60 * 60)))
-            k = 10 * math.sin((p / 302499) * (current + (dateArray[0] * 365.25 * 24 * 60 * 60) - 6))
+            j = 10 * math.sin((p / (1180295.8 / 2)) * (-current - (dateArray[0] * 365.25 * 24 * 60 * 60) - (13 * 24 * 60 * 60)))
+            k = 10 * math.sin((p / 302400.0) * (current + (dateArray[0] * 365.25 * 24 * 60 * 60) - 6))
             l = 0
             i = 1
             while i < 13:

@@ -16,7 +16,7 @@ bal = 0
 speed = 1
 limiter = "null"
 
-if WScript.Arguments.Count < 2 then
+if WScript.Arguments.Count < 3 then
 	vol = 100
 	bal = 0
 	speed = 1
@@ -25,20 +25,27 @@ else
 	vol = Wscript.Arguments(1)
 	bal = Wscript.Arguments(2)
 	speed = Wscript.Arguments(3)
+	speaker = Wscript.Arguments(5)
 	if Wscript.Arguments(3) = 0 then
 		speed = 1.0
 	end if
 	limiter = Wscript.Arguments(4)
 end if
 
-Set Sound = CreateObject("WMPlayer.OCX.7") 
-Sound.URL = ".\sound\assets\" & WScript.Arguments.Item(0)
-Sound.Settings.Volume = vol
-Sound.Settings.Balance = bal
-Sound.Settings.Rate = speed
-Sound.Controls.play 
-do while Sound.currentmedia.duration = 0 
-	wscript.sleep 100 
-loop 
-wscript.sleep (int(Sound.currentmedia.duration)+1)*1000
-wscript.quit 0
+if speed = 1 then
+	Set Sound = CreateObject("WMPlayer.OCX.7") 
+	Sound.URL = ".\sound\assets\" & WScript.Arguments.Item(0)
+	Sound.Settings.Volume = vol
+	Sound.Settings.Balance = bal
+	Sound.Settings.Rate = speed
+	Sound.Controls.play
+	do while Sound.currentmedia.duration = 0 
+		wscript.sleep 100 
+	loop 
+	wscript.sleep (int(Sound.currentmedia.duration)+1)*1000
+	wscript.quit 0
+else
+	Dim WShell
+	Set WShell = CreateObject("WScript.Shell")
+	WShell.Run "py.exe runaudio.py " & ".\sound\assets\" & WScript.Arguments.Item(0) & " " & vol & " " & speed & " " & bal & " " & speaker & " ", 0, 1
+end if

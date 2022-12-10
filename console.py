@@ -154,6 +154,8 @@ class comm:
         })
         return comm.wait(flags.timeout)
     
+    enCount = 0
+    
     def connect(enf=True):
         en = True
         errord = subprocess.getstatusoutput("cd \"\\" + tools.getRemote() + "\\ambience\" & " + "ping " + flags.remote + " -w 1 -n 1")[0]
@@ -165,6 +167,10 @@ class comm:
             if errord != 0:
                 print("Could not connect to remote system. Filesystem on IP address " + flags.remote + "doesn't exist or is not configured.")
                 en = False
+                comm.enCount = comm.enCount + 1
+                if comm.enCount > 30:
+                    flags.exitf = True
+                    exit()
             else:
                 os.chdir("\\\\" + flags.remote + "\\ambience")
                 errord = comm.ping()
